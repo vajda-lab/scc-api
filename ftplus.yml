@@ -1,0 +1,7 @@
+version 3
+
+services:
+  submit-host:
+    image: centos:7
+volumes:
+  logvolume01: {}
