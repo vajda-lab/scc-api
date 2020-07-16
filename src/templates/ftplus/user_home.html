@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% if user.is_authenticated %}
+
+{% load static from staticfiles %}
+
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <div style="margin:70px">
+    <h1>Welcome to your FTPlus Account Page</h1>
+    <h3>Use this page to view and edit previous jobs or to create new jobs.</h3>
+    <h5>You are allowed to submit {{ user.max_job_submission }} jobs a day.</h5>
+  {% if config.ACCEPTING_JOBS == 'yes' %}
+    {% if user.daily_job_count < user.max_job_submission %}
+      <p>You have submitted {{ user.daily_job_count }} jobs today.</p>
+      <button type="button" onclick="location.href='{% url 'ftmap:job_create' %}'" type="button" class="btn btn-primary btn-lg">Start a new job</button>
+    {% elif user.daily_job_count >= user.max_job_submission %}
+      You have reached your submission limit for today.
+    {% endif %}
+  {% endif %}
+  </div>
+  <div style="margin:70px">
+    <h2>Jobs in progress:</h2>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <table id="in-progress" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+              <tr>
+                <th>Created</th>
+                <th>Job</th>
+                <th>PDB ID</th>
+                <th>Status</th>
+                <th>User</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for job in job_list %}
+              {% if job.status == job.STATUS_ACTIVE %}
+                <tr>
+                  <td>{{ job.created }}</td>
+                  <td><a href="{%url 'ftmap:job_detail' slug=job.uuid %}">{{job.title}}</a></td>
+                  <td>{{ job.pdb_id }}</td>
+                  <td>{{ job.get_status_display }}</td>
+                  <td>{{ job.user }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    </div>
+  <div style="margin:70px">
+    <h2>Completed jobs:</h2>
+        <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <table id="completed" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+              <tr>
+                <th>Created</th>
+                <th>Job</th>
+                <th>PDB ID</th>
+                <th>Status</th>
+                <th>User</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for job in job_list %}
+              {% if job.status != job.STATUS_ACTIVE %}
+                <tr>
+                  <td>{{ job.created }}</td>
+                  <td>{{ job.title }}</td>
+                  <td>{{ job.pdb_id }}</td>
+                  <td>{{ job.get_status_display }}</td>
+                  <td>{{ job.user }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% endif %}

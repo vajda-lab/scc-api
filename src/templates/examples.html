@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% load static from staticfiles %}
+
+
+{% block title %}Examples{% endblock %}
+
+{% block content %}
+<style>
+  .row {display: flex;}
+  .column { flex: 50%;}
+  .table { width: max-content}
+</style>
+<div class="row" style="margin:70px">
+  <div class="column";>
+    <div style="margin-right: 3px">
+  <h1>FTPlus Examples</h1>
+
+  <table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Structure</th>
+      <th>PDB</th>
+      <th>Download</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for example in example_list %}
+      <tr>
+        <td>{{example.title}}</td>
+        <td>{{example.pdb_id}}</td>
+        <td><a download="{{example.pdb_file}}" href="{{ MEDIA_URL }}{{example.pdb_file}}">PDB
+        </a><a download="{{example.pse_file}}" href="{{ MEDIA_URL }}{{example.pse_file}}">PSE</a>
+        </td>
+        <td><label for="viewport" class="container">{{ item.title }}
+          <input type="radio" checked="checked" name="radio" value="{{ MEDIA_URL }}{{ example.pdb_file }}">
+          <span class="checkmark"></span></label>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+  <div class="column">
+    <meta name="viewport" content="width=device-width">
+    <div id="viewport" style="width:100%; height:400px;"></div>
+    <p>Mouse-over to identify atoms and bonds. Use left click to rotate, right click to zoom and press
+      scroll wheel to move object. Use two fingers to zoom with a trackpad.</p>
+      <p>Molecular viewer powered by <a href="http://nglviewer.org/" target="_blank">NGL.</a></p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ngl_viewer.js' %}"></script>
+<script type="text/javascript">
+
+// Create NGL Stage object
+var stage = new NGL.Stage( "viewport", {backgroundColor: "white"});
+
+
+// Handle window resizing
+window.addEventListener( "resize", function( event ){
+    stage.handleResize();
+}, false );
+
+function addElement (el) {
+  Object.assign(el.style, {
+    position: "absolute",
+    zIndex: 10
+  });
+  stage.viewer.container.appendChild(el)
+}
+
+function createElement (name, properties, style) {
+  let el = document.createElement(name);
+  Object.assign(el, properties);
+  Object.assign(el.style, style);
+  return el
+}
+
+$(document).on("click","input[name='radio']", function(){
+    let new_file = $("input[name='radio']:checked").val();
+    stage.removeAllComponents();
+    update_ngl(new_file);
+});
+
+// Load 1st example
+  let first_file = "{{ MEDIA_URL }}{{ example_list.first.pdb_file }}";
+  update_ngl(first_file)
+
+</script>
+
+{% endblock %}

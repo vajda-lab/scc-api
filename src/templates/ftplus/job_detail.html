@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% if user.is_authenticated %}
+
+{% load static from staticfiles %}
+
+
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+  <div style="margin:70px">
+    <div>
+      <h2>{{job.title}}</h2>
+    </div>
+    <div class="column">
+    <meta name="viewport" content="width=device-width">
+    <div id="viewport" style="width:100%; height:400px;"></div>
+    <p>Mouse-over to identify atoms and bonds. Use left click to rotate, right click to zoom and press
+      scroll wheel to move object. Use two fingers to zoom with a trackpad.</p>
+      <p>Molecular viewer powered by <a href="http://nglviewer.org/" target="_blank">NGL.</a></p>
+  </div>
+  </div>
+{% endblock %}
+
+{% endif %}
+
+
+{% block extra_js %}
+<script src="{% static 'js/ngl_viewer.js' %}"></script>
+<script type="text/javascript">
+
+// Create NGL Stage object
+var stage = new NGL.Stage( "viewport", {backgroundColor: "white"});
+
+
+// Handle window resizing
+window.addEventListener( "resize", function( event ){
+    stage.handleResize();
+}, false );
+
+function addElement (el) {
+  Object.assign(el.style, {
+    position: "absolute",
+    zIndex: 10
+  });
+  stage.viewer.container.appendChild(el)
+}
+
+function createElement (name, properties, style) {
+  let el = document.createElement(name);
+  Object.assign(el, properties);
+  Object.assign(el.style, style);
+  return el
+}
+
+// $(document).on("click","input[name='radio']", function(){
+//     let new_file = $("input[name='radio']:checked").val();
+//     stage.removeAllComponents();
+//     update_ngl(new_file);
+// });
+
+// Load 1st example
+  let first_file = "{{ MEDIA_URL }}{{ job.in_file }}";
+  update_ngl(first_file)
+
+</script>
+
+{% endblock %}

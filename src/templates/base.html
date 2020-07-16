@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+{% load static from staticfiles %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="manifest" href="/media/icons/site.webmanifest">
+  <link rel="mask-icon" href="/media/icons/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/media/icons/browserconfig.xml">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/sandstone/bootstrap.min.css">
+  <title>FTPlus | {% block title %}{% endblock %}</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top" id="navbar">
+    <a class="navbar-brand" href="{% url 'home' %}">FTPlus</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav mr-auto">
+        {% if user.is_authenticated %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'ftmap:user_home' %}">My FTPlus<span class="sr-only">(current)</span></a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'features' %}">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'examples' %}">Examples</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'about' %}">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+        </li>
+      </ul>
+      <style type="text/css">.sidebar-nav li{list-style-type: none;}</style>
+      <ul class="sidebar-nav" >
+       {% if user.is_authenticated %}
+        <li class="text-muted">User: {{ user.get_username }}</li>
+         <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+       {% else %}
+         <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+         <li><a href="{% url 'user_app:signup'%}">Signup</a></li>
+       {% endif %}
+       </ul>
+    </div>
+  </nav>
+  {% if config.BANNER_ON == 'yes' %}
+    {% if config.ACCEPTING_JOBS == 'yes' %}
+    <div class="alert alert-dismissible alert-info">
+    <strong>{{ config.BANNER_MESSAGE }}</strong>
+    </div>
+    {% elif config.ACCEPTING_JOBS == 'no' %}
+      <div class="alert alert-dismissible alert-danger">
+      <strong>{{ config.BANNER_MESSAGE }}</strong>
+      </div>
+    {% endif %}
+  {% else %}
+    {% if config.ACCEPTING_JOBS == 'no' %}
+      <div class="alert alert-dismissible alert-danger">
+      <strong>{{ config.BANNER_MESSAGE }}</strong>
+      </div>
+    {% endif %}
+  {% endif %}
+  {% block content %}{% endblock %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js"></script>
+  <script src="https://unpkg.com/ngl"></script>
+{% block extra_js %}{% endblock %}
+</body>
+
+<footer>
+  <div class="footer bg-light py-5" id="footer">
+    <p class="text-muted text-center my-0">Developed by the <a href="https://vajdalab.org/" target="_blank">Vajda Lab</a>
+      at <a href="https://www.bu.edu/" target="_blank">Boston University</a>.
+      <br>Copyright &copy; 2020. All rights reserved. Non-commercial use only.</p>
+  </div>
+</footer>
+
+</html>
