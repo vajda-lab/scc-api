@@ -1,6 +1,6 @@
 from django.db import models
 from improved_user.model_mixins import AbstractUser
-from ftmap.models import Job
+from sccApi.models import Job
 import datetime
 
 Affiliation_Choices = (

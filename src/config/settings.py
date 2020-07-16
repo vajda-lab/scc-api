@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     # first party
-    'ftmap.apps.FtmapConfig',
+    'sccApi'
+    # 'sccApi.apps.SccApiConfig',
 ]
 
 MIDDLEWARE = [

@@ -1,23 +1,15 @@
 {% extends "base.html" %}
 
-{% if user.is_authenticated %}
-
 {% load static from staticfiles %}
 
 
 {% block title %}Home{% endblock %}
 
+
+{% if user.is_authenticated %}
+
 {% block content %}
-  <div style="margin:70px">
-  {% if config.ACCEPTING_JOBS == 'yes' %}
-    {% if user.daily_job_count < user.max_job_submission %}
-      <p>You have submitted {{ user.daily_job_count }} jobs today.</p>
-      <button type="button" onclick="location.href='{% url 'ftmap:job_create' %}'" type="button" class="btn btn-primary btn-lg">Start a new job</button>
-    {% elif user.daily_job_count >= user.max_job_submission %}
-      You have reached your submission limit for today.
-    {% endif %}
-  {% endif %}
-  </div>
+
   <div style="margin:70px">
     <h2>Jobs in progress:</h2>
     <div class="container">
@@ -37,7 +29,7 @@
               {% if job.status == job.STATUS_ACTIVE %}
                 <tr>
                   <td>{{ job.created }}</td>
-                  <td><a href="{%url 'ftmap:job_detail' slug=job.uuid %}">{{job.title}}</a></td>
+                  <td><a href="{%url 'sccApi:job_detail' slug=job.uuid %}">{{job.uuid}}</a></td>
                   <td>{{ job.get_status_display }}</td>
                   <td>{{ job.user }}</td>
                 </tr>
@@ -68,7 +60,7 @@
               {% if job.status != job.STATUS_ACTIVE %}
                 <tr>
                   <td>{{ job.created }}</td>
-                  <td>{{ job.title }}</td>
+                  <td>{{ job.uuid }}</td>
                   <td>{{ job.get_status_display }}</td>
                   <td>{{ job.user }}</td>
                 </tr>

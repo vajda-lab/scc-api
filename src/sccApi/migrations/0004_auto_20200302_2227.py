@@ -7,7 +7,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ftmap', '0003_auto_20190606_1756'),
+        ('sccApi', '0003_auto_20190606_1756'),
     ]
 
     operations = [

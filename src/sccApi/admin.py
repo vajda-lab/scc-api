@@ -8,6 +8,3 @@ class JobAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Job, JobAdmin)
 
-
-class JobPageAdmin(admin.ModelAdmin):
-    admin.site.register(models.Example)

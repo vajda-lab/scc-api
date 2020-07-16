@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ftmap', '0008_job_status'),
+        ('sccApi', '0008_job_status'),
     ]
 
     operations = [

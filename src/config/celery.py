@@ -6,7 +6,7 @@ from celery.decorators import periodic_task
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
-app = Celery('ftplus')
+app = Celery('sccApi')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

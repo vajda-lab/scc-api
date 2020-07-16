@@ -24,7 +24,7 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.HomeView.as_view(), name="home"),
-    path('ftmap/', include(('ftmap.urls', 'ftmap'), namespace='ftmap')),
+    path('sccApi/', include(('sccApi.urls', 'sccApi'), namespace='sccApi')),
     path('signup/', include(('user_app.urls', 'user_app'), namespace='user_app')),
     path('accounts/', include('django.contrib.auth.urls')),
 ]

@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ftmap', '0004_auto_20200302_2227'),
+        ('sccApi', '0004_auto_20200302_2227'),
     ]
 
     operations = [

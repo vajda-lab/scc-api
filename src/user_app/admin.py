@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 
 from .models import User
-from ftmap.models import Job
+from sccApi.models import Job
 
 
 class JobRelationshipInline(admin.TabularInline):
