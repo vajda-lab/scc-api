@@ -1,0 +1,15 @@
+celery<5.1
+django-constance[redis]
+django-environ
+django-extensions
+django-improved-user
+Django<3.2
+djangorestframework<3.13
+flower
+ipython==6.4.0
+psycopg2-binary
+pytz==2018.5
+redis
+requests==2.23.0
+# tornado>=4.2.0,<6.0.0
+whitenoise
