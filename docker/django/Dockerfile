@@ -1,12 +1,12 @@
-FROM revolutionsystems/python:3.6.8-wee-optimized-lto
+FROM revolutionsystems/python:3.7.9-wee-optimized-lto
 
 WORKDIR /app
 
 ENV PYTHONUNBUFFERED 1
-RUN python3.6 -m pip install -U pip setuptools
+RUN python3.7 -m pip install -U pip setuptools
 
 COPY requirements /tmp/requirements
-RUN python3.6 -m pip install -U --no-cache-dir -r /tmp/requirements/development.txt
+RUN python3.7 -m pip install -U --no-cache-dir -r /tmp/requirements/development.txt
 
 COPY docker/django/celery/beat_start.sh /start-celerybeat
 RUN chmod +x /start-celerybeat
