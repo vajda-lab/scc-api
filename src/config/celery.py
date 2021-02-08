@@ -1,7 +1,7 @@
 import os
 from celery import Celery
-from celery.task.schedules import crontab
-from celery.decorators import periodic_task
+from celery.schedules import crontab
+# from celery.decorators import periodic_task
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
@@ -23,6 +23,6 @@ def debug_task(self):
     print('Request: {0!r}'.format(self.request))
 
 
-@periodic_task(run_every=(crontab(minute='*/1')), name="some_task", ignore_result=True)
+# @periodic_task(run_every=(crontab(minute='*/1')), name="some_task", ignore_result=True)
 def some_task():
     print('puthons are magic')
