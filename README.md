@@ -52,7 +52,7 @@ docker-compose run --rm django python manage.py test
 ```
 
 ### Non-Functioning commands (as of 2021-02-10)
-These commands will be investigated moving forward
+These commands will be investigated & updated moving forward
 
 To check PEP 8 for pre-commit use:
 ```shell
