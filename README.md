@@ -30,7 +30,9 @@ docker-compose down
 ```
 
 To remove all of the assets created by Docker to run the server use the
-command below.
+command below. The `--volumes` flag may be shortened to `-v`.
+*NOTE* The command below will also remove the database, thus removing any records or users created. This includes the superuser.
+
 
 ```shell
 docker-compose down --volumes --rmi local
@@ -41,8 +43,6 @@ To create a superuser use:
 docker-compose run django python manage.py createsuperuser
 ```
 
-The `--volumes` flag may be shortened to `-v`.
-
 
 To run the tests in Docker use:
 
@@ -51,6 +51,8 @@ To run the tests in Docker use:
 docker-compose run --rm django python manage.py test
 ```
 
+### Non-Functioning commands (as of 2021-02-10)
+These commands will be investigated moving forward
 
 To check PEP 8 for pre-commit use:
 ```shell
