@@ -8,8 +8,6 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = [
             "uuid",
-            "created",
-            "modified",
             "status",
             "user",
             "in_file"
