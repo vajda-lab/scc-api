@@ -1,7 +1,12 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from rest_framework import viewsets
 
 from .forms import SignUpForm
+
+from .models import User
+from . import serializers
+
 
 def signup(request):
     if request.method == 'POST':
@@ -16,3 +21,11 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """A viewset for viewing and editing User instances."""
+
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+    ordering = "organization"
