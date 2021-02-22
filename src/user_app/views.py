@@ -1,5 +1,7 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from django.views.generic.list import ListView
+
 from rest_framework import viewsets
 
 from .forms import SignUpForm
@@ -8,7 +10,14 @@ from .models import User
 from . import serializers
 
 
+class UserListView(ListView):
+    """List view of current users."""
+
+    model = User
+
+
 def signup(request):
+    """New user signup form."""
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
