@@ -10,7 +10,7 @@ router.register(r"api/users", views.UserViewSet, basename="user")
 app_name = 'user_app'
 urlpatterns = [
     # url('', views.signup, name='signup'),
-    url('', views.UserListView.as_view(), name='user-list'),
+    url('', views.UserListView.as_view(), name='list-user'),
     url('signup/', views.signup, name='signup'),
 ]
 
