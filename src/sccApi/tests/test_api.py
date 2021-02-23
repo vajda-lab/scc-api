@@ -1,8 +1,10 @@
+import json
 import pytest
 
 from model_bakery import baker
 
 from sccApi import models, serializers
+from user_app.models import User 
 
 
 # Test Job List url
@@ -36,9 +38,11 @@ def test_job_create(tp):
     url = tp.reverse("job-list")
     job = baker.prepare("sccApi.Job")
     payload = serializers.JobSerializer(instance=job).data
+    print(json.dumps(payload, indent=2))
     del payload["uuid"]
     response = tp.client.post(url, data=payload, content_type="application/json")
 
+    print(json.dumps(response.json(), indent=2))
     pk = response.json()["uuid"]
     tp.response_201(response)
 
