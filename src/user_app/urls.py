@@ -10,8 +10,8 @@ router.register(r"api/users", views.UserViewSet, basename="user")
 app_name = 'user_app'
 urlpatterns = [
     # url('', views.signup, name='signup'),
-    url('', views.UserListView, name='user-list'),
-    url('signup', views.signup, name='signup'),
+    url('', views.UserListView.as_view(), name='user-list'),
+    url('signup/', views.signup, name='signup'),
 ]
 
 urlpatterns += router.urls
