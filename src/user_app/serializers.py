@@ -8,7 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "affiliation",
-            "organization",
+            "full_name",
+            "pk",
+            "max_job_submission",
             "notes",
-            "max_job_submission"
+            "organization",
         ]
