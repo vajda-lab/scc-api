@@ -16,7 +16,7 @@ class UserListView(ListView):
     model = User
 
 
-def signup(self, request):
+def signup(request):
     """New user signup form."""
     if request.method == 'POST':
         form = SignUpForm(request.POST)
