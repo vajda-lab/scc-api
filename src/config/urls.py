@@ -30,13 +30,14 @@ router.register("users", UserViewSet, basename="user")
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.HomeView.as_view(), name="home"),
-    path('sccApi/', include(('sccApi.urls', 'sccApi'), namespace='sccApi')),
-    path('users/', include(('user_app.urls', 'user_app'), namespace='user_app')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('apis/', include(router.urls)),
+    path("admin/", admin.site.urls),
+    path("", views.HomeView.as_view(), name="home"),
+    path("sccApi/", include(("sccApi.urls", "sccApi"), namespace="sccApi")),
+    path("users/", include(("user_app.urls", "user_app"), namespace="user_app")),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("apis/", include(router.urls)),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
-               static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(
+    settings.STATIC_URL, document_root=settings.STATIC_ROOT
+)
