@@ -1,4 +1,5 @@
 import json
+import logging
 import pytest
 
 from model_bakery import baker
@@ -6,6 +7,16 @@ from model_bakery import baker
 from sccApi import models, serializers
 from user_app.models import User 
 
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    "%(asctime)s - %(levelname)s - %(pathname)s - %(funcName)s - Line %(lineno)d:\n%(message)s"
+)
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 # Test Job List url
 @pytest.mark.django_db()
@@ -38,11 +49,11 @@ def test_job_create(tp):
     url = tp.reverse("job-list")
     job = baker.prepare("sccApi.Job")
     payload = serializers.JobSerializer(instance=job).data
-    print(json.dumps(payload, indent=2))
+    logger.debug(json.dumps(payload, indent=2))
     del payload["uuid"]
     response = tp.client.post(url, data=payload, content_type="application/json")
 
-    print(json.dumps(response.json(), indent=2))
+    logger.debug(json.dumps(response.json(), indent=2))
     pk = response.json()["uuid"]
     tp.response_201(response)
 
@@ -89,10 +100,10 @@ def test_job_partial_update(tp, job):
     new_status = "error"
     assert job.status is not new_status
     url = tp.reverse("job-detail", pk=job.pk)
-    print(f"URL is {url}")
+    logger.debug(f"URL is {url}")
     payload = {"status": new_status}
     response = tp.client.patch(url, data=payload, content_type="application/json")
-    print(f"RESPONSE is {response}")
+    logger.debug(f"RESPONSE is {response}")
     tp.response_200(response)
 
     job_obj = models.Job.objects.get(pk=job.pk)
