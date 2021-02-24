@@ -49,11 +49,11 @@ def test_job_create(tp):
     url = tp.reverse("job-list")
     job = baker.prepare("sccApi.Job")
     payload = serializers.JobSerializer(instance=job).data
-    logger.debug(json.dumps(payload, indent=2))
+    print(f"PAYLOAD:\n{json.dumps(payload, indent=2)}")
     del payload["uuid"]
     response = tp.client.post(url, data=payload, content_type="application/json")
 
-    logger.debug(json.dumps(response.json(), indent=2))
+    print(f"RESPONSE:\n{json.dumps(response.json(), indent=2)}")
     pk = response.json()["uuid"]
     tp.response_201(response)
 
