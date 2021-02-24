@@ -86,11 +86,13 @@ def test_job_partial_update(tp, job):
     """
     PATCH '/apis/jobs/{pk}'
     """
-    new_status = "new-status"
+    new_status = "error"
     assert job.status is not new_status
     url = tp.reverse("job-detail", pk=job.pk)
+    print(f"URL is {url}")
     payload = {"status": new_status}
     response = tp.client.patch(url, data=payload, content_type="application/json")
+    print(f"RESPONSE is {response}")
     tp.response_200(response)
 
     job_obj = models.Job.objects.get(pk=job.pk)
@@ -102,7 +104,7 @@ def test_job_update(tp, job):
     """
     PUT '/apis/jobs/{pk}/'
     """
-    new_status = "new-status"
+    new_status = "error"
     assert job.status is not new_status
 
     url = tp.reverse("job-detail", pk=job.pk)
