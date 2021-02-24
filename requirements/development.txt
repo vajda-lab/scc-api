@@ -4,97 +4,61 @@
 #
 #    pip-compile ./requirements/development.in
 #
-amqp==5.0.5
-    # via
-    #   -r ./requirements/base.txt
-    #   kombu
+amqp==2.6.1
+    # via kombu
 appdirs==1.4.4
     # via virtualenv
 appnope==0.1.2
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
+    # via ipython
 asgiref==3.3.1
-    # via
-    #   -r ./requirements/base.txt
-    #   django
+    # via django
 aspy.yaml==1.3.0
     # via pre-commit
 attrs==20.3.0
-    # via flake8-bugbear
-babel==2.9.0
     # via
-    #   -r ./requirements/base.txt
-    #   flower
+    #   flake8-bugbear
+    #   pytest
 backcall==0.2.0
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
+    # via ipython
 billiard==3.6.3.0
-    # via
-    #   -r ./requirements/base.txt
-    #   celery
+    # via celery
 cached-property==1.5.2
     # via pre-commit
-celery==5.0.5
+celery==4.4.7
     # via
-    #   -r ./requirements/base.txt
+    #   -r ./requirements/base.in
     #   flower
 certifi==2020.12.5
-    # via
-    #   -r ./requirements/base.txt
-    #   requests
+    # via requests
 cfgv==3.2.0
     # via pre-commit
 chardet==3.0.4
-    # via
-    #   -r ./requirements/base.txt
-    #   requests
-click-didyoumean==0.0.3
-    # via
-    #   -r ./requirements/base.txt
-    #   celery
-click-plugins==1.1.1
-    # via
-    #   -r ./requirements/base.txt
-    #   celery
-click-repl==0.1.6
-    # via
-    #   -r ./requirements/base.txt
-    #   celery
-click==7.1.2
-    # via
-    #   -r ./requirements/base.txt
-    #   celery
-    #   click-didyoumean
-    #   click-plugins
-    #   click-repl
+    # via requests
 decorator==4.4.2
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
+    # via ipython
 distlib==0.3.1
     # via virtualenv
-django-constance[redis]==2.6.0
-    # via -r ./requirements/base.txt
+django-constance[redis]==2.8.0
+    # via -r ./requirements/base.in
 django-environ==0.4.5
-    # via -r ./requirements/base.txt
-django-extensions==2.1.0
-    # via -r ./requirements/base.txt
+    # via -r ./requirements/base.in
+django-extensions==3.1.1
+    # via -r ./requirements/base.in
 django-improved-user==1.0.1
-    # via -r ./requirements/base.txt
-django-test-plus==1.1.1
+    # via -r ./requirements/base.in
+django-test-plus==1.4.0
     # via -r ./requirements/development.in
-django==3.1.6
+django==3.1.7
     # via
-    #   -r ./requirements/base.txt
+    #   -r ./requirements/base.in
     #   django-improved-user
     #   djangorestframework
+    #   model-bakery
 djangorestframework==3.12.2
-    # via -r ./requirements/base.txt
-factory-boy==2.11.1
+    # via -r ./requirements/base.in
+factory-boy==3.2.0
     # via -r ./requirements/development.in
-faker==0.9.2
+faker==6.4.1
     # via
     #   -r ./requirements/development.in
     #   factory-boy
@@ -114,80 +78,75 @@ flake8==3.5.0
     #   flake8-bugbear
     #   flake8-docstrings
     #   flake8-polyfill
-flower==0.9.2
-    # via -r ./requirements/base.txt
-identify==1.5.13
+flower==0.9.7
+    # via -r ./requirements/base.in
+humanize==3.2.0
+    # via flower
+identify==1.5.14
     # via pre-commit
 idna==2.10
-    # via
-    #   -r ./requirements/base.txt
-    #   requests
-importlib-metadata==3.4.0
-    # via
-    #   -r ./requirements/base.txt
-    #   kombu
-    #   virtualenv
+    # via requests
+iniconfig==1.1.1
+    # via pytest
 ipython-genutils==0.2.0
-    # via
-    #   -r ./requirements/base.txt
-    #   traitlets
+    # via traitlets
 ipython==6.4.0
-    # via -r ./requirements/base.txt
+    # via -r ./requirements/base.in
 jedi==0.18.0
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
-kombu==5.0.2
-    # via
-    #   -r ./requirements/base.txt
-    #   celery
+    # via ipython
+kombu==4.6.11
+    # via celery
 mccabe==0.6.1
     # via flake8
+model-bakery==1.2.1
+    # via -r ./requirements/development.in
 nodeenv==1.5.0
     # via pre-commit
+packaging==20.9
+    # via pytest
 parso==0.8.1
-    # via
-    #   -r ./requirements/base.txt
-    #   jedi
+    # via jedi
 pep8-naming==0.7.0
     # via -r ./requirements/development.in
 pexpect==4.8.0
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
+    # via ipython
 pickleshare==0.7.5
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
+    # via ipython
+pluggy==0.13.1
+    # via pytest
 pre-commit==1.10.4
     # via -r ./requirements/development.in
+prometheus-client==0.8.0
+    # via flower
 prompt-toolkit==1.0.18
-    # via
-    #   -r ./requirements/base.txt
-    #   click-repl
-    #   ipython
-psycopg2-binary==2.7.5
-    # via -r ./requirements/base.txt
+    # via ipython
+psycopg2-binary==2.8.6
+    # via -r ./requirements/base.in
 ptyprocess==0.7.0
-    # via
-    #   -r ./requirements/base.txt
-    #   pexpect
+    # via pexpect
+py==1.10.0
+    # via pytest
 pycodestyle==2.3.1
     # via flake8
 pydocstyle==5.1.1
     # via flake8-docstrings
 pyflakes==1.6.0
     # via flake8
-pygments==2.7.4
+pygments==2.8.0
+    # via ipython
+pyparsing==2.4.7
+    # via packaging
+pytest-django==4.1.0
+    # via -r ./requirements/development.in
+pytest==6.2.2
     # via
-    #   -r ./requirements/base.txt
-    #   ipython
+    #   -r ./requirements/development.in
+    #   pytest-django
 python-dateutil==2.8.1
     # via faker
 pytz==2018.5
     # via
-    #   -r ./requirements/base.txt
-    #   babel
+    #   -r ./requirements/base.in
     #   celery
     #   django
     #   flower
@@ -195,22 +154,16 @@ pyyaml==5.4.1
     # via
     #   aspy.yaml
     #   pre-commit
-redis==3.2.1
+redis==3.5.3
     # via
-    #   -r ./requirements/base.txt
+    #   -r ./requirements/base.in
     #   django-constance
 requests==2.23.0
-    # via -r ./requirements/base.txt
+    # via -r ./requirements/base.in
 simplegeneric==0.8.1
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
+    # via ipython
 six==1.15.0
     # via
-    #   -r ./requirements/base.txt
-    #   click-repl
-    #   django-extensions
-    #   faker
     #   pre-commit
     #   prompt-toolkit
     #   python-dateutil
@@ -218,46 +171,30 @@ six==1.15.0
 snowballstemmer==2.1.0
     # via pydocstyle
 sqlparse==0.4.1
-    # via
-    #   -r ./requirements/base.txt
-    #   django
-text-unidecode==1.2
+    # via django
+text-unidecode==1.3
     # via faker
 toml==0.10.2
-    # via pre-commit
-tornado==5.1.1
     # via
-    #   -r ./requirements/base.txt
-    #   flower
+    #   pre-commit
+    #   pytest
+tornado==6.1
+    # via flower
 traitlets==5.0.5
-    # via
-    #   -r ./requirements/base.txt
-    #   ipython
-typing-extensions==3.7.4.3
-    # via
-    #   -r ./requirements/base.txt
-    #   importlib-metadata
+    # via ipython
 urllib3==1.25.11
+    # via requests
+vine==1.3.0
     # via
-    #   -r ./requirements/base.txt
-    #   requests
-vine==5.0.0
-    # via
-    #   -r ./requirements/base.txt
     #   amqp
     #   celery
+    #   flower
 virtualenv==20.4.2
     # via pre-commit
 wcwidth==0.2.5
-    # via
-    #   -r ./requirements/base.txt
-    #   prompt-toolkit
-whitenoise==4.1
-    # via -r ./requirements/base.txt
-zipp==3.4.0
-    # via
-    #   -r ./requirements/base.txt
-    #   importlib-metadata
+    # via prompt-toolkit
+whitenoise==5.2.0
+    # via -r ./requirements/base.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

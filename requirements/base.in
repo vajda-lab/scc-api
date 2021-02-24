@@ -1,4 +1,4 @@
-celery<5.1
+celery<5.0
 django-constance[redis]
 django-environ
 django-extensions

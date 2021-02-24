@@ -175,3 +175,12 @@ CELERYD_TASK_TIME_LIMIT = 5 * 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
 # TODO: set to whatever value is adequate in your circumstances
 CELERYD_TASK_SOFT_TIME_LIMIT = 60
+
+# DRF Settings
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_FILTER_BACKENDS": ["rest_framework.filters.OrderingFilter"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.CursorPagination",
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "PAGE_SIZE": 100,
+}
