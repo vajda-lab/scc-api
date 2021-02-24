@@ -97,7 +97,7 @@ def test_job_partial_update(tp, job):
     """
     PATCH '/apis/jobs/{pk}'
     """
-    new_status = "error"
+    new_status = job.STATUS_ERROR
     assert job.status is not new_status
     url = tp.reverse("job-detail", pk=job.pk)
     logger.debug(f"URL is {url}")
@@ -115,7 +115,7 @@ def test_job_update(tp, job):
     """
     PUT '/apis/jobs/{pk}/'
     """
-    new_status = "error"
+    new_status = job.STATUS_ERROR
     assert job.status is not new_status
 
     url = tp.reverse("job-detail", pk=job.pk)
