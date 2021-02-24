@@ -47,7 +47,8 @@ def test_job_create(tp):
     POST '/apis/jobs/'
     """
     url = tp.reverse("job-list")
-    job = baker.prepare("sccApi.Job")
+    user = baker.make("user_app.User")
+    job = baker.prepare("sccApi.Job", user=user)
     payload = serializers.JobSerializer(instance=job).data
     print(f"PAYLOAD:\n{json.dumps(payload, indent=2)}")
     del payload["uuid"]
