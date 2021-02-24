@@ -42,12 +42,11 @@ def test_job_list(tp, job):
 
 
 @pytest.mark.django_db()
-def test_job_create(tp):
+def test_job_create(tp, user):
     """
     POST '/apis/jobs/'
     """
     url = tp.reverse("job-list")
-    user = baker.make("user_app.User")
     job = baker.prepare("sccApi.Job", user=user)
     payload = serializers.JobSerializer(instance=job).data
     print(f"PAYLOAD:\n{json.dumps(payload, indent=2)}")
