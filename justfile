@@ -8,7 +8,7 @@ check:
 	docker-compose run --rm django python manage.py check
 
 migrate:
-	docker-compose run --rm django python manage.py migrate --no-input
+	docker-compose run --rm django python manage.py migrate --noinput
 
 run:
 	docker-compose run --rm django python manage.py runserver
