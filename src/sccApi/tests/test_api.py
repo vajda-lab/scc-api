@@ -90,25 +90,39 @@ def test_job_detail(tp, job, user, password):
 
 
 @pytest.mark.django_db()
-def test_job_delete(tp):
+def test_job_delete(tp, user, password):
     """
     DELETE '/apis/jobs/{pk}/'
     """
     job = baker.make("sccApi.Job")
     url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     tp.response_204(response)
     assert models.Job.objects.filter(pk=job.pk).count() == 0
 
 
 @pytest.mark.django_db()
-def test_job_partial_update(tp, job):
+def test_job_partial_update(tp, job, user, password):
     """
     PATCH '/apis/jobs/{pk}'
     """
     new_status = job.STATUS_ERROR
     assert job.status is not new_status
     url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
     payload = {"status": new_status}
     response = tp.client.patch(url, data=payload, content_type="application/json")
     tp.response_200(response)
