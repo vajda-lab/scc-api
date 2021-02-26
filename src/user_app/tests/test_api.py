@@ -14,12 +14,19 @@ def test_user_list_url(tp, user):
 
 
 @pytest.mark.django_db()
-def test_user_list(tp, user):
+def test_user_list(tp, user, password):
     """
     GET '/apis/users/'
     2nd assert is an extra check
     """
     url = tp.reverse("user-list")
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
     response = tp.get_check_200(url)
     results = response.data["results"]
     assert len(results) == 1
