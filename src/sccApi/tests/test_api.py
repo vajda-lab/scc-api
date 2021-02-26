@@ -132,7 +132,7 @@ def test_job_partial_update(tp, job, user, password):
 
 
 @pytest.mark.django_db()
-def test_job_update(tp, job):
+def test_job_update(tp, job, user, password):
     """
     PUT '/apis/jobs/{pk}/'
     """
@@ -140,6 +140,13 @@ def test_job_update(tp, job):
     assert job.status is not new_status
 
     url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
     payload = serializers.JobSerializer(instance=job).data
     payload["status"] = new_status
     response = tp.client.put(url, data=payload, content_type="application/json")
