@@ -69,11 +69,18 @@ def test_user_detail_url(tp, user):
 
 
 @pytest.mark.django_db()
-def test_user_detail(tp, user):
+def test_user_detail(tp, user, password):
     """
     GET '/apis/users/{pk}/'
     """
     url = tp.reverse("user-detail", pk=user.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
     response = tp.get_check_200(url)
     assert "pk" in response.data
     assert user.pk == response.data["pk"]
