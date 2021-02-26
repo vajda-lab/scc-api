@@ -3,7 +3,7 @@ import pytest
 from model_bakery import baker
 
 from sccApi import models, serializers
-from user_app.models import User 
+from user_app.models import User
 
 
 # Test Job List url
@@ -15,20 +15,20 @@ def test_job_list_url(tp, job):
 
 
 @pytest.mark.django_db()
-def test_job_list(tp, job, user):
+def test_job_list(tp, job, user, password):
     """
     GET '/apis/jobs/'
     2nd assert is an extra check
     """
     url = tp.reverse("job-list")
-    # Is auth working properly?
+
+    # Does API workout with auth?
     tp.get(url)
     tp.response_401()
 
-    # Now with auth
-    # tp.login(user)
-    with tp.login(username=user.username, password='password'):
-        response = tp.get_check_200(url)
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
+    response = tp.get_check_200(url)
     results = response.data["results"]
     assert len(results) == 1
 
