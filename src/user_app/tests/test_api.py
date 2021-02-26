@@ -92,7 +92,7 @@ def test_user_delete(tp, user, password):
     DELETE '/apis/users/{pk}/'
     """
     new_user = baker.make("user_app.User")
-    url = tp.reverse("user-detail", pk=user.pk)
+    url = tp.reverse("user-detail", pk=new_user.pk)
 
     # Without auth, API should return 401
     tp.get(url)
@@ -102,7 +102,7 @@ def test_user_delete(tp, user, password):
     tp.client.login(email=user.email, password=password)    
     response = tp.client.delete(url, content_type="application/json")
     tp.response_204(response)
-    assert models.User.objects.filter(pk=user.pk).count() == 0
+    assert models.User.objects.filter(pk=new_user.pk).count() == 0
 
 
 @pytest.mark.django_db()
