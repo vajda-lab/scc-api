@@ -15,13 +15,20 @@ def test_job_list_url(tp, job):
 
 
 @pytest.mark.django_db()
-def test_job_list(tp, job):
+def test_job_list(tp, job, user):
     """
     GET '/apis/jobs/'
     2nd assert is an extra check
     """
     url = tp.reverse("job-list")
-    response = tp.get_check_200(url)
+    # Is auth working properly?
+    tp.get(url)
+    tp.response_401()
+
+    # Now with auth
+    # tp.login(user)
+    with tp.login(username=user.username, password='password'):
+        response = tp.get_check_200(url)
     results = response.data["results"]
     assert len(results) == 1
 
