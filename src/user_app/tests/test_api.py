@@ -36,15 +36,22 @@ def test_user_list(tp, user, password):
 
 
 @pytest.mark.django_db()
-def test_user_create(tp):
+def test_user_create(tp, user, password):
     """
     POST '/apis/users/'
     """
     url = tp.reverse("user-list")
-    user = baker.prepare("user_app.User")
-    payload = serializers.UserSerializer(instance=user).data
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    new_user = baker.prepare("user_app.User")
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
+    payload = serializers.UserSerializer(instance=new_user).data
     del payload["pk"]
     response = tp.client.post(url, data=payload, content_type="application/json")
+    print(f"RESPONSE\n{response}")
 
     pk = response.json()["pk"]
     tp.response_201(response)
