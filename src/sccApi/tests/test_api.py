@@ -22,7 +22,7 @@ def test_job_list(tp, job, user, password):
     """
     url = tp.reverse("job-list")
 
-    # Does API workout with auth?
+    # Without auth, API should return 401
     tp.get(url)
     tp.response_401()
 
