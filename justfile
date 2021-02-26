@@ -5,23 +5,22 @@ build:
     docker-compose build
 
 check:
-	docker-compose run --rm django python manage.py check
+    docker-compose run --rm django python manage.py check
 
 migrate:
-	docker-compose run --rm django python manage.py migrate --noinput
+    docker-compose run --rm django python manage.py migrate --noinput
 
 run:
-	docker-compose run --rm django python manage.py runserver
+    docker-compose run --rm django python manage.py runserver
 
 shell:
-	docker-compose run --rm django /bin/bash
+    docker-compose run --rm django /bin/bash
 
 showmigrations:
-	docker-compose run --rm django python manage.py showmigrations
+    docker-compose run --rm django python manage.py showmigrations
 
 test:
-	# docker-compose run --rm django pytest
-	docker-compose run --rm django pytest -x
+    docker-compose run --rm django pytest -x
 
 up:
     docker-compose up
