@@ -37,11 +37,19 @@ def test_job_list(tp, job, user, password):
 
 
 @pytest.mark.django_db()
-def test_job_create(tp, user):
+def test_job_create(tp, user, password):
     """
     POST '/apis/jobs/'
     """
     url = tp.reverse("job-list")
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
+
     job = baker.prepare("sccApi.Job", user=user)
     payload = serializers.JobSerializer(instance=job).data
     del payload["uuid"]
