@@ -1,18 +1,27 @@
 import pytest
 
-from model_bakery import baker
+
+@pytest.fixture
+def password():
+    return "password"
 
 
 @pytest.fixture
-def user():
-    return baker.make("user_app.User")
+def staff(django_user_model, password):
+    return django_user_model.objects.create_user(
+        email="staff@here.com", password=password, is_staff=True
+    )
 
 
 @pytest.fixture
-def superuser():
-    return baker.make("user_app.User", is_superuser=True, is_staff=True)
+def superuser(django_user_model, password):
+    return django_user_model.objects.create_user(
+        email="superuser@here.com", password=password, is_superuser=True, is_staff=True
+    )
 
 
 @pytest.fixture
-def staff():
-    return baker.make("user_app.User", is_staff=True)
+def user(django_user_model, password):
+    return django_user_model.objects.create_user(
+        email="user@here.com", password=password
+    )

@@ -102,12 +102,10 @@ CONSTANCE_CONFIG = {
     'DELETE_JOBS_AFTER': (30, 'Delete jobs that have not been modified in X days.', int),
 }
 
-
-
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL='user_app.User'
+AUTH_USER_MODEL = 'user_app.User'
 AUTH_PREFIX = 'django.contrib.auth.password_validation.'
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -178,9 +176,13 @@ CELERYD_TASK_SOFT_TIME_LIMIT = 60
 
 # DRF Settings
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     "DEFAULT_FILTER_BACKENDS": ["rest_framework.filters.OrderingFilter"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.CursorPagination",
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated"],
     "PAGE_SIZE": 100,
 }
