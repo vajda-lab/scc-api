@@ -129,7 +129,7 @@ def test_user_partial_update(tp, user, password):
 
 
 @pytest.mark.django_db()
-def test_user_update(tp, user):
+def test_user_update(tp, user, password):
     """
     PUT '/apis/users/{pk}/'
     """
@@ -139,6 +139,13 @@ def test_user_update(tp, user):
     url = tp.reverse("user-detail", pk=user.pk)
     payload = serializers.UserSerializer(instance=user).data
     payload["organization"] = new_organization
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)    
     response = tp.client.put(url, data=payload, content_type="application/json")
     tp.response_200(response)
 
