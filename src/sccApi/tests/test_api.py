@@ -71,11 +71,19 @@ def test_job_detail_url(tp, job):
 
 
 @pytest.mark.django_db()
-def test_job_detail(tp, job):
+def test_job_detail(tp, job, user, password):
     """
     GET '/apis/jobs/{pk}/'
     """
     url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)
+
     response = tp.get_check_200(url)
     assert "uuid" in response.data
     assert str(job.pk) == response.data["uuid"]
