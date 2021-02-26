@@ -106,7 +106,7 @@ def test_user_delete(tp, user, password):
 
 
 @pytest.mark.django_db()
-def test_user_partial_update(tp, user):
+def test_user_partial_update(tp, user, password):
     """
     PATCH '/apis/users/{pk}'
     """
@@ -114,6 +114,13 @@ def test_user_partial_update(tp, user):
     assert user.organization is not new_organization
     url = tp.reverse("user-detail", pk=user.pk)
     payload = {"organization": new_organization}
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+    # Does API work with auth?
+    tp.client.login(email=user.email, password=password)    
     response = tp.client.patch(url, data=payload, content_type="application/json")
     tp.response_200(response)
 
