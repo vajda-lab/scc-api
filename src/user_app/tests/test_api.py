@@ -51,7 +51,6 @@ def test_user_create(tp, user, password):
     payload = serializers.UserSerializer(instance=new_user).data
     del payload["pk"]
     response = tp.client.post(url, data=payload, content_type="application/json")
-    print(f"RESPONSE\n{response}")
 
     pk = response.json()["pk"]
     tp.response_201(response)
