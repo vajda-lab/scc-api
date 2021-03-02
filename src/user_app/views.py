@@ -18,18 +18,18 @@ class UserListView(ListView):
 
 def signup(request):
     """New user signup form."""
-    if request.method == 'POST':
+    if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            email = form.cleaned_data.get('email')
-            raw_password = form.cleaned_data.get('password1')
+            email = form.cleaned_data.get("email")
+            raw_password = form.cleaned_data.get("password1")
             user = authenticate(email=email, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect("home")
     else:
         form = SignUpForm()
-    return render(request, 'registration/signup.html', {'form': form})
+    return render(request, "registration/signup.html", {"form": form})
 
 
 class UserViewSet(viewsets.ModelViewSet):

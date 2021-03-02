@@ -7,17 +7,19 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0002_auto_20190606_1752'),
+        ("sccApi", "0002_auto_20190606_1752"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='job',
-            name='id',
+            model_name="job",
+            name="id",
         ),
         migrations.AlterField(
-            model_name='job',
-            name='job_uuid',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+            model_name="job",
+            name="job_uuid",
+            field=models.UUIDField(
+                default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+            ),
         ),
     ]
