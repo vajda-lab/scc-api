@@ -98,7 +98,7 @@ def test_user_delete(tp, user, password):
     tp.response_401()
 
     # Does API work with auth?
-    tp.client.login(email=user.email, password=password)    
+    tp.client.login(email=user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     tp.response_204(response)
     assert models.User.objects.filter(pk=new_user.pk).count() == 0
@@ -119,7 +119,7 @@ def test_user_partial_update(tp, user, password):
     tp.response_401()
 
     # Does API work with auth?
-    tp.client.login(email=user.email, password=password)    
+    tp.client.login(email=user.email, password=password)
     response = tp.client.patch(url, data=payload, content_type="application/json")
     tp.response_200(response)
 
@@ -144,7 +144,7 @@ def test_user_update(tp, user, password):
     tp.response_401()
 
     # Does API work with auth?
-    tp.client.login(email=user.email, password=password)    
+    tp.client.login(email=user.email, password=password)
     response = tp.client.put(url, data=payload, content_type="application/json")
     tp.response_200(response)
 

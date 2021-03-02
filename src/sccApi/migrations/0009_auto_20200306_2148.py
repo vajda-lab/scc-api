@@ -6,18 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0008_job_status'),
+        ("sccApi", "0008_job_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='in_file',
-            field=models.FileField(blank=True, null=True, upload_to='jobs/'),
+            model_name="job",
+            name="in_file",
+            field=models.FileField(blank=True, null=True, upload_to="jobs/"),
         ),
         migrations.AlterField(
-            model_name='job',
-            name='status',
-            field=models.CharField(choices=[('complete', 'complete'), ('active', 'active'), ('error', 'error'), ('deleted', 'deleted')], default='active', max_length=20),
+            model_name="job",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("complete", "complete"),
+                    ("active", "active"),
+                    ("error", "error"),
+                    ("deleted", "deleted"),
+                ],
+                default="active",
+                max_length=20,
+            ),
         ),
     ]

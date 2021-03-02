@@ -7,27 +7,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0009_auto_20200306_2148'),
+        ("sccApi", "0009_auto_20200306_2148"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='job',
-            options={'get_latest_by': ['created'], 'ordering': ['-created']},
+            name="job",
+            options={"get_latest_by": ["created"], "ordering": ["-created"]},
         ),
         migrations.RenameField(
-            model_name='job',
-            old_name='created_at',
-            new_name='created',
+            model_name="job",
+            old_name="created_at",
+            new_name="created",
         ),
         migrations.RenameField(
-            model_name='job',
-            old_name='last_modified',
-            new_name='modified',
+            model_name="job",
+            old_name="last_modified",
+            new_name="modified",
         ),
         migrations.AlterField(
-            model_name='job',
-            name='in_file',
-            field=models.FileField(blank=True, null=True, upload_to='jobs/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['PDB'], message='Please upload a pdb file')]),
+            model_name="job",
+            name="in_file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="jobs/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=["PDB"], message="Please upload a pdb file"
+                    )
+                ],
+            ),
         ),
     ]

@@ -7,18 +7,33 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0003_auto_20190606_1756'),
+        ("sccApi", "0003_auto_20190606_1756"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='job_status',
-            field=models.CharField(choices=[('IP', 'In Progress'), ('CP', 'Successfully completed'), ('ER', 'Stopped due to error'), ('DE', 'Job deleted')], default='IP', max_length=2),
+            model_name="job",
+            name="job_status",
+            field=models.CharField(
+                choices=[
+                    ("IP", "In Progress"),
+                    ("CP", "Successfully completed"),
+                    ("ER", "Stopped due to error"),
+                    ("DE", "Job deleted"),
+                ],
+                default="IP",
+                max_length=2,
+            ),
         ),
         migrations.AlterField(
-            model_name='job',
-            name='job_uuid',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True),
+            model_name="job",
+            name="job_uuid",
+            field=models.UUIDField(
+                default=uuid.uuid4,
+                editable=False,
+                primary_key=True,
+                serialize=False,
+                unique=True,
+            ),
         ),
     ]

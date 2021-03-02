@@ -6,41 +6,41 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0006_example'),
+        ("sccApi", "0006_example"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='job',
-            old_name='job_uuid',
-            new_name='uuid',
+            model_name="job",
+            old_name="job_uuid",
+            new_name="uuid",
         ),
         migrations.RemoveField(
-            model_name='job',
-            name='job_name',
+            model_name="job",
+            name="job_name",
         ),
         migrations.RemoveField(
-            model_name='job',
-            name='job_status',
+            model_name="job",
+            name="job_status",
         ),
         migrations.AddField(
-            model_name='job',
-            name='chain',
+            model_name="job",
+            name="chain",
             field=models.CharField(blank=True, max_length=1, null=True),
         ),
         migrations.AddField(
-            model_name='job',
-            name='title',
+            model_name="job",
+            name="title",
             field=models.CharField(blank=True, max_length=70, null=True),
         ),
         migrations.AlterField(
-            model_name='example',
-            name='pdb_file',
-            field=models.FileField(upload_to='examples/'),
+            model_name="example",
+            name="pdb_file",
+            field=models.FileField(upload_to="examples/"),
         ),
         migrations.AlterField(
-            model_name='example',
-            name='pse_file',
-            field=models.FileField(upload_to='examples/'),
+            model_name="example",
+            name="pse_file",
+            field=models.FileField(upload_to="examples/"),
         ),
     ]
