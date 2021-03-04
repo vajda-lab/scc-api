@@ -108,6 +108,17 @@ def test_job_delete(tp, user, password):
     assert models.Job.objects.filter(pk=job.pk).count() == 0
 
 
+    job = baker.make("sccApi.Job", user=user)
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    new_user = baker.make("user_app.User", password=password, is_superuser=False)
+    # Does API work with auth?
+    tp.client.login(email=new_user.email, password=password)
+    response = tp.client.delete(url, content_type="application/json")
+    tp.response_204(response)
+    assert models.Job.objects.filter(pk=job.pk).count() == 0
+
+
 @pytest.mark.django_db()
 def test_job_partial_update(tp, job, user, password):
     """
