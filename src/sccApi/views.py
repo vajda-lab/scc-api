@@ -23,6 +23,19 @@ class JobDetail(LoginRequiredMixin, DetailView):
 class JobViewSet(viewsets.ModelViewSet):
     """A viewset for viewing and editing Job instances."""
 
-    queryset = Job.objects.all()
     serializer_class = serializers.JobSerializer
     ordering = "created"
+
+    def get_queryset(self):
+        """
+        View should return a list of jobs.
+        created by the currently authenticated user.
+        """
+
+        if self.request.user.is_superuser:
+            return Job.objects.all()
+
+        if self.action in ["list", "retrieve"]:
+            return Job.objects.all()
+        else:
+            return Job.objects.filter(user=self.request.user)
