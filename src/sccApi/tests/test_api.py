@@ -94,7 +94,7 @@ def test_job_delete(tp, user, password):
     """
     DELETE '/apis/jobs/{pk}/'
     """
-    job = baker.make("sccApi.Job")
+    job = baker.make("sccApi.Job", user=user)
     url = tp.reverse("job-detail", pk=job.pk)
 
     # Without auth, API should return 401
