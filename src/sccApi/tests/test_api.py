@@ -15,25 +15,42 @@ def test_job_list_url(tp, job):
 
 
 @pytest.mark.django_db()
-def test_job_list(tp, job, user, password):
+@pytest.mark.parametrize(
+    "test_user,expected",
+    [
+        (pytest.lazy_fixture("user"), 200),
+        (pytest.lazy_fixture("staff"), 200),
+        (pytest.lazy_fixture("superuser"), 200),
+        (None, 401),
+    ],
+)
+def test_job_list(tp, job, password, test_user, expected):
     """
     GET '/apis/jobs/'
-    2nd assert is an extra check
     """
     url = tp.reverse("job-list")
 
     # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
+    # tp.get(url)
+    # tp.response_401()
 
-    # Does API work with auth?
-    tp.client.login(email=user.email, password=password)
-    response = tp.get_check_200(url)
-    results = response.data["results"]
-    assert len(results) == 1
+    # # Does API work with auth?
+    if test_user:
+        tp.client.login(email=test_user.email, password=password)
 
-    result = results[0]
-    assert str(job.pk) == result["uuid"]
+        response = tp.get(url)
+        assert response.status_code == expected
+
+        results = response.data["results"]
+        assert len(results) == 1
+
+        result = results[0]
+        assert str(job.pk) == result["uuid"]
+
+    else:
+        # Without auth, API should return 401
+        response = tp.get(url)
+        assert response.status_code == expected
 
 
 @pytest.mark.django_db()
@@ -106,7 +123,6 @@ def test_job_delete(tp, user, password):
     response = tp.client.delete(url, content_type="application/json")
     tp.response_204(response)
     assert models.Job.objects.filter(pk=job.pk).count() == 0
-
 
     job = baker.make("sccApi.Job", user=user)
     url = tp.reverse("job-detail", pk=job.pk)
