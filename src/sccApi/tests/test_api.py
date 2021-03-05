@@ -124,11 +124,13 @@ def test_job_delete(tp, user, password):
     tp.response_204(response)
     assert models.Job.objects.filter(pk=job.pk).count() == 0
 
+    # New section of test: can users delete other user's jobs?
+    # 2nd job by 1st User
     job = baker.make("sccApi.Job", user=user)
     url = tp.reverse("job-detail", pk=job.pk)
 
+    # 2nd User; NOT a superuser
     new_user = baker.make("user_app.User", password=password, is_superuser=False)
-    # Does API work with auth?
     tp.client.login(email=new_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     tp.response_204(response)
