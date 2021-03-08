@@ -13,6 +13,19 @@ def test_job_list_url(tp, job):
     reversed_url = tp.reverse("job-list")
     assert expected_url == reversed_url
 
+# The noauth tests can probably get grouped in a class
+# I'll have to look up how to do that
+@pytest.mark.django_db()
+def test_job_list_noauth(tp, job, password):
+    """
+    GET '/apis/jobs/'
+    """
+    url = tp.reverse("job-list")
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
