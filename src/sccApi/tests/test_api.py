@@ -8,7 +8,7 @@ from user_app.models import User
 
 # The noauth tests can probably get grouped in a class
 # I'll have to look up how to do that
-def test_job_list_noauth(tp, job, password):
+def test_job_list_noauth(tp, job):
     """
     GET '/apis/jobs/'
     """
@@ -18,7 +18,7 @@ def test_job_list_noauth(tp, job, password):
     tp.get(url)
     tp.response_401()
 
-def test_job_create_noauth(tp, user, password):
+def test_job_create_noauth(tp):
     """
     POST '/apis/jobs/'
     """
@@ -28,7 +28,7 @@ def test_job_create_noauth(tp, user, password):
     tp.get(url)
     tp.response_401()
 
-def test_job_detail_noauth(tp, job, user, password):
+def test_job_detail_noauth(tp, job):
     """
     GET '/apis/jobs/{pk}/'
     """
@@ -38,7 +38,7 @@ def test_job_detail_noauth(tp, job, user, password):
     tp.get(url)
     tp.response_401()
 
-def test_job_delete_noauth(tp, user, password):
+def test_job_delete_noauth(tp, user):
     """
     DELETE '/apis/jobs/{pk}/'
     """
@@ -49,7 +49,7 @@ def test_job_delete_noauth(tp, user, password):
     tp.get(url)
     tp.response_401()
 
-def test_job_partial_update_noauth(tp, job, user, password):
+def test_job_partial_update_noauth(tp, job):
     """
     PATCH '/apis/jobs/{pk}'
     """
@@ -59,7 +59,7 @@ def test_job_partial_update_noauth(tp, job, user, password):
     tp.get(url)
     tp.response_401()
 
-def test_job_update_noauth(tp, job, user, password):
+def test_job_update_noauth(tp, job):
     """
     PUT '/apis/jobs/{pk}/'
     """
