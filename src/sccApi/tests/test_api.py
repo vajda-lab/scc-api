@@ -18,6 +18,57 @@ def test_job_list_noauth(tp, job, password):
     tp.get(url)
     tp.response_401()
 
+def test_job_create_noauth(tp, user, password):
+    """
+    POST '/apis/jobs/'
+    """
+    url = tp.reverse("job-list")
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+def test_job_detail_noauth(tp, job, user, password):
+    """
+    GET '/apis/jobs/{pk}/'
+    """
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+def test_job_delete_noauth(tp, user, password):
+    """
+    DELETE '/apis/jobs/{pk}/'
+    """
+    job = baker.make("sccApi.Job", user=user)
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+def test_job_partial_update_noauth(tp, job, user, password):
+    """
+    PATCH '/apis/jobs/{pk}'
+    """
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+def test_job_update_noauth(tp, job, user, password):
+    """
+    PUT '/apis/jobs/{pk}/'
+    """
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
 @pytest.mark.django_db()
 def test_job_list_url(tp, job):
     expected_url = "/apis/jobs/"
@@ -66,10 +117,6 @@ def test_job_create(tp, user, password):
     """
     url = tp.reverse("job-list")
 
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
-
     # Does API work with auth?
     tp.client.login(email=user.email, password=password)
 
@@ -100,10 +147,6 @@ def test_job_detail(tp, job, user, password):
     """
     url = tp.reverse("job-detail", pk=job.pk)
 
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
-
     # Does API work with auth?
     tp.client.login(email=user.email, password=password)
 
@@ -119,10 +162,6 @@ def test_job_delete(tp, user, password):
     """
     job = baker.make("sccApi.Job", user=user)
     url = tp.reverse("job-detail", pk=job.pk)
-
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
 
     # Does API work with auth?
     tp.client.login(email=user.email, password=password)
@@ -152,10 +191,6 @@ def test_job_partial_update(tp, job, user, password):
     assert job.status is not new_status
     url = tp.reverse("job-detail", pk=job.pk)
 
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
-
     # Does API work with auth?
     tp.client.login(email=user.email, password=password)
     payload = {"status": new_status}
@@ -175,10 +210,6 @@ def test_job_update(tp, job, user, password):
     assert job.status is not new_status
 
     url = tp.reverse("job-detail", pk=job.pk)
-
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
 
     # Does API work with auth?
     tp.client.login(email=user.email, password=password)
