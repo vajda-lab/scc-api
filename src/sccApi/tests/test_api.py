@@ -40,10 +40,6 @@ def test_job_list(tp, job, password, test_user, expected):
     """
     url = tp.reverse("job-list")
 
-    # Without auth, API should return 401
-    # tp.get(url)
-    # tp.response_401()
-
     # # Does API work with auth?
     if test_user:
         tp.client.login(email=test_user.email, password=password)
