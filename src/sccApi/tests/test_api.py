@@ -15,7 +15,6 @@ def test_job_list_url(tp, job):
 
 # The noauth tests can probably get grouped in a class
 # I'll have to look up how to do that
-@pytest.mark.django_db()
 def test_job_list_noauth(tp, job, password):
     """
     GET '/apis/jobs/'
