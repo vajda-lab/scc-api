@@ -6,13 +6,6 @@ from sccApi import models, serializers
 from user_app.models import User
 
 
-# Test Job List url
-@pytest.mark.django_db()
-def test_job_list_url(tp, job):
-    expected_url = "/apis/jobs/"
-    reversed_url = tp.reverse("job-list")
-    assert expected_url == reversed_url
-
 # The noauth tests can probably get grouped in a class
 # I'll have to look up how to do that
 def test_job_list_noauth(tp, job, password):
@@ -25,6 +18,11 @@ def test_job_list_noauth(tp, job, password):
     tp.get(url)
     tp.response_401()
 
+@pytest.mark.django_db()
+def test_job_list_url(tp, job):
+    expected_url = "/apis/jobs/"
+    reversed_url = tp.reverse("job-list")
+    assert expected_url == reversed_url
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
