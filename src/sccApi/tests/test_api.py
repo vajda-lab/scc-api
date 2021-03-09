@@ -143,6 +143,7 @@ def test_job_delete_noauth(tp, user):
     tp.response_401()
 
 @pytest.mark.django_db()
+# Can a creating_user job be deleted by deleting_user? 
 @pytest.mark.parametrize(
     "creating_user,deleting_user,expected_status",
     [
