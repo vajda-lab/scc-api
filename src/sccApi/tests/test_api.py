@@ -8,6 +8,12 @@ from user_app.models import User
 
 # The noauth tests can probably get grouped in a class
 # I'll have to look up how to do that
+@pytest.mark.django_db()
+def test_job_list_url(tp, job):
+    expected_url = "/apis/jobs/"
+    reversed_url = tp.reverse("job-list")
+    assert expected_url == reversed_url
+
 def test_job_list_noauth(tp, job):
     """
     GET '/apis/jobs/'
@@ -17,63 +23,6 @@ def test_job_list_noauth(tp, job):
     # Without auth, API should return 401
     tp.get(url)
     tp.response_401()
-
-def test_job_create_noauth(tp):
-    """
-    POST '/apis/jobs/'
-    """
-    url = tp.reverse("job-list")
-
-    # Without auth, API should return 401
-    tp.post(url)
-    tp.response_401()
-
-def test_job_detail_noauth(tp, job):
-    """
-    GET '/apis/jobs/{pk}/'
-    """
-    url = tp.reverse("job-detail", pk=job.pk)
-
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
-
-def test_job_delete_noauth(tp, user):
-    """
-    DELETE '/apis/jobs/{pk}/'
-    """
-    job = baker.make("sccApi.Job", user=user)
-    url = tp.reverse("job-detail", pk=job.pk)
-
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
-
-def test_job_partial_update_noauth(tp, job):
-    """
-    PATCH '/apis/jobs/{pk}'
-    """
-    url = tp.reverse("job-detail", pk=job.pk)
-
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
-
-def test_job_update_noauth(tp, job):
-    """
-    PUT '/apis/jobs/{pk}/'
-    """
-    url = tp.reverse("job-detail", pk=job.pk)
-
-    # Without auth, API should return 401
-    tp.get(url)
-    tp.response_401()
-
-@pytest.mark.django_db()
-def test_job_list_url(tp, job):
-    expected_url = "/apis/jobs/"
-    reversed_url = tp.reverse("job-list")
-    assert expected_url == reversed_url
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
@@ -109,6 +58,15 @@ def test_job_list(tp, job, password, test_user, expected):
         response = tp.get(url)
         assert response.status_code == expected
 
+def test_job_create_noauth(tp):
+    """
+    POST '/apis/jobs/'
+    """
+    url = tp.reverse("job-list")
+
+    # Without auth, API should return 401
+    tp.post(url)
+    tp.response_401()
 
 @pytest.mark.django_db()
 def test_job_create(tp, user, password):
@@ -140,6 +98,16 @@ def test_job_detail_url(tp, job):
     assert expected_url == reversed_url
 
 
+def test_job_detail_noauth(tp, job):
+    """
+    GET '/apis/jobs/{pk}/'
+    """
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
 @pytest.mark.django_db()
 def test_job_detail(tp, job, user, password):
     """
@@ -154,6 +122,17 @@ def test_job_detail(tp, job, user, password):
     assert "uuid" in response.data
     assert str(job.pk) == response.data["uuid"]
 
+
+def test_job_delete_noauth(tp, user):
+    """
+    DELETE '/apis/jobs/{pk}/'
+    """
+    job = baker.make("sccApi.Job", user=user)
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
 
 @pytest.mark.django_db()
 def test_job_delete(tp, user, password):
@@ -182,6 +161,16 @@ def test_job_delete(tp, user, password):
     assert models.Job.objects.filter(pk=job.pk).count() == 0
 
 
+def test_job_partial_update_noauth(tp, job):
+    """
+    PATCH '/apis/jobs/{pk}'
+    """
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
 @pytest.mark.django_db()
 def test_job_partial_update(tp, job, user, password):
     """
@@ -200,6 +189,16 @@ def test_job_partial_update(tp, job, user, password):
     job_obj = models.Job.objects.get(pk=job.pk)
     assert job_obj.status == new_status
 
+
+def test_job_update_noauth(tp, job):
+    """
+    PUT '/apis/jobs/{pk}/'
+    """
+    url = tp.reverse("job-detail", pk=job.pk)
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
 
 @pytest.mark.django_db()
 def test_job_update(tp, job, user, password):
