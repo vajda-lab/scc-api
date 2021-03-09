@@ -38,4 +38,6 @@ class JobViewSet(viewsets.ModelViewSet):
         if self.action in ["list", "retrieve"]:
             return Job.objects.all()
         else:
+            if self.request.user.is_staff:
+                return Job.objects.all()
             return Job.objects.filter(user=self.request.user)
