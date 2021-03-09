@@ -131,7 +131,7 @@ def test_job_delete_noauth(tp, user):
     url = tp.reverse("job-detail", pk=job.pk)
 
     # Without auth, API should return 401
-    tp.get(url)
+    tp.delete(url)
     tp.response_401()
 
 @pytest.mark.django_db()
@@ -168,7 +168,7 @@ def test_job_partial_update_noauth(tp, job):
     url = tp.reverse("job-detail", pk=job.pk)
 
     # Without auth, API should return 401
-    tp.get(url)
+    tp.patch(url)
     tp.response_401()
 
 @pytest.mark.django_db()
@@ -197,7 +197,7 @@ def test_job_update_noauth(tp, job):
     url = tp.reverse("job-detail", pk=job.pk)
 
     # Without auth, API should return 401
-    tp.get(url)
+    tp.put(url)
     tp.response_401()
 
 @pytest.mark.django_db()
