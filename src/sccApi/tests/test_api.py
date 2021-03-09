@@ -61,7 +61,15 @@ def test_job_create_noauth(tp):
     tp.response_401()
 
 @pytest.mark.django_db()
-def test_job_create(tp, user, password):
+@pytest.mark.parametrize(
+    "test_user,expected",
+    [
+        (pytest.lazy_fixture("user"), 200),
+        (pytest.lazy_fixture("staff"), 200),
+        (pytest.lazy_fixture("superuser"), 200),
+    ],
+)
+def test_job_create(tp, user, password, test_user,expected):
     """
     POST '/apis/jobs/'
     """
