@@ -25,7 +25,7 @@ def test_job_create_noauth(tp):
     url = tp.reverse("job-list")
 
     # Without auth, API should return 401
-    tp.get(url)
+    tp.post(url)
     tp.response_401()
 
 def test_job_detail_noauth(tp, job):
