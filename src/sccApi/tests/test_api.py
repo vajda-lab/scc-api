@@ -69,16 +69,16 @@ def test_job_create_noauth(tp):
         (pytest.lazy_fixture("superuser"), 200),
     ],
 )
-def test_job_create(tp, user, password, test_user,expected):
+def test_job_create(tp, password, test_user,expected):
     """
     POST '/apis/jobs/'
     """
     url = tp.reverse("job-list")
 
     # Does API work with auth?
-    tp.client.login(email=user.email, password=password)
+    tp.client.login(email=test_user.email, password=password)
 
-    job = baker.prepare("sccApi.Job", user=user)
+    job = baker.prepare("sccApi.Job", user=test_user)
     payload = serializers.JobSerializer(instance=job).data
     del payload["uuid"]
     response = tp.client.post(url, data=payload, content_type="application/json")
