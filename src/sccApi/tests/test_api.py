@@ -109,14 +109,22 @@ def test_job_detail_noauth(tp, job):
     tp.response_401()
 
 @pytest.mark.django_db()
-def test_job_detail(tp, job, user, password):
+@pytest.mark.parametrize(
+    "test_user,expected",
+    [
+        (pytest.lazy_fixture("user"), 200),
+        (pytest.lazy_fixture("staff"), 200),
+        (pytest.lazy_fixture("superuser"), 200),
+    ],
+)
+def test_job_detail(tp, job, password, test_user, expected):
     """
     GET '/apis/jobs/{pk}/'
     """
     url = tp.reverse("job-detail", pk=job.pk)
 
     # Does API work with auth?
-    tp.client.login(email=user.email, password=password)
+    tp.client.login(email=test_user.email, password=password)
 
     response = tp.get_check_200(url)
     assert "uuid" in response.data
