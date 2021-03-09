@@ -14,7 +14,6 @@ def test_job_list_url(tp, job):
     reversed_url = tp.reverse("job-list")
     assert expected_url == reversed_url
 
-
 def test_job_list_noauth(tp, job):
     """
     GET '/apis/jobs/'
@@ -24,7 +23,6 @@ def test_job_list_noauth(tp, job):
     # Without auth, API should return 401
     tp.get(url)
     tp.response_401()
-
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
@@ -52,7 +50,6 @@ def test_job_list(tp, job, password, test_user, expected):
     result = results[0]
     assert str(job.pk) == result["uuid"]
 
-
 def test_job_create_noauth(tp):
     """
     POST '/apis/jobs/'
@@ -63,7 +60,6 @@ def test_job_create_noauth(tp):
     tp.post(url)
     tp.response_401()
 
-
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
     "test_user,expected",
@@ -73,7 +69,7 @@ def test_job_create_noauth(tp):
         (pytest.lazy_fixture("superuser"), 200),
     ],
 )
-def test_job_create(tp, password, test_user, expected):
+def test_job_create(tp, password, test_user,expected):
     """
     POST '/apis/jobs/'
     """
@@ -112,7 +108,6 @@ def test_job_detail_noauth(tp, job):
     tp.get(url)
     tp.response_401()
 
-
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
     "test_user",
@@ -147,7 +142,6 @@ def test_job_delete_noauth(tp, user):
     tp.delete(url)
     tp.response_401()
 
-
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
     "create_user,delete_user,expected_status",
@@ -169,17 +163,14 @@ def test_job_delete(tp, password, create_user, delete_user, expected_status):
     """
     job = baker.make("sccApi.Job", user=create_user)
     url = tp.reverse("job-detail", pk=job.pk)
-    print(
-        f"CREATE_USER.IS_STAFF {create_user}, {create_user.is_staff}, {create_user.is_superuser}"
-    )
-    print(
-        f"DELETE_USER.IS_STAFF {delete_user}, {delete_user.is_staff}, {delete_user.is_superuser}"
-    )
+    print(f"CREATE_USER.IS_STAFF {create_user}, {create_user.is_staff}, {create_user.is_superuser}")
+    print(f"DELETE_USER.IS_STAFF {delete_user}, {delete_user.is_staff}, {delete_user.is_superuser}")
     # Does API work with auth?
     tp.client.login(email=delete_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     assert response.status_code == expected_status
     # assert models.Job.objects.filter(pk=job.pk).count() == 0
+
 
     # # New section of test: can users delete other user's jobs?
     # # 2nd job by 1st User
@@ -203,7 +194,6 @@ def test_job_partial_update_noauth(tp, job):
     # Without auth, API should return 401
     tp.patch(url)
     tp.response_401()
-
 
 @pytest.mark.django_db()
 def test_job_partial_update(tp, job, user, password):
@@ -233,7 +223,6 @@ def test_job_update_noauth(tp, job):
     # Without auth, API should return 401
     tp.put(url)
     tp.response_401()
-
 
 @pytest.mark.django_db()
 def test_job_update(tp, job, user, password):
