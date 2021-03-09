@@ -31,7 +31,6 @@ def test_job_list_noauth(tp, job):
         (pytest.lazy_fixture("user"), 200),
         (pytest.lazy_fixture("staff"), 200),
         (pytest.lazy_fixture("superuser"), 200),
-        (None, 401),
     ],
 )
 def test_job_list(tp, job, password, test_user, expected):
@@ -40,23 +39,16 @@ def test_job_list(tp, job, password, test_user, expected):
     """
     url = tp.reverse("job-list")
 
-    # # Does API work with auth?
-    if test_user:
-        tp.client.login(email=test_user.email, password=password)
+    tp.client.login(email=test_user.email, password=password)
 
-        response = tp.get(url)
-        assert response.status_code == expected
+    response = tp.get(url)
+    assert response.status_code == expected
 
-        results = response.data["results"]
-        assert len(results) == 1
+    results = response.data["results"]
+    assert len(results) == 1
 
-        result = results[0]
-        assert str(job.pk) == result["uuid"]
-
-    else:
-        # Without auth, API should return 401
-        response = tp.get(url)
-        assert response.status_code == expected
+    result = results[0]
+    assert str(job.pk) == result["uuid"]
 
 def test_job_create_noauth(tp):
     """
