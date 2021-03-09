@@ -144,7 +144,7 @@ def test_job_delete_noauth(tp, user):
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
-    "create_user,delete_user,expected_status",
+    "creating_user,deleting_user,expected_status",
     [
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 204),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 204),
@@ -157,16 +157,16 @@ def test_job_delete_noauth(tp, user):
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404),
     ],
 )
-def test_job_delete(tp, password, create_user, delete_user, expected_status):
+def test_job_delete(tp, password, creating_user, deleting_user, expected_status):
     """
     DELETE '/apis/jobs/{pk}/'
     """
-    job = baker.make("sccApi.Job", user=create_user)
+    job = baker.make("sccApi.Job", user=creating_user)
     url = tp.reverse("job-detail", pk=job.pk)
-    print(f"CREATE_USER: {create_user}, {create_user.is_staff}, {create_user.is_superuser}")
-    print(f"DELETE_USER: {delete_user}, {delete_user.is_staff}, {delete_user.is_superuser}")
+    print(f"CREATING_USER: {creating_user}, {creating_user.is_staff}, {creating_user.is_superuser}")
+    print(f"DELETING_USER: {deleting_user}, {deleting_user.is_staff}, {deleting_user.is_superuser}")
     # Does API work with auth?
-    tp.client.login(email=delete_user.email, password=password)
+    tp.client.login(email=deleting_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     assert response.status_code == expected_status
     # assert models.Job.objects.filter(pk=job.pk).count() == 0
