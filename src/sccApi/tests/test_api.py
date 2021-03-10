@@ -145,20 +145,20 @@ def test_job_delete_noauth(tp, user):
 @pytest.mark.django_db()
 # Can a creating_user job be deleted by deleting_user? 
 @pytest.mark.parametrize(
-    "creating_user,deleting_user,expected_status",
+    "creating_user,deleting_user,expected_status,expected_jobs",
     [
-        (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 204),
-        (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 204),
-        (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 204),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 204),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 204),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 204),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 204, 0),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 204, 0),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 204, 0),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404, 1),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 204, 0),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 204, 0),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, 1),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, 1),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 204, 0),
     ],
 )
-def test_job_delete(tp, password, creating_user, deleting_user, expected_status):
+def test_job_delete(tp, password, creating_user, deleting_user, expected_status, expected_jobs):
     """
     DELETE '/apis/jobs/{pk}/'
     """
@@ -170,7 +170,7 @@ def test_job_delete(tp, password, creating_user, deleting_user, expected_status)
     tp.client.login(email=deleting_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     assert response.status_code == expected_status
-
+    assert models.Job.objects.filter(pk=job.pk).count() == expected_jobs
 
 def test_job_partial_update_noauth(tp, job):
     """
