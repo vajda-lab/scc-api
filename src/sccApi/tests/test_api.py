@@ -164,8 +164,8 @@ def test_job_delete(tp, password, creating_user, deleting_user, expected_status)
     """
     job = baker.make("sccApi.Job", user=creating_user)
     url = tp.reverse("job-detail", pk=job.pk)
-    print(f"CREATING_USER: {creating_user}, {creating_user.is_staff}, {creating_user.is_superuser}")
-    print(f"DELETING_USER: {deleting_user}, {deleting_user.is_staff}, {deleting_user.is_superuser}")
+    # print(f"CREATING_USER: {creating_user}, {creating_user.is_staff}, {creating_user.is_superuser}")
+    # print(f"DELETING_USER: {deleting_user}, {deleting_user.is_staff}, {deleting_user.is_superuser}")
     # Does API work with auth?
     tp.client.login(email=deleting_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
