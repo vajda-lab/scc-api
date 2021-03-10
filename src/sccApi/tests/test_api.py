@@ -79,7 +79,7 @@ def test_job_create(tp, password, test_user, expected):
     """
     url = tp.reverse("job-list")
 
-    # Does API work with auth?
+    # Can users creat jobs?
     tp.client.login(email=test_user.email, password=password)
 
     job = baker.prepare("sccApi.Job", user=test_user)
@@ -128,7 +128,7 @@ def test_job_detail(tp, job, password, test_user):
     """
     url = tp.reverse("job-detail", pk=job.pk)
 
-    # Does API work with auth?
+    # Can users see job detail?
     tp.client.login(email=test_user.email, password=password)
 
     response = tp.get_check_200(url)
@@ -172,12 +172,13 @@ def test_job_delete(
     """
     job = baker.make("sccApi.Job", user=creating_user)
     url = tp.reverse("job-detail", pk=job.pk)
-    # print(f"CREATING_USER: {creating_user}, {creating_user.is_staff}, {creating_user.is_superuser}")
-    # print(f"DELETING_USER: {deleting_user}, {deleting_user.is_staff}, {deleting_user.is_superuser}")
-    # Does API work with auth?
+
+    # Can another user delete this job?
     tp.client.login(email=deleting_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     assert response.status_code == http_status
+
+    # Do we have the correct number of jobs, after delete attempt
     assert models.Job.objects.filter(pk=job.pk).count() == expected_jobs
 
 
@@ -230,7 +231,7 @@ def test_job_partial_update(
     response = tp.client.patch(url, data=payload, content_type="application/json")
     assert response.status_code == http_status
 
-    # Is Job.status correct, post patch attempt?
+    # Is Job.status correct, after patch attempt?
     job_obj = models.Job.objects.get(pk=job.pk)
     assert job_obj.status == exp_job_status
 
@@ -286,6 +287,6 @@ def test_job_update(
     response = tp.client.put(url, data=payload, content_type="application/json")
     assert response.status_code == http_status
 
-    # Is Job.status correct, post update attempt?
+    # Is Job.status correct, after update attempt?
     job_obj = models.Job.objects.get(pk=job.pk)
     assert job_obj.status == exp_job_status
