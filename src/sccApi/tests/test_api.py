@@ -150,12 +150,12 @@ def test_job_delete_noauth(tp, user):
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 204),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 204),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 204),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 204),
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 204),
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 204),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 204),
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404),
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 204),
     ],
 )
 def test_job_delete(tp, password, creating_user, deleting_user, expected_status):
