@@ -213,7 +213,7 @@ def test_job_partial_update(tp, password, creating_user, patching_user, http_sta
     response = tp.client.patch(url, data=payload, content_type="application/json")
     assert response.status_code == http_status
 
-    # What's the best way to assert Job Status is correct, post patch attempt?
+    # What's the best way to assert Job.status is correct, post patch attempt?
     # job_obj = models.Job.objects.get(pk=job.pk)
     # assert job_obj.status == new_status
 
