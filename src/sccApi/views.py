@@ -32,16 +32,14 @@ class JobViewSet(viewsets.ModelViewSet):
         created by the currently authenticated user.
         """
 
-        # Everyone has access to list/retrieve all Jobs
-        if self.action in ["list", "retrieve"]:
-            return Job.objects.all()
-
         # Superusers have access to all Jobs
         if self.request.user.is_superuser:
             return Job.objects.all()
 
         # Staff have access to all Jobs except for Superuser Jobs
         if self.request.user.is_staff:
+            if self.action in ["list", "retrieve"]:
+                return Job.objects.all()
             return Job.objects.filter(user__is_superuser=False)
 
         # Everyone else can only access their own Jobs
