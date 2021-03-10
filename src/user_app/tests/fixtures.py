@@ -21,7 +21,8 @@ def superuser(django_user_model, password):
 
 
 @pytest.fixture
-def user(django_user_model, password):
+def user(django_user_model, password, **kwargs):
+    email = kwargs.pop("email", "user@here.com")
     return django_user_model.objects.create_user(
-        email="user@here.com", password=password
+        email=email, password=password, **kwargs
     )
