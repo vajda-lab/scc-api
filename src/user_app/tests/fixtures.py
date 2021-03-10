@@ -16,7 +16,10 @@ def staff(django_user_model, password):
 @pytest.fixture
 def superuser(django_user_model, password):
     return django_user_model.objects.create_user(
-        email="superuser@here.com", password=password, is_superuser=True, is_staff=True
+        email="superuser@here.com",
+        password=password,
+        is_superuser=True,
+        is_staff=True,
     )
 
 
