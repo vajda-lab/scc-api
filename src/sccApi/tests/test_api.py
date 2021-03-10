@@ -145,7 +145,7 @@ def test_job_delete_noauth(tp, user):
 @pytest.mark.django_db()
 # Can a creating_user job be deleted by deleting_user? 
 @pytest.mark.parametrize(
-    "creating_user,deleting_user,expected_status,expected_jobs",
+    "creating_user,deleting_user,http_status,expected_jobs",
     [
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 204, 0),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 204, 0),
@@ -158,7 +158,7 @@ def test_job_delete_noauth(tp, user):
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 204, 0),
     ],
 )
-def test_job_delete(tp, password, creating_user, deleting_user, expected_status, expected_jobs):
+def test_job_delete(tp, password, creating_user, deleting_user, http_status, expected_jobs):
     """
     DELETE '/apis/jobs/{pk}/'
     """
@@ -169,7 +169,7 @@ def test_job_delete(tp, password, creating_user, deleting_user, expected_status,
     # Does API work with auth?
     tp.client.login(email=deleting_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
-    assert response.status_code == expected_status
+    assert response.status_code == http_status
     assert models.Job.objects.filter(pk=job.pk).count() == expected_jobs
 
 def test_job_partial_update_noauth(tp, job):
@@ -185,7 +185,7 @@ def test_job_partial_update_noauth(tp, job):
 @pytest.mark.django_db()
 # Can a creating_user job be patched by patching_user? 
 @pytest.mark.parametrize(
-    "creating_user,patching_user,expected_status",
+    "creating_user,patching_user,http_status",
     [
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 200),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 200),
@@ -198,7 +198,7 @@ def test_job_partial_update_noauth(tp, job):
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 200),
     ],
 )
-def test_job_partial_update(tp, password, creating_user, patching_user, expected_status):
+def test_job_partial_update(tp, password, creating_user, patching_user, http_status):
     """
     PATCH '/apis/jobs/{pk}'
     """
@@ -211,7 +211,7 @@ def test_job_partial_update(tp, password, creating_user, patching_user, expected
     tp.client.login(email=patching_user.email, password=password)
     payload = {"status": new_status}
     response = tp.client.patch(url, data=payload, content_type="application/json")
-    assert response.status_code == expected_status
+    assert response.status_code == http_status
 
     # What's the best way to assert Job Status is correct, post patch attempt?
     # job_obj = models.Job.objects.get(pk=job.pk)
