@@ -170,20 +170,6 @@ def test_job_delete(tp, password, creating_user, deleting_user, expected_status)
     tp.client.login(email=deleting_user.email, password=password)
     response = tp.client.delete(url, content_type="application/json")
     assert response.status_code == expected_status
-    # assert models.Job.objects.filter(pk=job.pk).count() == 0
-
-
-    # # New section of test: can users delete other user's jobs?
-    # # 2nd job by 1st User
-    # job = baker.make("sccApi.Job", user=test_user)
-    # url = tp.reverse("job-detail", pk=job.pk)
-
-    # # 2nd User; NOT a superuser
-    # new_user = baker.make("user_app.User", password=password, is_superuser=False)
-    # tp.client.login(email=new_user.email, password=password)
-    # response = tp.client.delete(url, content_type="application/json")
-    # tp.response_204(response)
-    # assert models.Job.objects.filter(pk=job.pk).count() == 0
 
 
 def test_job_partial_update_noauth(tp, job):
