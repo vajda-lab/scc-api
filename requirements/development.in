@@ -11,3 +11,4 @@ pep8-naming==0.7.0
 pre-commit==1.10.4
 pytest
 pytest-django
+pytest-lazy-fixture

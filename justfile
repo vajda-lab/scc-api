@@ -19,8 +19,8 @@ shell:
 showmigrations:
     docker-compose run --rm django python manage.py showmigrations
 
-test:
-    docker-compose run --rm django pytest -x
+test +ARGS="":
+    docker-compose run --rm django pytest -s {{ARGS}}
 
 up:
     docker-compose up
