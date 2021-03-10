@@ -286,5 +286,6 @@ def test_job_update(
     response = tp.client.put(url, data=payload, content_type="application/json")
     assert response.status_code == http_status
 
+    # Is Job.status correct, post update attempt?
     job_obj = models.Job.objects.get(pk=job.pk)
     assert job_obj.status == exp_job_status
