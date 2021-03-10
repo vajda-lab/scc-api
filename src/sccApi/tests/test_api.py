@@ -185,20 +185,20 @@ def test_job_partial_update_noauth(tp, job):
 @pytest.mark.django_db()
 # Can a creating_user job be patched by patching_user? 
 @pytest.mark.parametrize(
-    "creating_user,patching_user,http_status",
+    "creating_user,patching_user,http_status, exp_job_status",
     [
-        (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 200),
-        (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 200),
-        (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 200),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 200),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 200),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 200),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 200, "error"),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 200, "error"),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 200, "error"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404, "active"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 200, "error"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 200, "error"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "active"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "active"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 200, "error"),
     ],
 )
-def test_job_partial_update(tp, password, creating_user, patching_user, http_status):
+def test_job_partial_update(tp, password, creating_user, patching_user, http_status, exp_job_status):
     """
     PATCH '/apis/jobs/{pk}'
     """
@@ -213,9 +213,9 @@ def test_job_partial_update(tp, password, creating_user, patching_user, http_sta
     response = tp.client.patch(url, data=payload, content_type="application/json")
     assert response.status_code == http_status
 
-    # What's the best way to assert Job.status is correct, post patch attempt?
-    # job_obj = models.Job.objects.get(pk=job.pk)
-    # assert job_obj.status == new_status
+    # Is Job.status correct, post patch attempt?
+    job_obj = models.Job.objects.get(pk=job.pk)
+    assert job_obj.status == exp_job_status
 
 
 def test_job_update_noauth(tp, job):
