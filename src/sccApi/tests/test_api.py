@@ -229,21 +229,37 @@ def test_job_update_noauth(tp, job):
     tp.response_401()
 
 @pytest.mark.django_db()
-def test_job_update(tp, job, user, password):
+# Can a creating_user job be updated by updating_user? 
+@pytest.mark.parametrize(
+    "creating_user,updating_user,http_status, exp_job_status",
+    [
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 200, "error"),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 200, "error"),
+        (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 200, "error"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404, "active"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 200, "error"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 200, "error"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "active"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "active"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 200, "error"),
+    ],
+)
+def test_job_update(tp, user, password, creating_user, updating_user, http_status, exp_job_status):
     """
     PUT '/apis/jobs/{pk}/'
     """
+    job = baker.make("sccApi.Job", user=creating_user)
     new_status = job.STATUS_ERROR
     assert job.status is not new_status
 
     url = tp.reverse("job-detail", pk=job.pk)
 
-    # Does API work with auth?
-    tp.client.login(email=user.email, password=password)
+    # Can another user update this job?
+    tp.client.login(email=updating_user.email, password=password)
     payload = serializers.JobSerializer(instance=job).data
     payload["status"] = new_status
     response = tp.client.put(url, data=payload, content_type="application/json")
-    tp.response_200(response)
+    assert response.status_code == http_status
 
     job_obj = models.Job.objects.get(pk=job.pk)
-    assert job_obj.status == new_status
+    assert job_obj.status == exp_job_status
