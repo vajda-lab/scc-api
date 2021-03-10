@@ -14,6 +14,7 @@ def test_job_list_url(tp, job):
     reversed_url = tp.reverse("job-list")
     assert expected_url == reversed_url
 
+
 def test_job_list_noauth(tp, job):
     """
     GET '/apis/jobs/'
@@ -23,6 +24,7 @@ def test_job_list_noauth(tp, job):
     # Without auth, API should return 401
     tp.get(url)
     tp.response_401()
+
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
@@ -50,6 +52,7 @@ def test_job_list(tp, job, password, test_user, expected):
     result = results[0]
     assert str(job.pk) == result["uuid"]
 
+
 def test_job_create_noauth(tp):
     """
     POST '/apis/jobs/'
@@ -60,6 +63,7 @@ def test_job_create_noauth(tp):
     tp.post(url)
     tp.response_401()
 
+
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
     "test_user,expected",
@@ -69,7 +73,7 @@ def test_job_create_noauth(tp):
         (pytest.lazy_fixture("superuser"), 200),
     ],
 )
-def test_job_create(tp, password, test_user,expected):
+def test_job_create(tp, password, test_user, expected):
     """
     POST '/apis/jobs/'
     """
@@ -108,6 +112,7 @@ def test_job_detail_noauth(tp, job):
     tp.get(url)
     tp.response_401()
 
+
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
     "test_user",
@@ -142,8 +147,9 @@ def test_job_delete_noauth(tp, user):
     tp.delete(url)
     tp.response_401()
 
+
 @pytest.mark.django_db()
-# Can a creating_user job be deleted by deleting_user? 
+# Can a creating_user job be deleted by deleting_user?
 @pytest.mark.parametrize(
     "creating_user,deleting_user,http_status,expected_jobs",
     [
@@ -158,7 +164,9 @@ def test_job_delete_noauth(tp, user):
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 204, 0),
     ],
 )
-def test_job_delete(tp, password, creating_user, deleting_user, http_status, expected_jobs):
+def test_job_delete(
+    tp, password, creating_user, deleting_user, http_status, expected_jobs
+):
     """
     DELETE '/apis/jobs/{pk}/'
     """
@@ -172,6 +180,7 @@ def test_job_delete(tp, password, creating_user, deleting_user, http_status, exp
     assert response.status_code == http_status
     assert models.Job.objects.filter(pk=job.pk).count() == expected_jobs
 
+
 def test_job_partial_update_noauth(tp, job):
     """
     PATCH '/apis/jobs/{pk}'
@@ -182,8 +191,9 @@ def test_job_partial_update_noauth(tp, job):
     tp.patch(url)
     tp.response_401()
 
+
 @pytest.mark.django_db()
-# Can a creating_user job be patched by patching_user? 
+# Can a creating_user job be patched by patching_user?
 @pytest.mark.parametrize(
     "creating_user,patching_user,http_status, exp_job_status",
     [
@@ -195,10 +205,17 @@ def test_job_partial_update_noauth(tp, job):
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 200, "error"),
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "active"),
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "active"),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 200, "error"),
+        (
+            pytest.lazy_fixture("superuser"),
+            pytest.lazy_fixture("superuser"),
+            200,
+            "error",
+        ),
     ],
 )
-def test_job_partial_update(tp, password, creating_user, patching_user, http_status, exp_job_status):
+def test_job_partial_update(
+    tp, password, creating_user, patching_user, http_status, exp_job_status
+):
     """
     PATCH '/apis/jobs/{pk}'
     """
@@ -228,8 +245,9 @@ def test_job_update_noauth(tp, job):
     tp.put(url)
     tp.response_401()
 
+
 @pytest.mark.django_db()
-# Can a creating_user job be updated by updating_user? 
+# Can a creating_user job be updated by updating_user?
 @pytest.mark.parametrize(
     "creating_user,updating_user,http_status, exp_job_status",
     [
@@ -241,10 +259,17 @@ def test_job_update_noauth(tp, job):
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 200, "error"),
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "active"),
         (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "active"),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("superuser"), 200, "error"),
+        (
+            pytest.lazy_fixture("superuser"),
+            pytest.lazy_fixture("superuser"),
+            200,
+            "error",
+        ),
     ],
 )
-def test_job_update(tp, user, password, creating_user, updating_user, http_status, exp_job_status):
+def test_job_update(
+    tp, user, password, creating_user, updating_user, http_status, exp_job_status
+):
     """
     PUT '/apis/jobs/{pk}/'
     """
