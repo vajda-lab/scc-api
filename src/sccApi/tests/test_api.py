@@ -149,7 +149,6 @@ def test_job_delete_noauth(tp, user):
 
 
 @pytest.mark.django_db()
-# Can a creating_user job be deleted by deleting_user?
 @pytest.mark.parametrize(
     "creating_user,deleting_user,http_status,expected_jobs",
     [
@@ -169,6 +168,7 @@ def test_job_delete(
 ):
     """
     DELETE '/apis/jobs/{pk}/'
+    Can a creating_user job be deleted by deleting_user?
     """
     job = baker.make("sccApi.Job", user=creating_user)
     url = tp.reverse("job-detail", pk=job.pk)
@@ -194,7 +194,6 @@ def test_job_partial_update_noauth(tp, job):
 
 
 @pytest.mark.django_db()
-# Can a creating_user job be patched by patching_user?
 @pytest.mark.parametrize(
     "creating_user,patching_user,http_status, exp_job_status",
     [
@@ -219,6 +218,7 @@ def test_job_partial_update(
 ):
     """
     PATCH '/apis/jobs/{pk}'
+    Can a creating_user job be patched by patching_user?
     """
     job = baker.make("sccApi.Job", user=creating_user)
     new_status = job.STATUS_ERROR
@@ -248,7 +248,6 @@ def test_job_update_noauth(tp, job):
 
 
 @pytest.mark.django_db()
-# Can a creating_user job be updated by updating_user?
 @pytest.mark.parametrize(
     "creating_user,updating_user,http_status, exp_job_status",
     [
@@ -273,6 +272,7 @@ def test_job_update(
 ):
     """
     PUT '/apis/jobs/{pk}/'
+    Can a creating_user job be updated by updating_user?
     """
     job = baker.make("sccApi.Job", user=creating_user)
     new_status = job.STATUS_ERROR
