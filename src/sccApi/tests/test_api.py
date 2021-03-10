@@ -66,14 +66,14 @@ def test_job_create_noauth(tp):
 
 @pytest.mark.django_db()
 @pytest.mark.parametrize(
-    "test_user,expected",
+    "test_user,http_status",
     [
-        (pytest.lazy_fixture("user"), 200),
-        (pytest.lazy_fixture("staff"), 200),
-        (pytest.lazy_fixture("superuser"), 200),
+        (pytest.lazy_fixture("user"), 201),
+        (pytest.lazy_fixture("staff"), 201),
+        (pytest.lazy_fixture("superuser"), 201),
     ],
 )
-def test_job_create(tp, password, test_user, expected):
+def test_job_create(tp, password, test_user, http_status):
     """
     POST '/apis/jobs/'
     """
@@ -86,10 +86,10 @@ def test_job_create(tp, password, test_user, expected):
     payload = serializers.JobSerializer(instance=job).data
     del payload["uuid"]
     response = tp.client.post(url, data=payload, content_type="application/json")
-
     pk = response.json()["uuid"]
-    tp.response_201(response)
 
+    # Was job created?
+    assert response.status_code == http_status
     job_obj = models.Job.objects.get(pk=pk)
     assert job_obj.pk
 
