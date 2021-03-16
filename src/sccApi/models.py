@@ -16,18 +16,20 @@ class Job(Model):
     created = DateTimeField(auto_now_add=True)
     modified = DateTimeField(auto_now=True)
 
-    STATUS_COMPLETE = "complete"
     STATUS_ACTIVE = "active"
+    STATUS_COMPLETE = "complete"
     STATUS_ERROR = "error"
     STATUS_DELETED = "deleted"
+    STATUS_QUEUED = "queued"
     STATUS_CHOICES = (
-        (STATUS_COMPLETE, "complete"),
         (STATUS_ACTIVE, "active"),
+        (STATUS_COMPLETE, "complete"),
         (STATUS_ERROR, "error"),
         (STATUS_DELETED, "deleted"),
+        (STATUS_QUEUED, "queued"),
     )
     status = CharField(
-        max_length=20, choices=STATUS_CHOICES, default=STATUS_ACTIVE, null=False
+        max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED, null=False
     )
     user = ForeignKey("user_app.User", on_delete=CASCADE)
     in_file = FileField(
