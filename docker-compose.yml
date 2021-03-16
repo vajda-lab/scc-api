@@ -25,11 +25,11 @@ services:
     volumes:
       - ./src:/app
 
-  celerybeat:
+  scheduler:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
-    command: /start-celerybeat
+    command: /start-scheduler
     depends_on:
       - redis
       - postgres
@@ -37,7 +37,7 @@ services:
     volumes:
       - ./src:/app
 
-  celeryworker:
+  worker:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile

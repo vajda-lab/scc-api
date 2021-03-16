@@ -8,8 +8,8 @@ RUN python3.7 -m pip install -U pip setuptools
 COPY requirements /tmp/requirements
 RUN python3.7 -m pip install -U --no-cache-dir -r /tmp/requirements/development.txt
 
-COPY docker/django/celery/beat_start.sh /start-celerybeat
-RUN chmod +x /start-celerybeat
+COPY docker/django/celery/beat_start.sh /start-scheduler
+RUN chmod +x /start-scheduler
 
 COPY docker/django/celery/flower_start.sh /start-flower
 RUN chmod +x /start-flower

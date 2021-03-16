@@ -1,8 +1,8 @@
 .docker-env
-celerybeat-schedule.bak
-celerybeat-schedule.dat
-celerybeat-schedule.dir
-celerybeat.pid
+scheduler-schedule.bak
+scheduler-schedule.dat
+scheduler-schedule.dir
+scheduler.pid
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -89,7 +89,7 @@ ipython_config.py
 .python-version
 
 # celery beat schedule file
-celerybeat-schedule
+scheduler-schedule
 
 # SageMath parsed files
 *.sage.py
