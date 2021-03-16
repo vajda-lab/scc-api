@@ -4,6 +4,7 @@ from rest_framework import viewsets
 
 from .models import Job
 from . import serializers
+from . import tasks
 
 
 class UserHomeView(LoginRequiredMixin, ListView):
@@ -44,3 +45,29 @@ class JobViewSet(viewsets.ModelViewSet):
 
         # Everyone else can only access their own Jobs
         return Job.objects.filter(user=self.request.user)
+
+    # def list(self, request):
+    #     pass
+
+    def create(self, request):
+        response = super().create(request)
+        tasks.create_job_task.delay(self.get_object().pk)
+        return response
+
+    # # def retrieve(self, request, pk=None):
+    # #     pass
+
+    def update(self, request, pk=None, **kwargs):
+        response = super().update(request, pk=pk, **kwargs)
+        tasks.update_job_priority_task.delay(pk)
+        return response
+
+    def partial_update(self, request, pk=None):
+        response = super().partial_update(request, pk=pk)
+        tasks.update_job_priority_task.delay(pk)
+        return response
+
+    def destroy(self, request, pk=None):
+        tasks.delete_job_task.delay(pk)
+        response = super().destroy(request, pk=pk)
+        return response
