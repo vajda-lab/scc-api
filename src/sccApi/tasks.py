@@ -1,7 +1,27 @@
-# from celery import task
+from celery import task
 from .models import Job
 
-# @task()
-# def create_job(job_uuid):
-#     job = Job(job_uuid=job_uuid)
-#     job.save()
+
+@task(bind=True)
+def create_job_task(self, pk):
+    print(f"create_job_task({pk})")
+    job = Job.objects.get(pk=pk)
+    # ToDo: use subprocess() to run qsub on the submit host
+
+@task(bind=True)
+def delete_job_task(self, pk):
+    print(f"delete_job_task({pk})")    
+    job = Job.objects.get(pk=pk)
+    # ToDo: use subprocess() to run {delete job command} on the submit host
+
+@task(bind=True)
+def update_job_priority_task(self, pk):
+    print(f"update_job_priority_task({pk})") 
+    job = Job.objects.get(pk=pk)
+    # ToDo: use subprocess() to run {command to change job priority} on the submit host
+
+@task(bind=True)
+def poll_job_task(self):
+    print(f"poll_job_task({pk})")
+    # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
+    # ToDo: need to process qstat output to know what to do
