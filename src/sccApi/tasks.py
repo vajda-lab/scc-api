@@ -27,7 +27,8 @@ def update_job_priority(self, pk):
     # ToDo: use subprocess() to run {command to change job priority} on the submit host
     # ToDo: later, add priority field to Job model & update job status to change priority
     # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
-        # Do we need to explicitly create separate queues in settings? 
+        # Do we need to explicitly create separate queues in settings?
+    # ToDo: We'll need to pass job.priority into this task, if we add a priority field to Job
 
 
 
