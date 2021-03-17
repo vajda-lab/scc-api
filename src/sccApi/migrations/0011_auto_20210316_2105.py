@@ -6,28 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0010_auto_20200328_0055'),
+        ("sccApi", "0010_auto_20200328_0055"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Example',
+            name="Example",
         ),
         migrations.RemoveField(
-            model_name='job',
-            name='chain',
+            model_name="job",
+            name="chain",
         ),
         migrations.RemoveField(
-            model_name='job',
-            name='pdb_id',
+            model_name="job",
+            name="pdb_id",
         ),
         migrations.RemoveField(
-            model_name='job',
-            name='title',
+            model_name="job",
+            name="title",
         ),
         migrations.AlterField(
-            model_name='job',
-            name='status',
-            field=models.CharField(choices=[('active', 'active'), ('complete', 'complete'), ('error', 'error'), ('deleted', 'deleted'), ('queued', 'queued')], default='queued', max_length=20),
+            model_name="job",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("active", "active"),
+                    ("complete", "complete"),
+                    ("error", "error"),
+                    ("deleted", "deleted"),
+                    ("queued", "queued"),
+                ],
+                default="queued",
+                max_length=20,
+            ),
         ),
     ]

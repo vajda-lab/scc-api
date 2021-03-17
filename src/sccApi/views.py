@@ -54,8 +54,8 @@ class JobViewSet(viewsets.ModelViewSet):
         tasks.create_job_task.delay(self.get_object().pk)
         return response
 
-    # # def retrieve(self, request, pk=None):
-    # #     pass
+    # def retrieve(self, request, pk=None):
+    #     pass
 
     def update(self, request, pk=None, **kwargs):
         response = super().update(request, pk=pk, **kwargs)
