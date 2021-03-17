@@ -79,7 +79,7 @@ def test_job_create(tp, password, test_user, http_status):
     """
     url = tp.reverse("job-list")
 
-    # Can users creat jobs?
+    # Can users create jobs?
     tp.client.login(email=test_user.email, password=password)
 
     job = baker.prepare("sccApi.Job", user=test_user)
