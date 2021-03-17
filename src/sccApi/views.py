@@ -50,6 +50,9 @@ class JobViewSet(viewsets.ModelViewSet):
     #     pass
 
     def create(self, request):
+        """
+        Add a new Job instance to the task queue.
+        """
         response = super().create(request)
         tasks.create_job.delay(self.get_object().pk)
         return response
