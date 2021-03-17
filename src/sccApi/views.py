@@ -51,7 +51,7 @@ class JobViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         response = super().create(request)
-        tasks.create_job_task.delay(self.get_object().pk)
+        tasks.create_job.delay(self.get_object().pk)
         return response
 
     # def retrieve(self, request, pk=None):
@@ -59,15 +59,15 @@ class JobViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None, **kwargs):
         response = super().update(request, pk=pk, **kwargs)
-        tasks.update_job_priority_task.delay(pk)
+        tasks.update_job_priority.delay(pk)
         return response
 
     def partial_update(self, request, pk=None):
         response = super().partial_update(request, pk=pk)
-        tasks.update_job_priority_task.delay(pk)
+        tasks.update_job_priority.delay(pk)
         return response
 
     def destroy(self, request, pk=None):
-        tasks.delete_job_task.delay(pk)
+        tasks.delete_job.delay(pk)
         response = super().destroy(request, pk=pk)
         return response
