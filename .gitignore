@@ -1,8 +1,8 @@
 .docker-env
-scheduler-schedule.bak
-scheduler-schedule.dat
-scheduler-schedule.dir
-scheduler.pid
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
+celerybeat.pid
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
