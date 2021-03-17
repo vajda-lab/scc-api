@@ -16,6 +16,8 @@ class Job(Model):
     created = DateTimeField(auto_now_add=True)
     modified = DateTimeField(auto_now=True)
 
+    # STATUS_QUEUED = model instance created in Django
+    # STATUS_ACTIVE = model instance sent to Celery
     STATUS_ACTIVE = "active"
     STATUS_COMPLETE = "complete"
     STATUS_ERROR = "error"
