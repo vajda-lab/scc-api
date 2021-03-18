@@ -30,7 +30,11 @@ def test_create_job():
 
 @pytest.mark.django_db()
 def test_update_job_priority():
-    pass
+    job = baker.make("sccApi.Job",)
+    assert job.status is not models.Job.STATUS_ERROR
+    tasks.update_job_priority(job.pk)
+    job.refresh_from_db()
+    assert job.status == models.Job.STATUS_ERROR
 
 @pytest.mark.django_db()
 def test_poll_job():
