@@ -38,6 +38,7 @@ def update_job_priority(self, pk):
 @task(bind=True)
 def poll_job(self):
     print(f"poll_job()")
+    return True
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: need to process qstat output to know what to do
     # ToDo: Read about mocking (Thea's article)

@@ -38,4 +38,5 @@ def test_update_job_priority():
 
 @pytest.mark.django_db()
 def test_poll_job():
-    pass
+    result = tasks.poll_job()
+    assert result
