@@ -1,5 +1,6 @@
 import uuid
 from django.db.models import (
+    BooleanField,
     CASCADE,
     CharField,
     DateTimeField,
@@ -15,6 +16,7 @@ class Job(Model):
     uuid = UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     created = DateTimeField(auto_now_add=True)
     modified = DateTimeField(auto_now=True)
+    priority = BooleanField(default=False)
 
     # STATUS_QUEUED = model instance created in Django
     # STATUS_ACTIVE = model instance sent to Celery
