@@ -11,6 +11,9 @@ up:
 down:
     docker-compose down
 
+watch:
+    watch docker ps
+
 # Django
 check:
     docker-compose run --rm django python manage.py check
@@ -23,6 +26,9 @@ run:
 
 shell:
     docker-compose run --rm django /bin/bash
+
+django-shell:
+    docker-compose run --rm django python manage.py shell
 
 showmigrations:
     docker-compose run --rm django python manage.py showmigrations
