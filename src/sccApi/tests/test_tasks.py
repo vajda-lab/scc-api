@@ -31,10 +31,15 @@ def test_create_job():
 @pytest.mark.django_db()
 def test_update_job_priority():
     job = baker.make("sccApi.Job",)
-    assert job.status is not models.Job.STATUS_ERROR
+    # False is the default value
+    assert job.priority == False
     tasks.update_job_priority(job.pk)
     job.refresh_from_db()
-    assert job.status == models.Job.STATUS_ERROR
+    assert job.priority == True
+    # Does it work both ways?
+    tasks.update_job_priority(job.pk)
+    job.refresh_from_db()
+    assert job.priority == False
 
 @pytest.mark.django_db()
 def test_poll_job():
