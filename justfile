@@ -1,9 +1,17 @@
 @_default:
     just --list
 
+# Docker
 build:
     docker-compose build
 
+up:
+    docker-compose up
+
+down:
+    docker-compose down
+
+# Django
 check:
     docker-compose run --rm django python manage.py check
 
@@ -22,9 +30,7 @@ showmigrations:
 test +ARGS="":
     docker-compose run --rm django pytest -s {{ARGS}}
 
-up:
-    docker-compose up
-
+# Environment
 upgrade-pip-requirements:
     pip install --upgrade --requirement ./requirements/base.in
     pip install --upgrade --requirement ./requirements/development.in
