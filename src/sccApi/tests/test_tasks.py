@@ -12,7 +12,7 @@ def test_delete_job():
     Tests task status properly updated by tasks.delete_job() 
     """
     job = baker.make("sccApi.Job",)
-    assert job.status is not models.Job.STATUS_DELETED
+    assert job.status != models.Job.STATUS_DELETED
     tasks.delete_job(job.pk)
     job.refresh_from_db()
     assert job.status == models.Job.STATUS_DELETED
@@ -23,7 +23,7 @@ def test_create_job():
     Tests task status properly updated by tasks.create_job() 
     """
     job = baker.make("sccApi.Job",)
-    assert job.status is not models.Job.STATUS_ACTIVE
+    assert job.status != models.Job.STATUS_ACTIVE
     tasks.create_job(job.pk)
     job.refresh_from_db()
     assert job.status == models.Job.STATUS_ACTIVE
