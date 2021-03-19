@@ -18,6 +18,9 @@ watch:
 check:
     docker-compose run --rm django python manage.py check
 
+makemigrations:
+    docker-compose run --rm django python manage.py makemigrations
+
 migrate:
     docker-compose run --rm django python manage.py migrate --noinput
 
