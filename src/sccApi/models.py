@@ -1,11 +1,12 @@
 import uuid
 from django.db.models import (
-    BooleanField,
     CASCADE,
     CharField,
     DateTimeField,
     FileField,
     ForeignKey,
+    IntegerField,
+    IntegerChoices,
     Model,
     UUIDField,
 )
@@ -13,10 +14,19 @@ from django.core.validators import FileExtensionValidator
 
 
 class Job(Model):
+
+
+    class Priority(IntegerChoices):
+        LOW = -1, "low"
+        NORMAL = 0, "normal"
+        HIGH = 1, "high"
+
+
+    priority = IntegerField(choices=Priority.choices, default=Priority.NORMAL,)
+
     uuid = UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     created = DateTimeField(auto_now_add=True)
     modified = DateTimeField(auto_now=True)
-    priority = BooleanField(default=False)
 
     # STATUS_QUEUED = model instance created in Django
     # STATUS_ACTIVE = model instance sent to Celery
