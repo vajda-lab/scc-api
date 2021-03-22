@@ -21,18 +21,17 @@ def delete_job(self, pk):
 
 
 @task(bind=True)
-def update_job_priority(self, pk):
-    print(f"update_job_priority({pk})")
+def update_job_priority(self, pk, new_priority):
+    print(f"update_job_priority({pk}, {new_priority})")
     job = Job.objects.get(pk=pk)
     # Current assumption, only 2 queues: standard & priority
     # If more priority levels are added, logic will need to change
-    job.priority = not job.priority
+    job.priority = new_priority
     job.save()
     # ToDo: use subprocess() to run {command to change job priority} on the submit host
     # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
         # Do we need to explicitly create separate queues in settings?
     # ToDo: We'll need to pass job.priority into this task, if we add a priority field to Job (this comment doesn't make sense); Comment makes sense if more than 2 priority levels
-
 
 
 @task(bind=True)

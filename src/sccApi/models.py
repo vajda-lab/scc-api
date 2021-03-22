@@ -17,9 +17,9 @@ class Job(Model):
 
 
     class Priority(IntegerChoices):
-        LOW = -1, "low"
-        NORMAL = 0, "normal"
-        HIGH = 1, "high"
+        LOW = (-1, "low")
+        NORMAL = (0, "normal")
+        HIGH = (1, "high")
 
 
     priority = IntegerField(choices=Priority.choices, default=Priority.NORMAL,)
