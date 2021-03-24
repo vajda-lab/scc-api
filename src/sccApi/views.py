@@ -1,9 +1,11 @@
-from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
+from django.views.generic import ListView, DetailView
 from rest_framework import viewsets
 
 from .models import Job
 from . import serializers
+from . import tasks
 
 
 class UserHomeView(LoginRequiredMixin, ListView):
@@ -44,3 +46,35 @@ class JobViewSet(viewsets.ModelViewSet):
 
         # Everyone else can only access their own Jobs
         return Job.objects.filter(user=self.request.user)
+
+    # def list(self, request):
+    #     pass
+
+    def create(self, request):
+        """
+        Add a new Job instance to the task queue.
+        """
+        response = super().create(request)
+        pk = response.data.get("uuid")
+        tasks.create_job.delay(pk=pk)
+        return response
+
+    # def retrieve(self, request, pk=None):
+    #     pass
+
+    def update(self, request, pk=None, new_priority=None, **kwargs):
+        response = super().update(request, pk=pk, **kwargs)
+        with transaction.atomic():
+            tasks.update_job_priority.delay(pk, new_priority)
+        return response
+
+    def partial_update(self, request, pk=None, new_priority=None):
+        response = super().partial_update(request, pk=pk)
+        with transaction.atomic():
+            tasks.update_job_priority.delay(pk, new_priority)
+        return response
+
+    def destroy(self, request, pk=None):
+        tasks.delete_job.delay(pk)
+        response = super().destroy(request, pk=pk)
+        return response

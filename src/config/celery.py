@@ -25,5 +25,10 @@ def debug_task(self):
 
 
 # @periodic_task(run_every=(crontab(minute='*/1')), name="some_task", ignore_result=True)
+# ToDo: We'll need to run something like the line above; prob turn on in config.settings
 def some_task():
-    print("puthons are magic")
+    print("pythons are magic")
+
+
+# NOTES: refer to https://github.com/tveastman/secateur/blob/master/secateur/tasks.py#L118
+# And the Repo in general

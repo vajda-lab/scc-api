@@ -4,5 +4,5 @@ set -o errexit
 set -o nounset
 
 
-rm -f './celerybeat.pid'
+rm -f './scheduler.pid'
 celery -A config beat -l INFO

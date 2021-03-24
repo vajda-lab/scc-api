@@ -79,7 +79,7 @@ def test_job_create(tp, password, test_user, http_status):
     """
     url = tp.reverse("job-list")
 
-    # Can users creat jobs?
+    # Can users create jobs?
     tp.client.login(email=test_user.email, password=password)
 
     job = baker.prepare("sccApi.Job", user=test_user)
@@ -200,11 +200,11 @@ def test_job_partial_update_noauth(tp, job):
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 200, "error"),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 200, "error"),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 200, "error"),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404, "active"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404, "queued"),
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 200, "error"),
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 200, "error"),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "active"),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "active"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "queued"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "queued"),
         (
             pytest.lazy_fixture("superuser"),
             pytest.lazy_fixture("superuser"),
@@ -254,11 +254,11 @@ def test_job_update_noauth(tp, job):
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("user"), 200, "error"),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("staff"), 200, "error"),
         (pytest.lazy_fixture("user"), pytest.lazy_fixture("superuser"), 200, "error"),
-        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404, "active"),
+        (pytest.lazy_fixture("staff"), pytest.lazy_fixture("user"), 404, "queued"),
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("staff"), 200, "error"),
         (pytest.lazy_fixture("staff"), pytest.lazy_fixture("superuser"), 200, "error"),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "active"),
-        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "active"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("user"), 404, "queued"),
+        (pytest.lazy_fixture("superuser"), pytest.lazy_fixture("staff"), 404, "queued"),
         (
             pytest.lazy_fixture("superuser"),
             pytest.lazy_fixture("superuser"),
