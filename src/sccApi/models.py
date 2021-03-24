@@ -13,13 +13,13 @@ from django.db.models import (
 from django.core.validators import FileExtensionValidator
 
 
+class Priority(IntegerChoices):
+    LOW = (0, "low")
+    NORMAL = (1, "normal")
+    HIGH = (2, "high")
+
+
 class Job(Model):
-
-
-    class Priority(IntegerChoices):
-        LOW = (0, "low")
-        NORMAL = (1, "normal")
-        HIGH = (2, "high")
 
 
     priority = IntegerField(choices=Priority.choices, default=Priority.LOW,)
