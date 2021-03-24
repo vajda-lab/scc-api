@@ -33,7 +33,7 @@ def test_update_job_priority():
     """
     Tests task priority properly updated by tasks.update_job_priority
 
-    Current assumption: only 2 priority levels: Normal and High 
+    Current assumption: 3 priority levels: Low/Normal/High 
     """
     job = baker.make("sccApi.Job",)
     # 0 or normal is the default value
