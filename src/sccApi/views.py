@@ -1,5 +1,6 @@
-from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
+from django.views.generic import ListView, DetailView
 from rest_framework import viewsets
 
 from .models import Job
@@ -62,12 +63,14 @@ class JobViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None, new_priority=None, **kwargs):
         response = super().update(request, pk=pk, **kwargs)
-        tasks.update_job_priority.delay(pk, new_priority)
+        with transaction.atomic():
+            tasks.update_job_priority.delay(pk, new_priority)
         return response
 
     def partial_update(self, request, pk=None, new_priority=None):
         response = super().partial_update(request, pk=pk)
-        tasks.update_job_priority.delay(pk, new_priority)
+        with transaction.atomic():
+            tasks.update_job_priority.delay(pk, new_priority)
         return response
 
     def destroy(self, request, pk=None):
