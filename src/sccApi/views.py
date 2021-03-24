@@ -60,14 +60,14 @@ class JobViewSet(viewsets.ModelViewSet):
     # def retrieve(self, request, pk=None):
     #     pass
 
-    def update(self, request, pk=None, **kwargs):
+    def update(self, request, pk=None, new_priority=None, **kwargs):
         response = super().update(request, pk=pk, **kwargs)
-        tasks.update_job_priority.delay(pk)
+        tasks.update_job_priority.delay(pk, new_priority)
         return response
 
-    def partial_update(self, request, pk=None):
+    def partial_update(self, request, pk=None, new_priority=None):
         response = super().partial_update(request, pk=pk)
-        tasks.update_job_priority.delay(pk)
+        tasks.update_job_priority.delay(pk, new_priority)
         return response
 
     def destroy(self, request, pk=None):
