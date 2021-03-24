@@ -4,7 +4,6 @@ from .models import Job
 # Group of Celery task actions
 @task(bind=True)
 def create_job(self, pk):
-    print(f"create_job({pk})")
     job = Job.objects.get(pk=pk)
     job.status = Job.STATUS_ACTIVE
     job.save()
@@ -13,7 +12,6 @@ def create_job(self, pk):
 
 @task(bind=True)
 def delete_job(self, pk):
-    print(f"delete_job({pk})")
     job = Job.objects.get(pk=pk)
     job.status = Job.STATUS_DELETED
     job.save()
@@ -22,7 +20,6 @@ def delete_job(self, pk):
 
 @task(bind=True)
 def update_job_priority(self, pk, new_priority):
-    print(f"update_job_priority({pk}, {new_priority})")
     job = Job.objects.get(pk=pk)
     # Current assumption, only 2 queues: standard & priority
     # If more priority levels are added, logic will need to change
