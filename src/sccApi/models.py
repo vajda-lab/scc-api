@@ -17,12 +17,12 @@ class Job(Model):
 
 
     class Priority(IntegerChoices):
-        LOW = (-1, "low")
-        NORMAL = (0, "normal")
-        HIGH = (1, "high")
+        LOW = (0, "low")
+        NORMAL = (1, "normal")
+        HIGH = (2, "high")
 
 
-    priority = IntegerField(choices=Priority.choices, default=Priority.NORMAL,)
+    priority = IntegerField(choices=Priority.choices, default=Priority.LOW,)
 
     uuid = UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     created = DateTimeField(auto_now_add=True)

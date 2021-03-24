@@ -36,19 +36,16 @@ def test_update_job_priority():
     Current assumption: 3 priority levels: Low/Normal/High 
     """
     job = baker.make("sccApi.Job",)
-    # 0 or normal is the default value
-    print(f"\nJOB.PRIORITY is {job.priority}")
-    assert job.priority == 0
+    # 0 or Low is the default value
+    assert job.priority == models.Job.Priority.LOW
     # Update to High
-    tasks.update_job_priority(job.pk, 1)
+    tasks.update_job_priority(job.pk, models.Job.Priority.HIGH)
     job.refresh_from_db()
-    print(f"\nJOB.PRIORITY is {job.priority}")
-    assert job.priority == 1
-    # Update to Low
-    tasks.update_job_priority(job.pk, -1)
+    assert job.priority == models.Job.Priority.HIGH
+    # Update to Normal
+    tasks.update_job_priority(job.pk, models.Job.Priority.NORMAL)
     job.refresh_from_db()
-    print(f"\nJOB.PRIORITY is {job.priority}")
-    assert job.priority == -1
+    assert job.priority == models.Job.Priority.NORMAL
 
 @pytest.mark.django_db()
 def test_poll_job():
