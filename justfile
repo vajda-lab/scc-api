@@ -5,8 +5,8 @@
 build:
     docker-compose build
 
-up:
-    docker-compose up
+up +ARGS="":
+    docker-compose up {{ARGS}}
 
 down:
     docker-compose down
