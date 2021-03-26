@@ -1,32 +1,22 @@
 import uuid
-from django.db.models import (
-    CASCADE,
-    CharField,
-    DateTimeField,
-    FileField,
-    ForeignKey,
-    IntegerField,
-    IntegerChoices,
-    Model,
-    UUIDField,
-)
+from django.db import models
 from django.core.validators import FileExtensionValidator
 
 
-class Priority(IntegerChoices):
+class Priority(models.IntegerChoices):
     LOW = (0, "low")
     NORMAL = (1, "normal")
     HIGH = (2, "high")
 
 
-class Job(Model):
+class Job(models.Model):
 
 
-    priority = IntegerField(choices=Priority.choices, default=Priority.LOW,)
+    priority = models.IntegerField(choices=Priority.choices, default=Priority.LOW,)
 
-    uuid = UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    created = DateTimeField(auto_now_add=True)
-    modified = DateTimeField(auto_now=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     # STATUS_QUEUED = model instance created in Django
     # STATUS_ACTIVE = model instance sent to Celery
@@ -42,11 +32,11 @@ class Job(Model):
         (STATUS_DELETED, "deleted"),
         (STATUS_QUEUED, "queued"),
     )
-    status = CharField(
+    status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED, null=False
     )
-    user = ForeignKey("user_app.User", on_delete=CASCADE)
-    in_file = FileField(
+    user = models.ForeignKey("user_app.User", on_delete=models.CASCADE)
+    in_file = models.FileField(
         upload_to="jobs/",
         blank=True,
         null=True,
