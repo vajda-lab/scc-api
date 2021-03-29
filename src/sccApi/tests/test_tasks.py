@@ -24,9 +24,10 @@ def test_create_job():
     """
     job = baker.make("sccApi.Job",)
     assert job.status != models.Job.STATUS_ACTIVE
-    tasks.create_job(job.pk)
+    qsub_status = tasks.create_job(job.pk)
     job.refresh_from_db()
     assert job.status == models.Job.STATUS_ACTIVE
+    assert "5290723" in qsub_status
 
 @pytest.mark.django_db()
 def test_update_job_priority():

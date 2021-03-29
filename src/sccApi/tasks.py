@@ -1,3 +1,4 @@
+import subprocess
 from celery import task
 from .models import Job
 
@@ -8,6 +9,9 @@ def create_job(self, pk):
     job.status = Job.STATUS_ACTIVE
     job.save()
     # ToDo: use subprocess() to run qsub on the submit host
+    job_submit = subprocess.run([ "/bin/qsub"], capture_output=True)
+    print(f"Job Submission output: {job_submit.stdout}")
+    return job_submit.stdout
 
 
 @task(bind=True)
@@ -34,6 +38,7 @@ def update_job_priority(self, pk, new_priority):
 @task(bind=True)
 def poll_job(self):
     print(f"poll_job()")
+    # subprocess.run([ "../bin/qstat"])
     return True
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: need to process qstat output to know what to do
