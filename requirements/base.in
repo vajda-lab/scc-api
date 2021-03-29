@@ -1,4 +1,5 @@
 celery<5.0
+click
 django-constance[redis]
 django-environ
 django-extensions
