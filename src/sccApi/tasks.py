@@ -37,7 +37,7 @@ def update_job_priority(self, pk, new_priority):
 
 
 @task(bind=True)
-def poll_job(self):
+def scheduled_poll_job(self):
     print(f"poll_job()")
     job_poll = subprocess.run(["/app/bin/qstat", "-u"], capture_output=True)
     return job_poll
@@ -47,3 +47,15 @@ def poll_job(self):
     # ToDo: Set up a schedule to run the poll job at regular intervals
     # ToDo: search for "assert_called_once_with" section in Thea's article
     # ToDo: Scheduling model code https://github.com/revsys/git-shoes/blob/main/config/settings.py#L249-L251
+
+
+@task(bind=True)
+def scheduled_allocate_job(self):
+    # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
+    # Do logic based on both
+    # For each priorty, give count of STATUS_ACTIVE jobs
+    # Based on limits per priority queue, decide which Celery queue to send new jobs to
+    pass
+
+# Three commands defined in settings, to abstract the specific locations of
+# QSUB, QDEL, QSTAT; Also the scheduled jobs. QDEL already done.

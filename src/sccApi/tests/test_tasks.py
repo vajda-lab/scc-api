@@ -56,7 +56,7 @@ def test_update_job_priority():
     assert job.priority == models.Priority.NORMAL
 
 @pytest.mark.django_db()
-def test_poll_job():
+def test_scheduled_poll_job():
     # TODO: This command requires an --option to be passed in
-    qstat_response = tasks.poll_job()
+    qstat_response = tasks.scheduled_poll_job()
     assert qstat_response.returncode == 2

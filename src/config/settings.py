@@ -184,7 +184,11 @@ CELERYD_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULE = {
     "poll-job": {
         "schedule": crontab(minute="*/1"),  # every minute
-        "task": "sccApi.tasks.poll_job",
+        "task": "sccApi.tasks.scheduled_poll_job",
+    },
+    "allocate-job": {
+        "schedule": crontab(minute="*/1"),  # every minute
+        "task": "sccApi.tasks.scheduled_allocate_job",
     },
 } 
 
