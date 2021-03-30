@@ -203,3 +203,5 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "PAGE_SIZE": 100,
 }
+
+QDEL = ENV("QDEL", default="/app/bin/qdel")

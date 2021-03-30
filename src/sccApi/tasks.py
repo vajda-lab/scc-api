@@ -1,6 +1,7 @@
 import subprocess
 from celery import task
 from .models import Job
+from django.conf import settings
 
 # Group of Celery task actions
 @task(bind=True)
@@ -19,7 +20,7 @@ def delete_job(self, pk):
     job.status = Job.STATUS_DELETED
     job.save()
     # ToDo: use subprocess() to run {delete job command} on the submit host
-    job_delete = subprocess.run(["/app/bin/qdel"], capture_output=True)
+    job_delete = subprocess.run([settings.QDEL], capture_output=True)
     return job_delete
 
 
