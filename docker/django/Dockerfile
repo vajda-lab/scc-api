@@ -5,8 +5,8 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED 1
 RUN python3.7 -m pip install -U pip setuptools
 
-COPY requirements /tmp/requirements
-RUN python3.7 -m pip install -U --no-cache-dir -r /tmp/requirements/development.txt
+COPY requirements.txt /tmp/requirements.txt
+RUN python3.7 -m pip install -U --no-cache-dir -r /tmp/requirements.txt
 
 COPY docker/django/celery/beat_start.sh /start-scheduler
 RUN chmod +x /start-scheduler
