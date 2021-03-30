@@ -27,9 +27,14 @@ def test_delete_job():
     """
     job = baker.make("sccApi.Job",)
     assert job.status != models.Job.STATUS_DELETED
-    tasks.delete_job(job.pk)
+    qdel_response = tasks.delete_job(job.pk)
     job.refresh_from_db()
     assert job.status == models.Job.STATUS_DELETED
+    assert qdel_response.returncode == 0
+    assert b"5290728.1" in qdel_response.stdout
+    assert b"5290728.2" in qdel_response.stdout
+    assert b"has registered the job" in qdel_response.stdout
+    assert b"for deletion" in qdel_response.stdout
 
 @pytest.mark.django_db()
 def test_update_job_priority():

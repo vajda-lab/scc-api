@@ -19,6 +19,8 @@ def delete_job(self, pk):
     job.status = Job.STATUS_DELETED
     job.save()
     # ToDo: use subprocess() to run {delete job command} on the submit host
+    job_delete = subprocess.run(["/app/bin/qdel"], capture_output=True)
+    return job_delete
 
 
 @task(bind=True)
