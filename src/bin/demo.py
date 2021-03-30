@@ -18,7 +18,7 @@ def delete():
     data = {}
     headers = {"token": SCC_API_TOKEN}
     try:
-        response = requests.delete(SCC_API_URL + "jobs/", data=data, headers=headers)
+        response = requests.delete(f"{SCC_API_URL}jobs/", data=data, headers=headers)
         click.echo(response.status_code)
     except Exception as e:
         click.secho(f"{e}", fg="red")
@@ -28,7 +28,7 @@ def delete():
 def status():
     click.echo("status")
     data = {}
-    response = requests.get(SCC_API_URL + "jobs/", data=data)
+    response = requests.get(f"{SCC_API_URL}jobs/", data=data)
     print(response.status_code)
 
 
@@ -36,7 +36,7 @@ def status():
 def submit():
     click.echo("submit")
     data = {}
-    response = requests.post(SCC_API_URL + "jobs/", data=data)
+    response = requests.post(f"{SCC_API_URL}jobs/", data=data)
     print(response.status_code)
 
 
