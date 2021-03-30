@@ -57,5 +57,5 @@ def test_update_job_priority():
 
 @pytest.mark.django_db()
 def test_poll_job():
-    result = tasks.poll_job()
-    assert result
+    qstat_response = tasks.poll_job()
+    assert qstat_response.returncode == 0
