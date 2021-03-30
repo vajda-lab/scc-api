@@ -40,8 +40,7 @@ test +ARGS="":
     docker-compose run --rm django pytest -s {{ARGS}}
 
 # Environment
-upgrade-pip-requirements:
-    pip install --upgrade --requirement ./requirements/base.in
+pip-compile:
     pip install --upgrade --requirement ./requirements/development.in
     pip-compile --rebuild ./requirements/base.in
     pip-compile --rebuild ./requirements/development.in
