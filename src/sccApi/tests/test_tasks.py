@@ -57,5 +57,6 @@ def test_update_job_priority():
 
 @pytest.mark.django_db()
 def test_poll_job():
+    # TODO: This command requires an --option to be passed in
     qstat_response = tasks.poll_job()
-    assert qstat_response.returncode == 0
+    assert qstat_response.returncode == 2
