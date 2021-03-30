@@ -10,7 +10,7 @@ def create_job(self, pk):
     job.save()
     # ToDo: use subprocess() to run qsub on the submit host
     job_submit = subprocess.run(["/app/bin/qsub"], capture_output=True)
-    return job_submit.stdout
+    return job_submit
 
 
 @task(bind=True)

@@ -13,11 +13,12 @@ def test_create_job():
     """
     job = baker.make("sccApi.Job",)
     assert job.status != models.Job.STATUS_ACTIVE
-    qsub_status = tasks.create_job(job.pk)
+    qsub_response = tasks.create_job(job.pk)
     job.refresh_from_db()
     assert job.status == models.Job.STATUS_ACTIVE
-    assert b"5290723" in qsub_status
-    assert b"has been submitted" in qsub_status
+    assert qsub_response.returncode == 0
+    assert b"5290723" in qsub_response.stdout
+    assert b"has been submitted" in qsub_response.stdout
 
 @pytest.mark.django_db()
 def test_delete_job():
