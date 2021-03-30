@@ -59,4 +59,4 @@ def test_update_job_priority():
 def test_scheduled_poll_job():
     # TODO: This command requires an --option to be passed in
     qstat_response = tasks.scheduled_poll_job()
-    assert qstat_response.returncode == 2
+    assert qstat_response.returncode == 0
