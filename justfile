@@ -41,6 +41,5 @@ test +ARGS="":
 
 # Environment
 pip-compile:
-    pip install --upgrade --requirement ./requirements/development.in
-    pip-compile --rebuild ./requirements/base.in
-    pip-compile --rebuild ./requirements/development.in
+    pip install --upgrade --requirement ./requirements.in
+    pip-compile --rebuild ./requirements.in
