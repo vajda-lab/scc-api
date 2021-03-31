@@ -50,7 +50,10 @@ jobs:
       - run: |
           pwd
           ls /home/runner/work/scc-api/scc-api/
+          echo "Double SCC above; Single Below"
           ls /home/runner/work/scc-api/
+          echo "Is what's below what we want?"
+          ls /home/runner/work/scc-api/scc-api/src/bin          
       - name: Test with pytest
         env:
           CELERY_BROKER_URL: 'redis://redis:6379/0'
@@ -61,9 +64,9 @@ jobs:
           REDIS_URL: 'redis://redis:6379/0'
           SECRET_KEY: 'this-is-for-testing-only'
 
-          GE_DELETE: '/home/runner/work/scc-api/scc-api/bin/qdel'
-          GE_SUBMIT: '/home/runner/work/scc-api/scc-api/bin/qsub'
-          GE_STATUS: '/home/runner/work/scc-api/scc-api/bin/qstat'
+          GE_DELETE: '/home/runner/work/scc-api/scc-api/src/bin/qdel'
+          GE_SUBMIT: '/home/runner/work/scc-api/scc-api/src/bin/qsub'
+          GE_STATUS: '/home/runner/work/scc-api/scc-api/src/bin/qstat'
 
         run: |
           python -m pytest src
