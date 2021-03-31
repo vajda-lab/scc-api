@@ -204,4 +204,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-QDEL = ENV("QDEL", default="/app/bin/qdel")
+# Grid Engine Commands
+GE_DELETE = ENV("GE_DELETE", default="/app/bin/qdel")
+GE_SUBMIT = ENV("GE_SUBMIT", default = "/app/bin/qsub")
+GE_STATUS = ENV("GE_STATUS", default = "/app/bin/qstat")

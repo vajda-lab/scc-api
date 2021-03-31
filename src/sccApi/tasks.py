@@ -10,7 +10,7 @@ def create_job(self, pk):
     job.status = Job.STATUS_ACTIVE
     job.save()
     # ToDo: use subprocess() to run qsub on the submit host
-    job_submit = subprocess.run(["/app/bin/qsub"], capture_output=True)
+    job_submit = subprocess.run([settings.GE_SUBMIT], capture_output=True)
     return job_submit
 
 
@@ -20,7 +20,7 @@ def delete_job(self, pk):
     job.status = Job.STATUS_DELETED
     job.save()
     # ToDo: use subprocess() to run {delete job command} on the submit host
-    job_delete = subprocess.run([settings.QDEL], capture_output=True)
+    job_delete = subprocess.run([settings.GE_DELETE], capture_output=True)
     return job_delete
 
 
@@ -40,7 +40,7 @@ def update_job_priority(self, pk, new_priority):
 @task(bind=True)
 def scheduled_poll_job(self):
     print(f"poll_job()")
-    job_poll = subprocess.run(["/app/bin/qstat",], capture_output=True)
+    job_poll = subprocess.run([settings.GE_STATUS], capture_output=True)
     return job_poll
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: need to process qstat output to know what to do
@@ -57,6 +57,3 @@ def scheduled_allocate_job(self):
     # For each priorty, give count of STATUS_ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to
     pass
-
-# Three commands defined in settings, to abstract the specific locations of
-# QSUB, QDEL, QSTAT; Also the scheduled jobs. QDEL already done.
