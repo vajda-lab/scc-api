@@ -60,3 +60,11 @@ def test_scheduled_poll_job():
     # TODO: This command requires an --option to be passed in
     qstat_response = tasks.scheduled_poll_job()
     assert qstat_response.returncode == 0
+    print(f"QSTAT_RESPONSE.ARGS: {qstat_response.args}")
+    # Testing options in qstat mock
+    if len(qstat_response.args) > 1:
+        if qstat_response.args[1] == '-u':
+            assert b"5290728" in qstat_response.stdout
+        else:
+            assert b"job_number:                 5290723" in qstat_response.stdout
+
