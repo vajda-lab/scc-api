@@ -57,5 +57,10 @@ jobs:
           DEBUG: false
           REDIS_URL: 'redis://redis:6379/0'
           SECRET_KEY: 'this-is-for-testing-only'
+
+          GE_DELETE: '/home/runner/work/scc-api/scc-api/bin/qdel'
+          GE_SUBMIT: '/home/runner/work/scc-api/scc-api/bin/qsub'
+          GE_STATUS: '/home/runner/work/scc-api/scc-api/bin/qstat'
+
         run: |
           python -m pytest src
