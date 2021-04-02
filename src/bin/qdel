@@ -1,0 +1,3 @@
+#!/usr/bin/env python
+print("awake has registered the job-array task 5290728.1 for deletion")
+print("awake has registered the job-array task 5290728.2 for deletion")

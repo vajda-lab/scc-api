@@ -44,7 +44,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements/development.txt
+          python -m pip install -r requirements.txt
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Test with pytest
@@ -56,5 +56,10 @@ jobs:
           DEBUG: false
           REDIS_URL: 'redis://redis:6379/0'
           SECRET_KEY: 'this-is-for-testing-only'
+
+          GE_DELETE: '/home/runner/work/scc-api/scc-api/src/bin/qdel'
+          GE_SUBMIT: '/home/runner/work/scc-api/scc-api/src/bin/qsub'
+          GE_STATUS: '/home/runner/work/scc-api/scc-api/src/bin/qstat'
+
         run: |
           python -m pytest src

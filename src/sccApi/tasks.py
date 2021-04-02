@@ -1,28 +1,39 @@
+import subprocess
 from celery import task
 from .models import Job
+from django.conf import settings
 
 # Group of Celery task actions
 @task(bind=True)
 def create_job(self, pk):
-    print(f"create_job({pk})")
     job = Job.objects.get(pk=pk)
     job.status = Job.STATUS_ACTIVE
     job.save()
     # ToDo: use subprocess() to run qsub on the submit host
+    cmd = settings.GE_SUBMIT.split(" ")
+    if isinstance(cmd, list):
+        job_submit = subprocess.run(cmd, capture_output=True)
+    else:
+        job_submit = subprocess.run([cmd], capture_output=True)        
+    return job_submit
 
 
 @task(bind=True)
 def delete_job(self, pk):
-    print(f"delete_job({pk})")
     job = Job.objects.get(pk=pk)
     job.status = Job.STATUS_DELETED
     job.save()
     # ToDo: use subprocess() to run {delete job command} on the submit host
+    cmd = settings.GE_DELETE.split(" ")
+    if isinstance(cmd, list):
+        job_delete = subprocess.run(cmd, capture_output=True)
+    else:
+        job_delete = subprocess.run([cmd], capture_output=True)        
+    return job_delete
 
 
 @task(bind=True)
 def update_job_priority(self, pk, new_priority):
-    print(f"update_job_priority({pk}, {new_priority})")
     job = Job.objects.get(pk=pk)
     # Current assumption, only 2 queues: standard & priority
     # If more priority levels are added, logic will need to change
@@ -35,12 +46,26 @@ def update_job_priority(self, pk, new_priority):
 
 
 @task(bind=True)
-def poll_job(self):
+def scheduled_poll_job(self):
     print(f"poll_job()")
-    return True
+    cmd = settings.GE_STATUS.split(" ")
+    if isinstance(cmd, list):
+        job_poll = subprocess.run(cmd, capture_output=True)
+    else: 
+        job_poll = subprocess.run([cmd], capture_output=True)
+    return job_poll
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: need to process qstat output to know what to do
     # ToDo: Read about mocking (Thea's article)
     # ToDo: Set up a schedule to run the poll job at regular intervals
     # ToDo: search for "assert_called_once_with" section in Thea's article
     # ToDo: Scheduling model code https://github.com/revsys/git-shoes/blob/main/config/settings.py#L249-L251
+
+
+@task(bind=True)
+def scheduled_allocate_job(self):
+    # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
+    # Do logic based on both
+    # For each priorty, give count of STATUS_ACTIVE jobs
+    # Based on limits per priority queue, decide which Celery queue to send new jobs to
+    pass

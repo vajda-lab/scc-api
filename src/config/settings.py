@@ -184,7 +184,11 @@ CELERYD_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULE = {
     "poll-job": {
         "schedule": crontab(minute="*/1"),  # every minute
-        "task": "sccApi.tasks.poll_job",
+        "task": "sccApi.tasks.scheduled_poll_job",
+    },
+    "allocate-job": {
+        "schedule": crontab(minute="*/1"),  # every minute
+        "task": "sccApi.tasks.scheduled_allocate_job",
     },
 } 
 
@@ -199,3 +203,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "PAGE_SIZE": 100,
 }
+
+# Grid Engine Commands
+GE_DELETE = ENV("GE_DELETE", default="/app/bin/qdel")
+GE_SUBMIT = ENV("GE_SUBMIT", default = "/app/bin/qsub")
+GE_STATUS = ENV("GE_STATUS", default = "/app/bin/qstat")
