@@ -10,7 +10,11 @@ def create_job(self, pk):
     job.status = Job.STATUS_ACTIVE
     job.save()
     # ToDo: use subprocess() to run qsub on the submit host
-    job_submit = subprocess.run([settings.GE_SUBMIT], capture_output=True)
+    cmd = settings.GE_SUBMIT.split(" ")
+    if isinstance(cmd, list):
+        job_submit = subprocess.run(cmd, capture_output=True)
+    else:
+        job_submit = subprocess.run([cmd], capture_output=True)        
     return job_submit
 
 
@@ -20,7 +24,11 @@ def delete_job(self, pk):
     job.status = Job.STATUS_DELETED
     job.save()
     # ToDo: use subprocess() to run {delete job command} on the submit host
-    job_delete = subprocess.run([settings.GE_DELETE], capture_output=True)
+    cmd = settings.GE_DELETE.split(" ")
+    if isinstance(cmd, list):
+        job_delete = subprocess.run(cmd, capture_output=True)
+    else:
+        job_delete = subprocess.run([cmd], capture_output=True)        
     return job_delete
 
 
@@ -40,7 +48,11 @@ def update_job_priority(self, pk, new_priority):
 @task(bind=True)
 def scheduled_poll_job(self):
     print(f"poll_job()")
-    job_poll = subprocess.run([settings.GE_STATUS], capture_output=True)
+    cmd = settings.GE_STATUS.split(" ")
+    if isinstance(cmd, list):
+        job_poll = subprocess.run(cmd, capture_output=True)
+    else: 
+        job_poll = subprocess.run([cmd], capture_output=True)
     return job_poll
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: need to process qstat output to know what to do
