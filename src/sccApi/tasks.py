@@ -7,15 +7,22 @@ from django.conf import settings
 @task(bind=True)
 def create_job(self, pk):
     job = Job.objects.get(pk=pk)
-    job.status = Job.STATUS_ACTIVE
-    job.save()
-    # ToDo: use subprocess() to run qsub on the submit host
-    cmd = settings.GE_SUBMIT.split(" ")
-    if isinstance(cmd, list):
-        job_submit = subprocess.run(cmd, capture_output=True)
+    if job.status == Job.STATUS_QUEUED:
+        job.status = Job.STATUS_ACTIVE
+        # ToDo: use subprocess() to run qsub on the submit host
+        try:
+            cmd = settings.GE_SUBMIT.split(" ")
+            if isinstance(cmd, list):
+                job_submit = subprocess.run(cmd, capture_output=True)
+            else:
+                job_submit = subprocess.run([cmd], capture_output=True)        
+            return job_submit
+        except Exception as e:
+            job.status = Job.STATUS_ERROR
+        finally:
+            job.save()
     else:
-        job_submit = subprocess.run([cmd], capture_output=True)        
-    return job_submit
+        return None
 
 
 @task(bind=True)
@@ -68,11 +75,13 @@ def scheduled_allocate_job(self):
     queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED).count()
     active_jobs = Job.objects.filter(status=Job.STATUS_ACTIVE).count()
 
+    # ToDo: add settings for MaxValues of Low, Normal, & High priority jobs
+    # settings.MAX_HIGH_JOBS
     queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED)
     for queued_job in queued_jobs:
-        queued_job.status = Job.STATUS_ACTIVE
-        queued_job.save()
-
+        # queued_job.status = Job.STATUS_ACTIVE
+        # queued_job.save()
+        create_job.delay(pk=queued_job.pk)
     # For each priorty, give count of STATUS_ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
