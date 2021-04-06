@@ -3,6 +3,7 @@ celerybeat-schedule.bak
 celerybeat-schedule.dat
 celerybeat-schedule.dir
 celerybeat.pid
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -123,3 +124,7 @@ dmypy.json
 
 # scc login
 dev/scc_vars.py
+
+# scc sample code
+atlas*
+sample_job*
