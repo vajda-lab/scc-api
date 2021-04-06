@@ -53,3 +53,9 @@ class Job(models.Model):
     class Meta:
         get_latest_by = ["created"]
         ordering = ["-created"]
+
+# ToDo: Create new model to log changes to Job (JobLog or better name)
+# Also look breifly into Python's built-in auditing features
+# https://docs.python.org/3/library/sys.html#auditing
+# https://docs.python.org/3/library/audit_events.html#audit-events
+# There are also some Django & DRF audit packages, but that may be more complexity than we need  
