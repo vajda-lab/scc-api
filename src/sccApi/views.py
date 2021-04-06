@@ -55,8 +55,8 @@ class JobViewSet(viewsets.ModelViewSet):
         Add a new Job instance to the task queue.
         """
         response = super().create(request)
-        pk = response.data.get("uuid")
-        tasks.create_job.delay(pk=pk)
+        # pk = response.data.get("uuid")
+        # tasks.create_job.delay(pk=pk)
         return response
 
     # def retrieve(self, request, pk=None):
