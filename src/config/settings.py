@@ -208,3 +208,8 @@ REST_FRAMEWORK = {
 GE_DELETE = ENV("GE_DELETE", default="/app/bin/qdel")
 GE_SUBMIT = ENV("GE_SUBMIT", default = "/app/bin/qsub")
 GE_STATUS = ENV("GE_STATUS", default = "/app/bin/qstat")
+
+# TASK QUEUE SETTINGS
+MAX_HIGH_JOBS = 50
+MAX_NORMAL_JOBS = 25
+MAX_LOW_JOBS = 25
