@@ -65,6 +65,9 @@ def scheduled_poll_job(self):
 @task(bind=True)
 def scheduled_allocate_job(self):
     # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
+    queued_jobs = Job.objects.filter(status='STATUS_QUEUED').count()
+    active_jobs = Job.objects.filter(status='STATUS_ACTIVE').count()
+
     # Do logic based on both
     # For each priorty, give count of STATUS_ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to
