@@ -3,6 +3,7 @@ import pytest
 from model_bakery import baker
 
 from sccApi import models, serializers, tasks
+from sccApi.models import Job
 from user_app.models import User
 
 
@@ -67,4 +68,17 @@ def test_scheduled_poll_job():
             assert b"5290728" in qstat_response.stdout
         else:
             assert b"job_number:                 5290723" in qstat_response.stdout
+
+@pytest.mark.django_db()
+def test_scheduled_allocate_job():
+    baker.make("sccApi.Job", status=models.Job.STATUS_QUEUED, _quantity=2)
+
+    assert Job.objects.filter(status=Job.STATUS_QUEUED).count() == 2
+    assert Job.objects.filter(status=Job.STATUS_ACTIVE).count() == 0
+
+    tasks.scheduled_allocate_job()
+
+    assert Job.objects.filter(status=Job.STATUS_QUEUED).count() == 0
+    assert Job.objects.filter(status=Job.STATUS_ACTIVE).count() == 2
+
 
