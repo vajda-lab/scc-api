@@ -49,6 +49,9 @@ class Job(models.Model):
             )
         ],
     )
+    # ToDo: Potential new fields
+    # output_file: models.FileField?; capture the results tar file from the SCC
+    # sge_task_id: models.IntegerField; capture SGE Task ID, to map Job instance to SGE task 
 
     class Meta:
         get_latest_by = ["created"]
