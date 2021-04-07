@@ -36,6 +36,9 @@ class Job(models.Model):
         max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED, null=False
     )
     user = models.ForeignKey("user_app.User", on_delete=models.CASCADE)
+    # in_file will be INPUT TAR file
+    # making sure input file path is accessible to other machines?
+    # Are these all (Django/submit host/SCC) running on the same server, or separate servers
     in_file = models.FileField(
         upload_to="jobs/",
         blank=True,
