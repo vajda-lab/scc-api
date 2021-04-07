@@ -6,6 +6,10 @@ from django.conf import settings
 # Group of Celery task actions
 @task(bind=True)
 def create_job(self, pk):
+    """
+    Takes existing Job object instances
+    Submits their data to the SCC.
+    """
     job = Job.objects.get(pk=pk)
     if job.status == Job.STATUS_QUEUED:
         job.status = Job.STATUS_ACTIVE
@@ -54,6 +58,10 @@ def update_job_priority(self, pk, new_priority):
 
 @task(bind=True)
 def scheduled_poll_job(self):
+    """
+    Checks status of current SCC jobs at a set interval
+    Interval determined by settings.CELERY_BEAT_SCHEDULE
+    """
     cmd = settings.GE_STATUS.split(" ")
     if isinstance(cmd, list):
         job_poll = subprocess.run(cmd, capture_output=True)
@@ -70,6 +78,11 @@ def scheduled_poll_job(self):
 
 @task(bind=True)
 def scheduled_allocate_job(self):
+    """
+    Allocates existing Job instances to Celery at a set interval
+    Interval determined by settings.CELERY_BEAT_SCHEDULE
+    Should do so based on availability of different priority queues
+    """
     # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
     queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED).count()
     active_jobs = Job.objects.filter(status=Job.STATUS_ACTIVE).count()
