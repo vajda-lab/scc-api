@@ -126,5 +126,5 @@ dmypy.json
 dev/scc_vars.py
 
 # scc sample code
-atlas*
+*atlas*
 sample_job*
