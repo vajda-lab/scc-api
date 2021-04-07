@@ -54,7 +54,6 @@ def update_job_priority(self, pk, new_priority):
 
 @task(bind=True)
 def scheduled_poll_job(self):
-    print(f"poll_job()")
     cmd = settings.GE_STATUS.split(" ")
     if isinstance(cmd, list):
         job_poll = subprocess.run(cmd, capture_output=True)
