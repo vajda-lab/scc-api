@@ -36,25 +36,39 @@ class Job(models.Model):
         max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED, null=False
     )
     user = models.ForeignKey("user_app.User", on_delete=models.CASCADE)
-    # in_file will be INPUT TAR file
-    # making sure input file path is accessible to other machines?
+    # input_file will be INPUT TAR file
+    # making sure input file path is accessible to other machines? Combined containers should fix this
     # Are these all (Django/submit host/SCC) running on the same server, or separate servers
-    in_file = models.FileField(
-        upload_to="jobs/",
+    #ToDo: If file fails validation, put filename in the message
+    input_file = models.FileField(
+        upload_to="jobs_input/",
         blank=True,
         null=True,
         validators=[
             FileExtensionValidator(
                 allowed_extensions=[
-                    "PDB",
+                    "tar.xz",
                 ],
-                message="Please upload a pdb file",
+                message="Please upload a compressed TAR file",
             )
         ],
     )
-    # ToDo: Potential new fields
-    # output_file: models.FileField?; capture the results tar file from the SCC
-    # sge_task_id: models.IntegerField; capture SGE Task ID, to map Job instance to SGE task 
+    # output_file will be results TAR file
+    #ToDo: If file fails validation, put filename in the message
+    output_file = models.FileField(
+        upload_to="jobs_output/",
+        blank=True,
+        null=True,
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=[
+                    "tar.xz",
+                ],
+                message="Please upload a compressed TAR file",
+            )
+        ],
+    )
+    sge_task_id = models.IntegerField(blank=True, null=True,)
 
     class Meta:
         get_latest_by = ["created"]
