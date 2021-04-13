@@ -48,6 +48,8 @@ class Job(models.Model):
             FileExtensionValidator(
                 allowed_extensions=[
                     "tar.xz",
+                    "tar.gz",
+                    "tar.bz2",
                 ],
                 message="Please upload a compressed TAR file",
             )
@@ -63,6 +65,8 @@ class Job(models.Model):
             FileExtensionValidator(
                 allowed_extensions=[
                     "tar.xz",
+                    "tar.gz",
+                    "tar.bz2",
                 ],
                 message="Please upload a compressed TAR file",
             )
