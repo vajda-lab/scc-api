@@ -56,6 +56,7 @@ class JobViewSet(viewsets.ModelViewSet):
         """
         # ToDo: Pass request.user as "user"
         # ToDo: How to copy and modify request to add request.user?
+        request.data["user"] = request.user.pk
         response = super().create(request)
         # pk = response.data.get("uuid")
         # tasks.create_job.delay(pk=pk)
