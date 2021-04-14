@@ -1,6 +1,6 @@
 import click
 import requests
-
+from requests.auth import HTTPBasicAuth
 
 SCC_API_TOKEN = ""  # TODO: pull from the environment
 SCC_API_URL = "http://localhost:8000/apis/"
@@ -33,12 +33,20 @@ def status():
 
 
 @cli.command()
-@click.argument('input_file', type=click.Path(exists=True, resolve_path=True))
+@click.argument('input_file', type=click.File('rb'))
 def submit(input_file):
-    click.echo(f"Submitting {input_file}")
-    data = {"input_file": input_file}
-    response = requests.post(f"{SCC_API_URL}jobs/", data=data)
+    files = {'input_file': input_file}
+    click.echo("Submitting")
+    data = {}
+    response = requests.post(
+        f"{SCC_API_URL}jobs/",
+        auth=HTTPBasicAuth('kojo@revsys.com', 'kojo'),
+        data=data,
+        files=files,
+        )
     print(response.status_code)
+    print(response)
+    print(response.text)
 
 
 if __name__ == "__main__":
