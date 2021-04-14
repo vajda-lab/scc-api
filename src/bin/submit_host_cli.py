@@ -33,9 +33,10 @@ def status():
 
 
 @cli.command()
+@click.argument('input_file', type=click.Path(exists=True, resolve_path=True))
 def submit():
-    click.echo("submit")
-    data = {}
+    click.echo(f"Submitting {input_file}")
+    data = {"input_file": input_file}
     response = requests.post(f"{SCC_API_URL}jobs/", data=data)
     print(response.status_code)
 
