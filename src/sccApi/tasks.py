@@ -71,7 +71,6 @@ def scheduled_poll_job(self):
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: need to process qstat output to know what to do
     # ToDo: Read about mocking (Thea's article)
-    # ToDo: Set up a schedule to run the poll job at regular intervals
     # ToDo: search for "assert_called_once_with" section in Thea's article
     # ToDo: Scheduling model code https://github.com/revsys/git-shoes/blob/main/config/settings.py#L249-L251
 
