@@ -54,6 +54,8 @@ class JobViewSet(viewsets.ModelViewSet):
         """
         Add a new Job instance to the task queue.
         """
+        # ToDo: Pass request.user as "user"
+        # ToDo: How to copy and modify request to add request.user?
         response = super().create(request)
         # pk = response.data.get("uuid")
         # tasks.create_job.delay(pk=pk)
