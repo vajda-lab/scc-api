@@ -71,7 +71,7 @@ def scheduled_poll_job(self):
     # kombu.exceptions.EncodeError: Object of type CompletedProcess is not JSON serializable
     # Returning portions of CompletedProcess to avoid error
     # kombu.exceptions.EncodeError: Object of type bytes is not JSON serializable
-    return (job_poll.args, job_poll.returncode, job_poll.stdout)
+    # return (job_poll.args, job_poll.returncode, job_poll.stdout)
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: need to process qstat output to know what to do
     # ToDo: Read about mocking (Thea's article)
