@@ -68,6 +68,13 @@ def scheduled_poll_job(self):
     else: 
         job_poll = subprocess.run([cmd], capture_output=True)
 
+    # Ask Amanda if the want output from this captured in the model?
+    # Do we want an automated running w/ Job ID or USER ID?
+        # If so, do you want it captured in the model?
+
+    # Capturing QSTAT info
+        # Parsing QSTAT output to save to model
+
     # kombu.exceptions.EncodeError: Object of type CompletedProcess is not JSON serializable
     # Returning portions of CompletedProcess to avoid error
     # kombu.exceptions.EncodeError: Object of type bytes is not JSON serializable
