@@ -62,6 +62,7 @@ def status():
         rprint(result)
 
 
+# ToDo Will SCC token provide auth for Django app and user_id for submit host?
 @cli.command()
 @click.argument("input_file", type=click.File("rb"))
 def submit(input_file):
