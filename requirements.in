@@ -11,6 +11,7 @@ psycopg2-binary
 pytz==2018.5
 redis
 requests==2.23.0
+rich
 # tornado>=4.2.0,<6.0.0
 whitenoise
 

@@ -1,6 +1,7 @@
 import click
 import requests
 from requests.auth import HTTPBasicAuth
+from rich import print as rprint
 
 SCC_API_TOKEN = ""  # TODO: pull from the environment
 SCC_API_URL = "http://localhost:8000/apis/"
@@ -51,7 +52,7 @@ def status():
     print(response.status_code)
     results = response.json()["results"]
     for result in results:
-        print(result)
+        rprint(result)
 
 
 @cli.command()
