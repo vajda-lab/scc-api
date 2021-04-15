@@ -162,7 +162,9 @@ pytest==6.2.2
     #   pytest-django
     #   pytest-lazy-fixture
 python-dateutil==2.8.1
-    # via faker
+    # via
+    #   -r ./requirements.in
+    #   faker
 pytz==2018.5
     # via
     #   -r ./requirements.in

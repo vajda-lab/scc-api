@@ -8,6 +8,7 @@ Django<3.2
 djangorestframework<3.13
 flower
 psycopg2-binary
+python-dateutil
 pytz==2018.5
 redis
 requests==2.23.0
