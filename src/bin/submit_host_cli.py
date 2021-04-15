@@ -24,7 +24,7 @@ def delete(job_id):
     Using job_id (Job.uuid)
     For Django object:
         Set Job.status to STATUS_DELETED
-    On SCC:
+    On SCC: # ToDo
         Stop the selected job (Job.sge_task_id)
         Delete all related files
     """
