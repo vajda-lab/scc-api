@@ -10,8 +10,6 @@ class Priority(models.IntegerChoices):
 
 
 class Job(models.Model):
-
-
     priority = models.IntegerField(choices=Priority.choices, default=Priority.LOW,)
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
@@ -80,6 +78,17 @@ class Job(models.Model):
     )
     sge_task_id = models.IntegerField(blank=True, null=True,)
 
+    # these are to track what comes out of qstat
+    # state The state of the job:
+    #   (r) – running;
+    #   (qw) – waiting to run;
+    #   (hqw) – on hold, waiting to run;
+    #   (Eqw) – job in error state;
+    #   (s) – suspended;
+    #   (t) – transfering.
+    job_state = models.CharField(max_length=10, blank=True, null=True)
+    job_submitted = models.DateTimeField(blank=True, null=True, help_text="Time when the job was submitted. When the job is running, this field is updated with the time the job started.")
+
     class Meta:
         get_latest_by = ["created"]
         ordering = ["-created"]
@@ -88,4 +97,4 @@ class Job(models.Model):
 # Also look breifly into Python's built-in auditing features
 # https://docs.python.org/3/library/sys.html#auditing
 # https://docs.python.org/3/library/audit_events.html#audit-events
-# There are also some Django & DRF audit packages, but that may be more complexity than we need  
+# There are also some Django & DRF audit packages, but that may be more complexity than we need
