@@ -15,9 +15,10 @@ def cli(debug):
 @cli.command()
 @click.argument("job_id", type=str)
 def delete(job_id):
-    # Add auth
-    # Pass job ID
-    # User will need to run status, to get uuid to use as job_id
+    """
+    Delete the selected job
+    User will need to run status first, to get uuid to use as job_id
+    """
 
     # Amanda questions
     # SHould delete REMOVE from DB, or just set status.STATUS_DELETED?
