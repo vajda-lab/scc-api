@@ -1,7 +1,12 @@
-import json
+import pytz
 
+from dateutil import tz
+from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils import timezone
+from dateutil.parser import parse
+from django.utils.dateparse import parse_datetime
+from rich.console import Console
+from rich.table import Table
 
 from sccApi.models import Job
 from user_app.models import User
@@ -533,6 +538,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user, created = User.objects.get_or_create(email="jeff.triplett@gmail.com")
 
+        table = Table()
+
+        table.add_column("job-ID")
+        table.add_column("prior")
+        table.add_column("name")
+        table.add_column("user")
+        table.add_column("state")
+        table.add_column("submit/start")
+        table.add_column("at")
+        table.add_column("queue")
+        table.add_column("slots")
+        table.add_column("ja-task-ID")
+
         rows = parse_output(OUTPUT)
         for row in rows:
             """
@@ -548,10 +566,33 @@ class Command(BaseCommand):
             - queue
             - slots
             - ja-task-ID
-            - """
+            -"""
+            table.add_row(
+                row["job-ID"],
+                row["prior"],
+                row["name"],
+                row["user"],
+                row["state"],
+                row["submit/start"],
+                row["at"],
+                row["queue"],
+                row.get("slots"),
+                row.get("ja-task-ID"),
+            )
+
             job_id = row["job-ID"]
+            job_state = row["state"]
+            job_submitted = f"{row['submit/start']} {row['at']}"  # .replace("/", "-")
+            job_submitted = parse(job_submitted)
+
+            if job_submitted:
+                job_submitted = pytz.timezone(settings.TIME_ZONE).localize(job_submitted, is_dst=None)
+
             job, created = Job.objects.update_or_create(
                 sge_task_id=job_id,
-                user=user)
-            print(job)
-            print(row)
+                user=user,
+                defaults={"job_state": job_state, "job_submitted": job_submitted},
+            )
+
+        console = Console()
+        console.print(table)
