@@ -41,14 +41,16 @@ def delete(job_id):
 
 @cli.command()
 def status():
-    # ToDo: Next 2021-04-15
-    # Make sure this shows user-appropriate output
+    """
+    Shows status of all jobs user is authorized to see
+    """
     click.echo("status")
     data = {}
     response = requests.get(
         f"{SCC_API_URL}jobs/",
         data=data,
         auth=HTTPBasicAuth("kojo@revsys.com", "kojo"),
+        # auth=HTTPBasicAuth("kojo.idrissa@gmail.com", "BlizzardManBetterThanTPain"),
     )
     print(response.status_code)
     results = response.json()["results"]
