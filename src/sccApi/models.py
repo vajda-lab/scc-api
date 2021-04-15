@@ -33,7 +33,7 @@ class Job(models.Model):
         (STATUS_QUEUED, "queued"),
     )
     status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED, null=False
+        max_length=20, choices=STATUS_CHOICES, default=STATUS_QUEUED, null=False, db_index=True
     )
     user = models.ForeignKey("user_app.User", on_delete=models.CASCADE)
     # input_file will be INPUT TAR file
