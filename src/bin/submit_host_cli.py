@@ -3,7 +3,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 from rich import print as rprint
 
-# from ..sccApi.models import Job
 
 SCC_API_TOKEN = ""
 # TODO: pull from the environment
