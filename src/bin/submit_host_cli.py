@@ -17,13 +17,15 @@ def cli(debug):
 @click.argument("job_id", type=str)
 def delete(job_id):
     """
-    Delete the selected job
-    User will need to run status first, to get uuid to use as job_id
+    User will need to run `status` first, to get uuid to use as job_id
+    Using job_id (Job.uuid)
+    For Django object:
+        Set Job.status to STATUS_DELETED
+    On SCC:
+        Stop the selected job (Job.sge_task_id)
+        Delete all related files
     """
 
-    # Amanda questions
-    # SHould delete REMOVE from DB, or just set status.STATUS_DELETED?
-    # Is STATUS_DELETED for Django or SCC?
     click.echo("delete")
     data = {}
     try:
@@ -40,7 +42,6 @@ def delete(job_id):
 @cli.command()
 def status():
     # ToDo: Next 2021-04-15
-    # Look at Rich library to format output
     # Make sure this shows user-appropriate output
     click.echo("status")
     data = {}
