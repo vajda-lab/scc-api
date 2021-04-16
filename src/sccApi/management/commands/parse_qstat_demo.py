@@ -17,13 +17,35 @@ def parse_output(output):
     lines = [line for line in output.split("\n") if len(line)]
     header_keys = [column for column in lines[0].split(" ") if len(column)]
     print(header_keys)
-    # print(header.split(" "))
+
+    headers = {}
+    header_cols = []
+    for header_col in range(len(header_keys)):
+        header = header_keys[header_col]
+        start = lines[0].find(header)
+        try:
+            next_header = header_keys[header_col + 1]
+            end = lines[0].find(next_header)
+        except IndexError:
+            end = None
+
+        header_cols.append(start)
+        headers[header] = {
+            "name": header,
+            "start": start,
+            "end": end,
+        }
+
     rows = []
     for row in lines[2:]:
         data = {}
-        columns = [column for column in row.split(" ") if len(column)]
-        for column in range(len(columns)):
-            data[header_keys[column]] = columns[column]
+        for column in headers:
+            start = headers[column]["start"]
+            end = headers[column]["end"]
+            if end:
+                data[column] = row[start:end]
+            else:
+                data[column] = row[start:]
         rows.append(data)
     return rows
 
@@ -34,23 +56,23 @@ def main(input_filename):
 
     if Path(input_filename).exists():
         input_buffer = Path(input_filename).read_text()
+        input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
 
         user, created = User.objects.get_or_create(email="jeff.triplett@gmail.com")
 
-        table = Table()
+        rows = parse_output(input_buffer)
 
+        table = Table()
         table.add_column("job-ID")
         table.add_column("prior")
         table.add_column("name")
         table.add_column("user")
         table.add_column("state")
-        table.add_column("submit/start")
-        table.add_column("at")
+        table.add_column("submit-start-at")
         table.add_column("queue")
         table.add_column("slots")
         table.add_column("ja-task-ID")
 
-        rows = parse_output(input_buffer)
         for row in rows:
             """
             TODO: Do something with `state`
@@ -72,8 +94,7 @@ def main(input_filename):
                 row["name"],
                 row["user"],
                 row["state"],
-                row["submit/start"],
-                row["at"],
+                row["submit-start-at"],
                 row["queue"],
                 row.get("slots"),
                 row.get("ja-task-ID"),
@@ -82,7 +103,7 @@ def main(input_filename):
             try:
                 job_id = row["job-ID"]
                 job_state = row["state"]
-                job_submitted = f"{row['submit/start']} {row['at']}".replace("/", "-")
+                job_submitted = f"{row['submit-start-at']}".replace("/", "-")
                 job_submitted = parse(job_submitted)
 
                 if job_submitted:
@@ -100,8 +121,7 @@ def main(input_filename):
                     },
                 )
             except Exception as e:
-                print(f"{job_id}")
-                print(f"{e}")
+                print(f"{job_id} :: {e}")
 
         console = Console()
         console.print(table)
