@@ -32,7 +32,9 @@
       class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top"
       id="navbar"
     >
-      <a class="navbar-brand" href="{% url 'home' %}">SCC API at Boston University</a>
+      <a class="navbar-brand" href="{% url 'home' %}">
+        SCC API at Boston University
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -49,7 +51,9 @@
         <ul class="navbar-nav mr-auto">
           {% if user.is_authenticated %}
           <li class="nav-item active">
-            <a class="nav-link" href="{% url 'sccApi:user_home' %}">SCC Queue<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="{% url 'sccApi:user_home' %}">
+              SCC Queue<span class="sr-only">(current)</span>
+            </a>
           </li>
           {% endif %}
         </ul>

@@ -24,7 +24,9 @@
             <tr>
               <td>{{ job.created }}</td>
               <td>
-                <a href="{%url 'sccApi:job_detail' slug=job.uuid %}">{{job.uuid}}</a>
+                <a href="{%url 'sccApi:job_detail' slug=job.uuid %}">
+                  {{job.uuid}}
+                </a>
               </td>
               <td>{{ job.get_status_display }}</td>
               <td>{{ job.user }}</td>
