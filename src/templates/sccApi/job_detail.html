@@ -1,49 +1,39 @@
-{% extends "base.html" %}
-
-{% if user.is_authenticated %}
-
-{% load static %}
-
-
-{% block title %}{{ job.uuid }}{% endblock %}
-
-{% block content %}
-  <div style="margin:70px">
-    <div>
-      <h2>{{job.uuid}}</h2>
+{% extends "base.html" %} {% load static %} {% if user.is_authenticated %} {%
+block title %}{{ job.uuid }}{% endblock %} {% block content %}
+<div style="margin: 70px">
+  <div>
+    <h2>{{job.uuid}}</h2>
   </div>
 
-      <div class="container">
-      <div class="row">
-        <div class="col-sm-12">
-          <table id="in-progress" class="table table-striped table-bordered" style="width:100%">
-            <thead>
-              <tr>
-                <th>Created</th>
-                <th>Job</th>
-                <th>Status</th>
-                <th>User</th>
-                <th>File</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{{ job.created }}</td>
-                <td>{{job.uuid}}</td>
-                <td>{{ job.get_status_display }}</td>
-                <td>{{ job.user }}</td>
-                <td>{{ job.file }}</td>
-              </tr>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <table
+          id="in-progress"
+          class="table table-striped table-bordered"
+          style="width: 100%"
+        >
+          <thead>
+            <tr>
+              <th>Created</th>
+              <th>Job</th>
+              <th>Status</th>
+              <th>User</th>
+              <th>File</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ job.created }}</td>
+              <td>{{job.uuid}}</td>
+              <td>{{ job.get_status_display }}</td>
+              <td>{{ job.user }}</td>
+              <td>{{ job.file }}</td>
+            </tr>
           </tbody>
-          </table>
-        </div>
+        </table>
       </div>
     </div>
-{% endblock %}
-
-{% endif %}
-
-
-{% block extra_js %}
-
-{% endblock %}
+  </div>
+</div>
+{% endblock %} {% endif %} {% block extra_js %} {% endblock %}
