@@ -15,31 +15,40 @@ watch:
     watch docker ps
 
 # Django
-check:
+@check:
     docker-compose run --rm django python manage.py check
 
-makemigrations:
+@makemigrations:
     docker-compose run --rm django python manage.py makemigrations
 
-migrate:
+@migrate:
     docker-compose run --rm django python manage.py migrate --noinput
 
-run:
+@fmt:
+    -black .
+    -prettier --write ./src/templates/
+
+@lint:
+    -black --check .
+    -curlylint src/templates/
+    -prettier --check ./src/templates/
+
+@run:
     docker-compose run --rm django python manage.py runserver
 
-shell:
+@shell:
     docker-compose run --rm django /bin/bash
 
-django-shell:
+@django-shell:
     docker-compose run --rm django python manage.py shell
 
-showmigrations:
+@showmigrations:
     docker-compose run --rm django python manage.py showmigrations
 
-test +ARGS="":
+@test +ARGS="":
     docker-compose run --rm django pytest -s {{ARGS}}
 
 # Environment
-pip-compile:
+@pip-compile:
     pip install --upgrade --requirement ./requirements.in
     pip-compile --rebuild ./requirements.in
