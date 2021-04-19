@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0013_auto_20210322_2117'),
+        ("sccApi", "0013_auto_20210322_2117"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='priority',
-            field=models.IntegerField(choices=[(0, 'low'), (1, 'normal'), (2, 'high')], default=0),
+            model_name="job",
+            name="priority",
+            field=models.IntegerField(
+                choices=[(0, "low"), (1, "normal"), (2, "high")], default=0
+            ),
         ),
     ]

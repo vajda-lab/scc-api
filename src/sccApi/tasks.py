@@ -19,7 +19,7 @@ def create_job(self, pk):
             if isinstance(cmd, list):
                 job_submit = subprocess.run(cmd, capture_output=True)
             else:
-                job_submit = subprocess.run([cmd], capture_output=True)        
+                job_submit = subprocess.run([cmd], capture_output=True)
             return job_submit
         except Exception as e:
             job.status = Job.STATUS_ERROR
@@ -39,7 +39,7 @@ def delete_job(self, pk):
     if isinstance(cmd, list):
         job_delete = subprocess.run(cmd, capture_output=True)
     else:
-        job_delete = subprocess.run([cmd], capture_output=True)        
+        job_delete = subprocess.run([cmd], capture_output=True)
     return job_delete
 
 
@@ -52,7 +52,7 @@ def update_job_priority(self, pk, new_priority):
     job.save()
     # ToDo: use subprocess() to run {command to change job priority} on the submit host
     # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
-        # Do we need to explicitly create separate queues in settings?
+    # Do we need to explicitly create separate queues in settings?
     # ToDo: We'll need to pass job.priority into this task, if we add a priority field to Job (this comment doesn't make sense); Comment makes sense if more than 2 priority levels
 
 
@@ -65,15 +65,15 @@ def scheduled_poll_job(self):
     cmd = settings.GE_STATUS.split(" ")
     if isinstance(cmd, list):
         job_poll = subprocess.run(cmd, capture_output=True)
-    else: 
+    else:
         job_poll = subprocess.run([cmd], capture_output=True)
 
     # Ask Amanda if the want output from this captured in the model?
     # Do we want an automated running w/ Job ID or USER ID?
-        # If so, do you want it captured in the model?
+    # If so, do you want it captured in the model?
 
     # Capturing QSTAT info
-        # Parsing QSTAT output to save to model
+    # Parsing QSTAT output to save to model
 
     # kombu.exceptions.EncodeError: Object of type CompletedProcess is not JSON serializable
     # Returning portions of CompletedProcess to avoid error
@@ -106,7 +106,3 @@ def scheduled_allocate_job(self):
         create_job.delay(pk=queued_job.pk)
     # For each priorty, give count of STATUS_ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to
-
-
-
-

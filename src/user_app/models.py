@@ -25,7 +25,10 @@ class User(AbstractUser):
     organization = models.CharField(max_length=250)
     notes = models.CharField(max_length=1000, blank=True, null=True)
     max_job_submission = models.IntegerField(default=20)
-    priority = models.IntegerField(choices=Priority.choices, default=Priority.LOW,)
+    priority = models.IntegerField(
+        choices=Priority.choices,
+        default=Priority.LOW,
+    )
 
     def daily_job_count(self):
         return (

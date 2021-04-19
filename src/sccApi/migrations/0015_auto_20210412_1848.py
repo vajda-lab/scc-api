@@ -7,27 +7,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0014_auto_20210324_2051'),
+        ("sccApi", "0014_auto_20210324_2051"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='job',
-            name='in_file',
+            model_name="job",
+            name="in_file",
         ),
         migrations.AddField(
-            model_name='job',
-            name='input_file',
-            field=models.FileField(blank=True, null=True, upload_to='jobs_input/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['tar.xz'], message='Please upload a compressed TAR file')]),
+            model_name="job",
+            name="input_file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="jobs_input/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=["tar.xz"],
+                        message="Please upload a compressed TAR file",
+                    )
+                ],
+            ),
         ),
         migrations.AddField(
-            model_name='job',
-            name='output_file',
-            field=models.FileField(blank=True, null=True, upload_to='jobs_output/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['tar.xz'], message='Please upload a compressed TAR file')]),
+            model_name="job",
+            name="output_file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="jobs_output/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=["tar.xz"],
+                        message="Please upload a compressed TAR file",
+                    )
+                ],
+            ),
         ),
         migrations.AddField(
-            model_name='job',
-            name='sge_task_id',
+            model_name="job",
+            name="sge_task_id",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

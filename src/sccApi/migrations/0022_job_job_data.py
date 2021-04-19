@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0021_auto_20210415_2033'),
+        ("sccApi", "0021_auto_20210415_2033"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='job_data',
+            model_name="job",
+            name="job_data",
             field=models.JSONField(blank=True, default=dict),
         ),
     ]

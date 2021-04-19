@@ -7,18 +7,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0017_auto_20210414_2032'),
+        ("sccApi", "0017_auto_20210414_2032"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='input_file',
-            field=models.FileField(blank=True, null=True, upload_to='jobs_input/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['tar.bz2', 'tar.gz', 'tar.xz', 'xz'], message='Please upload a compressed TAR file')]),
+            model_name="job",
+            name="input_file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="jobs_input/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=["tar.bz2", "tar.gz", "tar.xz", "xz"],
+                        message="Please upload a compressed TAR file",
+                    )
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='job',
-            name='output_file',
-            field=models.FileField(blank=True, null=True, upload_to='jobs_output/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['tar.bz2', 'tar.gz', 'tar.xz', 'xz'], message='Please upload a compressed TAR file')]),
+            model_name="job",
+            name="output_file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="jobs_output/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=["tar.bz2", "tar.gz", "tar.xz", "xz"],
+                        message="Please upload a compressed TAR file",
+                    )
+                ],
+            ),
         ),
     ]
