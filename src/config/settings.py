@@ -84,8 +84,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": ENV.db("DATABASE_URL"),
-    "dashboard": ENV.db("DATABASE_URL"),
 }
+# dashboard database for `django-sql-dashboard`
+DATABASES["dashboard"] = DATABASES["default"].copy()
 DATABASES["dashboard"]["OPTIONS"] = {
     "options": "-c default_transaction_read_only=on -c statement_timeout=100"
 }
