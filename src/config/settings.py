@@ -34,13 +34,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # third party
-    "user_app.apps.UserAppConfig",
     "constance",
-    "rest_framework",
     "django_extensions",
+    "django_sql_dashboard",
+    "rest_framework",
     # first party
     "sccApi"
     # 'sccApi.apps.SccApiConfig',
+    "user_app.apps.UserAppConfig",
 ]
 
 MIDDLEWARE = [
@@ -82,10 +83,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    "default": ENV.db(
-        "DATABASE_URL",
-    )
+    "default": ENV.db("DATABASE_URL"),
+    "dashboard": ENV.db("DATABASE_URL"),
 }
+DATABASES["dashboard"]["OPTIONS"] = (
+    {"options": "-c default_transaction_read_only=on -c statement_timeout=100"},
+)
 
 
 CONSTANCE_REDIS_CONNECTION = "redis://redis:6379/0"
