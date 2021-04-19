@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django_sql_dashboard",
     "rest_framework",
     # first party
-    "sccApi"
+    "sccApi",
     # 'sccApi.apps.SccApiConfig',
     "user_app.apps.UserAppConfig",
 ]
@@ -86,9 +86,9 @@ DATABASES = {
     "default": ENV.db("DATABASE_URL"),
     "dashboard": ENV.db("DATABASE_URL"),
 }
-DATABASES["dashboard"]["OPTIONS"] = (
-    {"options": "-c default_transaction_read_only=on -c statement_timeout=100"},
-)
+DATABASES["dashboard"]["OPTIONS"] = {
+    "options": "-c default_transaction_read_only=on -c statement_timeout=100"
+}
 
 
 CONSTANCE_REDIS_CONNECTION = "redis://redis:6379/0"
