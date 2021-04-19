@@ -87,9 +87,8 @@ DATABASES = {
 }
 # dashboard database for `django-sql-dashboard`
 DATABASES["dashboard"] = DATABASES["default"].copy()
-DATABASES["dashboard"]["OPTIONS"] = {
-    "options": "-c default_transaction_read_only=on -c statement_timeout=100"
-}
+DATABASES["dashboard"]["OPTIONS"] = {"options": "-c default_transaction_read_only=on -c statement_timeout=100"}
+DATABASES["dashboard"]["TEST"] = {"LEGACY": True}
 
 
 CONSTANCE_REDIS_CONNECTION = "redis://redis:6379/0"
