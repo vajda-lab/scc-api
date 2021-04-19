@@ -68,6 +68,6 @@ jobs:
         run: |
           black --check .
 
-      # - name: Lints HTML templates
-      #   run: |
-      #     curlylint src/templates/
+      - name: Lints HTML templates
+        run: |
+          curlylint src/templates/
