@@ -63,3 +63,11 @@ jobs:
 
         run: |
           python -m pytest src
+
+      - name: Lints Python
+        run: |
+          black --check .
+
+      # - name: Lints HTML templates
+      #   run: |
+      #     curlylint src/templates/
