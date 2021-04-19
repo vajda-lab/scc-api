@@ -4,6 +4,9 @@ from .settings import *  # noqa
 
 # Let's speed up our tests!
 
+if "dashboard" in DATABASES:
+    del DATABASES["dashboard"]
+
 # Disable DEBUG
 DEBUG = False
 
