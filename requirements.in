@@ -18,6 +18,7 @@ whitenoise
 
 # development
 black==20.8b1
+curlylint
 django-test-plus
 factory_boy
 Faker
