@@ -88,6 +88,7 @@ class Job(models.Model):
     #   (t) – transfering.
     job_state = models.CharField(max_length=10, blank=True, null=True)
     job_submitted = models.DateTimeField(blank=True, null=True, help_text="Time when the job was submitted. When the job is running, this field is updated with the time the job started.")
+    job_data = models.JSONField(default=dict, blank=True)
 
     class Meta:
         get_latest_by = ["created"]
