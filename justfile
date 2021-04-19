@@ -2,16 +2,16 @@
     just --list
 
 # Docker
-build:
+@build:
     docker-compose build
 
-up +ARGS="":
+@up +ARGS="":
     docker-compose up {{ARGS}}
 
-down:
+@down:
     docker-compose down
 
-watch:
+@watch:
     watch docker ps
 
 # Django
@@ -26,12 +26,12 @@ watch:
 
 @fmt:
     -black .
-    -prettier --write ./src/templates/
+    -prettier --config=./prettier.config.js --write ./src/templates/
 
 @lint:
     -black --check .
     -curlylint src/templates/
-    -prettier --check ./src/templates/
+    -prettier --config=./prettier.config.js  --check ./src/templates/
 
 @run:
     docker-compose run --rm django python manage.py runserver
