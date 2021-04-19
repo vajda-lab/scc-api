@@ -28,12 +28,18 @@
     -black .
     -npx prettier --config=./prettier.config.js --write ./src/templates/
 
+@manage +ARGS="--help":
+    docker-compose run --rm django python manage.py {{ARGS}}
+
 @lint:
     -black --check .
     -curlylint src/templates/
     -npx prettier --config=./prettier.config.js  --check ./src/templates/
 
-@run:
+@run +ARGS="":
+    docker-compose run --rm django {{ARGS}}
+
+@serve:
     docker-compose run --rm django python manage.py runserver
 
 @shell:
