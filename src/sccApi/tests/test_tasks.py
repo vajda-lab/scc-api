@@ -10,9 +10,11 @@ from user_app.models import User
 @pytest.mark.django_db()
 def test_create_job():
     """
-    Tests task status properly updated by tasks.create_job() 
+    Tests task status properly updated by tasks.create_job()
     """
-    job = baker.make("sccApi.Job",)
+    job = baker.make(
+        "sccApi.Job",
+    )
     assert job.status != models.Job.STATUS_ACTIVE
     qsub_response = tasks.create_job(job.pk)
     job.refresh_from_db()
@@ -21,12 +23,15 @@ def test_create_job():
     assert b"5290723" in qsub_response.stdout
     assert b"has been submitted" in qsub_response.stdout
 
+
 @pytest.mark.django_db()
 def test_delete_job():
     """
-    Tests task status properly updated by tasks.delete_job() 
+    Tests task status properly updated by tasks.delete_job()
     """
-    job = baker.make("sccApi.Job",)
+    job = baker.make(
+        "sccApi.Job",
+    )
     assert job.status != models.Job.STATUS_DELETED
     qdel_response = tasks.delete_job(job.pk)
     job.refresh_from_db()
@@ -37,14 +42,17 @@ def test_delete_job():
     assert b"has registered the job" in qdel_response.stdout
     assert b"for deletion" in qdel_response.stdout
 
+
 @pytest.mark.django_db()
 def test_update_job_priority():
     """
     Tests task priority properly updated by tasks.update_job_priority
 
-    Current assumption: 3 priority levels: Low/Normal/High 
+    Current assumption: 3 priority levels: Low/Normal/High
     """
-    job = baker.make("sccApi.Job",)
+    job = baker.make(
+        "sccApi.Job",
+    )
     # 0 or Low is the default value
     assert job.priority == models.Priority.LOW
     # Update to High
@@ -55,6 +63,7 @@ def test_update_job_priority():
     tasks.update_job_priority(job.pk, models.Priority.NORMAL)
     job.refresh_from_db()
     assert job.priority == models.Priority.NORMAL
+
 
 # @pytest.mark.django_db()
 # def test_scheduled_poll_job():
@@ -69,6 +78,7 @@ def test_update_job_priority():
 #         else:
 #             assert b"job_number:                 5290723" in qstat_response[2]
 
+
 @pytest.mark.django_db()
 def test_scheduled_allocate_job():
     baker.make("sccApi.Job", status=models.Job.STATUS_QUEUED, _quantity=2)
@@ -80,5 +90,3 @@ def test_scheduled_allocate_job():
 
     assert Job.objects.filter(status=Job.STATUS_QUEUED).count() == 0
     assert Job.objects.filter(status=Job.STATUS_ACTIVE).count() == 2
-
-

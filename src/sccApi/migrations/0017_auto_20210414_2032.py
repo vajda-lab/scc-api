@@ -7,13 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0016_auto_20210413_1927'),
+        ("sccApi", "0016_auto_20210413_1927"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='input_file',
-            field=models.FileField(blank=True, null=True, upload_to='jobs_input/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['tar.xz', 'tar.gz', 'tar.bz2', 'xz'], message='Please upload a compressed TAR file')]),
+            model_name="job",
+            name="input_file",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="jobs_input/",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=["tar.xz", "tar.gz", "tar.bz2", "xz"],
+                        message="Please upload a compressed TAR file",
+                    )
+                ],
+            ),
         ),
     ]

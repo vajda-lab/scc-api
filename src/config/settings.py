@@ -190,7 +190,7 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute="*/1"),  # every minute
         "task": "sccApi.tasks.scheduled_allocate_job",
     },
-} 
+}
 
 # DRF Settings
 REST_FRAMEWORK = {
@@ -206,8 +206,8 @@ REST_FRAMEWORK = {
 
 # Grid Engine Commands
 GE_DELETE = ENV("GE_DELETE", default="/app/bin/qdel")
-GE_SUBMIT = ENV("GE_SUBMIT", default = "/app/bin/qsub")
-GE_STATUS = ENV("GE_STATUS", default = "/app/bin/qstat")
+GE_SUBMIT = ENV("GE_SUBMIT", default="/app/bin/qsub")
+GE_STATUS = ENV("GE_STATUS", default="/app/bin/qstat")
 
 # TASK QUEUE SETTINGS
 MAX_HIGH_JOBS = 50

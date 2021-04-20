@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0011_auto_20210316_2105'),
+        ("sccApi", "0011_auto_20210316_2105"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='priority',
+            model_name="job",
+            name="priority",
             field=models.BooleanField(default=False),
         ),
     ]

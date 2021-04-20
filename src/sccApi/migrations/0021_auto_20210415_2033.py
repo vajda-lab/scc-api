@@ -6,18 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0020_auto_20210415_2020'),
+        ("sccApi", "0020_auto_20210415_2020"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='job_state',
+            model_name="job",
+            name="job_state",
             field=models.CharField(blank=True, max_length=10, null=True),
         ),
         migrations.AddField(
-            model_name='job',
-            name='job_submitted',
-            field=models.DateTimeField(blank=True, help_text='Time when the job was submitted. When the job is running, this field is updated with the time the job started.', null=True),
+            model_name="job",
+            name="job_submitted",
+            field=models.DateTimeField(
+                blank=True,
+                help_text="Time when the job was submitted. When the job is running, this field is updated with the time the job started.",
+                null=True,
+            ),
         ),
     ]

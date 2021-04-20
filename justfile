@@ -2,44 +2,59 @@
     just --list
 
 # Docker
-build:
+@build:
     docker-compose build
 
-up +ARGS="":
+@up +ARGS="":
     docker-compose up {{ARGS}}
 
-down:
+@down:
     docker-compose down
 
-watch:
+@watch:
     watch docker ps
 
 # Django
-check:
+@check:
     docker-compose run --rm django python manage.py check
 
-makemigrations:
+@makemigrations:
     docker-compose run --rm django python manage.py makemigrations
 
-migrate:
+@migrate:
     docker-compose run --rm django python manage.py migrate --noinput
 
-run:
+@fmt:
+    -black .
+    -npx prettier --config=./prettier.config.js --write ./src/templates/
+
+@manage +ARGS="--help":
+    docker-compose run --rm django python manage.py {{ARGS}}
+
+@lint:
+    -black --check .
+    -curlylint src/templates/
+    -npx prettier --config=./prettier.config.js  --check ./src/templates/
+
+@run +ARGS="":
+    docker-compose run --rm django {{ARGS}}
+
+@serve:
     docker-compose run --rm django python manage.py runserver
 
-shell:
+@shell:
     docker-compose run --rm django /bin/bash
 
-django-shell:
+@django-shell:
     docker-compose run --rm django python manage.py shell
 
-showmigrations:
+@showmigrations:
     docker-compose run --rm django python manage.py showmigrations
 
-test +ARGS="":
+@test +ARGS="":
     docker-compose run --rm django pytest -s {{ARGS}}
 
 # Environment
-pip-compile:
+@pip-compile:
     pip install --upgrade --requirement ./requirements.in
     pip-compile --rebuild ./requirements.in

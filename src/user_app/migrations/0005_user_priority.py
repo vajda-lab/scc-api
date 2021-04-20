@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_app', '0004_user_max_job_submission'),
+        ("user_app", "0004_user_max_job_submission"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='priority',
-            field=models.IntegerField(choices=[(0, 'low'), (1, 'normal'), (2, 'high')], default=0),
+            model_name="user",
+            name="priority",
+            field=models.IntegerField(
+                choices=[(0, "low"), (1, "normal"), (2, "high")], default=0
+            ),
         ),
     ]
