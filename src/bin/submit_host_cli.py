@@ -47,6 +47,8 @@ def delete(job_id):
 def status():
     """
     Shows status of all jobs user is authorized to see
+    Draws data from Django app
+    Django app updated from SCC, via scheduled_poll_job Celery task
     """
     click.echo("status")
     data = {}
@@ -66,6 +68,10 @@ def status():
 @cli.command()
 @click.argument("input_file", type=click.File("rb"))
 def submit(input_file):
+    """
+    Takes compressed input TAR file, creates job in Django app
+    Submission to SCC is handled by scheduled_allocate_job Celery task
+    """
     files = {"input_file": input_file}
     click.echo("Submitting")
     data = {}
