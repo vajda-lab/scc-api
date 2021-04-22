@@ -1,4 +1,5 @@
 import subprocess
+import tarfile
 from celery import task
 from .models import Job
 from django.conf import settings
@@ -16,9 +17,13 @@ def create_scc_job(self, pk):
 
         # ToDO: Figure out how to make sure directory setup runs on SCC 
         # Setup SCC job directory; this may change based on container situation
-        subprocess.run(["mkdir", str(job.uuid)])
+        scc_job_dir = str(job.uuid)
+        scc_input_file = str(job.input_file) # Will this work? Or does the file need to be opened/read?
+        subprocess.run(["mkdir", scc_job_dir])
+        subprocess.run(["tar", "-xf", scc_input_file, "-C", scc_job_dir])
 
         # ToDo: use subprocess() to run qsub on the submit host
+        # ToDo: how to "point" qsub at the right directory?
         try:
             cmd = settings.GE_SUBMIT.split(" ")
             if isinstance(cmd, list):
