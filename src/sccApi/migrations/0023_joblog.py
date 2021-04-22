@@ -7,21 +7,34 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0022_job_job_data'),
+        ("sccApi", "0022_job_job_data"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='JobLog',
+            name="JobLog",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('event', models.TextField()),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('job', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sccApi.job')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("event", models.TextField()),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "job",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="sccApi.job"
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created'],
-                'get_latest_by': ['created'],
+                "ordering": ["-created"],
+                "get_latest_by": ["created"],
             },
         ),
     ]
