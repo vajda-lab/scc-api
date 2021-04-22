@@ -35,8 +35,6 @@ def create_scc_job(self, pk):
 @task(bind=True)
 def delete_job(self, pk):
     job = Job.objects.get(pk=pk)
-    job.status = Job.STATUS_DELETED
-    job.save()
 
     JobLog.objects.create(job=job, event="Job status changed to deleted")
 

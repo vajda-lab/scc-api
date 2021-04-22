@@ -179,7 +179,12 @@ def test_job_delete(
     assert response.status_code == http_status
 
     # Do we have the correct number of jobs, after delete attempt
-    assert models.Job.objects.filter(pk=job.pk).count() == expected_jobs
+    assert (
+        models.Job.objects.filter(pk=job.pk)
+        .exclude(status=models.Job.STATUS_DELETED)
+        .count()
+        == expected_jobs
+    )
 
 
 def test_job_partial_update_noauth(tp, job):

@@ -1,7 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.views.generic import ListView, DetailView
+from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 from .models import Job
 from . import serializers
@@ -61,13 +63,19 @@ class JobViewSet(viewsets.ModelViewSet):
         """
         Delete a Job.
         """
+        instance = self.get_object()
+        instance.status = Job.STATUS_DELETED
+        instance.save()
 
         # Call Celery to manage our job.
         tasks.delete_job.delay(pk)
 
+        # response = super().destroy(request, pk=pk)
+        # self.perform_destroy(instance)
+
         # TODO: This should only soft-delete the Job instead of removing it.
-        response = super().destroy(request, pk=pk)
-        return response
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def partial_update(self, request, pk=None, new_priority=None):
         """
