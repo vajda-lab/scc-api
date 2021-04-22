@@ -5,10 +5,10 @@ from django.conf import settings
 
 # Group of Celery task actions
 @task(bind=True)
-def create_job(self, pk):
+def create_scc_job(self, pk):
     """
-    Takes existing Job object instances
-    Submits their data to the SCC.
+    Takes existing Job object instances from Django API
+    Submits their data to the SCC for processing
     """
     job = Job.objects.get(pk=pk)
     if job.status == Job.STATUS_QUEUED:
@@ -103,6 +103,6 @@ def scheduled_allocate_job(self):
     for queued_job in queued_jobs:
         # queued_job.status = Job.STATUS_ACTIVE
         # queued_job.save()
-        create_job.delay(pk=queued_job.pk)
+        create_scc_job.delay(pk=queued_job.pk)
     # For each priorty, give count of STATUS_ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to

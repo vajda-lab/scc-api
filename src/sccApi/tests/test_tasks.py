@@ -8,15 +8,15 @@ from user_app.models import User
 
 
 @pytest.mark.django_db()
-def test_create_job():
+def test_create_scc_job():
     """
-    Tests task status properly updated by tasks.create_job()
+    Tests task status properly updated by tasks.create_scc_job()
     """
     job = baker.make(
         "sccApi.Job",
     )
     assert job.status != models.Job.STATUS_ACTIVE
-    qsub_response = tasks.create_job(job.pk)
+    qsub_response = tasks.create_scc_job(job.pk)
     job.refresh_from_db()
     assert job.status == models.Job.STATUS_ACTIVE
     assert qsub_response.returncode == 0
