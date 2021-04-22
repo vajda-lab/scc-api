@@ -43,6 +43,10 @@ def create_scc_job(self, pk):
 
 @task(bind=True)
 def delete_job(self, pk):
+    """
+    Sets Job.status to STATUS_DELETED in Django
+    Also delete job directory and associated files on SCC
+    """
     job = Job.objects.get(pk=pk)
     job.status = Job.STATUS_DELETED
     job.save()
@@ -60,6 +64,10 @@ def delete_job(self, pk):
 
 @task(bind=True)
 def update_job_priority(self, pk, new_priority):
+    """
+    Update Job.priority
+    Update priority on SCC or via Celery (unknown)
+    """
     job = Job.objects.get(pk=pk)
     # Current assumption, only 2 queues: standard & priority
     # If more priority levels are added, logic will need to change
@@ -70,8 +78,8 @@ def update_job_priority(self, pk, new_priority):
 
     # ToDo: use subprocess() to run {command to change job priority} on the submit host
     # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
-    # Do we need to explicitly create separate queues in settings?
-    # ToDo: We'll need to pass job.priority into this task, if we add a priority field to Job (this comment doesn't make sense); Comment makes sense if more than 2 priority levels
+    # ToDo: Decide how we're handline priority, mechanically
+    # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
 
 
 @task(bind=True)
