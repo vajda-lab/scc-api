@@ -13,6 +13,11 @@ def create_scc_job(self, pk):
     job = Job.objects.get(pk=pk)
     if job.status == Job.STATUS_QUEUED:
         job.status = Job.STATUS_ACTIVE
+
+        # ToDO: Figure out how to make sure directory setup runs on SCC 
+        # Setup SCC job directory; this may change based on container situation
+        subprocess.run(["mkdir", str(job.uuid)])
+
         # ToDo: use subprocess() to run qsub on the submit host
         try:
             cmd = settings.GE_SUBMIT.split(" ")
