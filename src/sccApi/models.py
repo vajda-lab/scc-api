@@ -113,8 +113,17 @@ class Job(models.Model):
         ordering = ["-created"]
 
 
-# ToDo: Create new model to log changes to Job (JobLog or better name)
 # Also look breifly into Python's built-in auditing features
 # https://docs.python.org/3/library/sys.html#auditing
 # https://docs.python.org/3/library/audit_events.html#audit-events
 # There are also some Django & DRF audit packages, but that may be more complexity than we need
+class JobLog(models.Model):
+    job = models.ForeignKey("Job", on_delete=models.CASCADE)
+    event = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    # TODO: We may want a user?
+    # user = models.ForeignKey("user_app.User", on_delete=models.CASCADE)
+
+    class Meta:
+        get_latest_by = ["created"]
+        ordering = ["-created"]
