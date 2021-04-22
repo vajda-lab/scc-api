@@ -1,7 +1,7 @@
 import subprocess
 import tarfile
 from celery import task
-from .models import Job
+from .models import Job, JobLog
 from django.conf import settings
 
 # Group of Celery task actions
@@ -21,6 +21,8 @@ def create_scc_job(self, pk):
         scc_input_file = str(job.input_file) # Will this work? Or does the file need to be opened/read?
         subprocess.run(["mkdir", scc_job_dir])
         subprocess.run(["tar", "-xf", scc_input_file, "-C", scc_job_dir])
+
+        JobLog.objects.create(job=job, event="Job status changed to active")
 
         # ToDo: use subprocess() to run qsub on the submit host
         # ToDo: how to "point" qsub at the right directory?
@@ -44,6 +46,9 @@ def delete_job(self, pk):
     job = Job.objects.get(pk=pk)
     job.status = Job.STATUS_DELETED
     job.save()
+
+    JobLog.objects.create(job=job, event="Job status changed to deleted")
+
     # ToDo: use subprocess() to run {delete job command} on the submit host
     cmd = settings.GE_DELETE.split(" ")
     if isinstance(cmd, list):
@@ -60,6 +65,9 @@ def update_job_priority(self, pk, new_priority):
     # If more priority levels are added, logic will need to change
     job.priority = new_priority
     job.save()
+
+    JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
+
     # ToDo: use subprocess() to run {command to change job priority} on the submit host
     # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
     # Do we need to explicitly create separate queues in settings?
