@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from .models import Job
+from .models import Job, JobLog
 from . import serializers
 from . import tasks
 
@@ -67,13 +67,10 @@ class JobViewSet(viewsets.ModelViewSet):
         instance.status = Job.STATUS_DELETED
         instance.save()
 
+        JobLog.objects.create(job=instance, event="Job status changed to deleted")
+
         # Call Celery to manage our job.
         tasks.delete_job.delay(pk)
-
-        # response = super().destroy(request, pk=pk)
-        # self.perform_destroy(instance)
-
-        # TODO: This should only soft-delete the Job instead of removing it.
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

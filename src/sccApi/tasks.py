@@ -35,8 +35,7 @@ def create_scc_job(self, pk):
 @task(bind=True)
 def delete_job(self, pk):
     job = Job.objects.get(pk=pk)
-
-    JobLog.objects.create(job=job, event="Job status changed to deleted")
+    # JobLog.objects.create(job=job, event="Job status changed to deleted")
 
     # ToDo: use subprocess() to run {delete job command} on the submit host
     cmd = settings.GE_DELETE.split(" ")
