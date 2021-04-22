@@ -57,7 +57,7 @@ class JobViewSet(viewsets.ModelViewSet):
         request.data["user"] = request.user.pk
         response = super().create(request)
         # pk = response.data.get("uuid")
-        # tasks.create_job.delay(pk=pk)
+        # tasks.create_scc_job.delay(pk=pk)
         return response
 
     # def retrieve(self, request, pk=None):
