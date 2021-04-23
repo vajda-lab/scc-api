@@ -54,12 +54,11 @@ jobs:
           CELERY_FLOWER_USER: 'celery'
           DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres'
           DEBUG: false
+          GRID_ENGINE_DELETE_CMD: '/home/runner/work/scc-api/scc-api/src/bin/qdel'
+          GRID_ENGINE_STATUS_CMD: '/home/runner/work/scc-api/scc-api/src/bin/qstat'
+          GRID_ENGINE_SUBMIT_CMD: '/home/runner/work/scc-api/scc-api/src/bin/qsub'
           REDIS_URL: 'redis://redis:6379/0'
           SECRET_KEY: 'this-is-for-testing-only'
-
-          GE_DELETE: '/home/runner/work/scc-api/scc-api/src/bin/qdel'
-          GE_SUBMIT: '/home/runner/work/scc-api/scc-api/src/bin/qsub'
-          GE_STATUS: '/home/runner/work/scc-api/scc-api/src/bin/qstat'
 
         run: |
           python -m pytest src
