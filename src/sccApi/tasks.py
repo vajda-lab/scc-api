@@ -18,43 +18,47 @@ def activate_job(self, pk):
     called via: `scheduled_allocate_job`
 
     """
-    job = Job.objects.get(pk=pk)
-    if job.status == Job.STATUS_QUEUED:
-        job.status = Job.STATUS_ACTIVE
+    try:
+        job = Job.objects.get(pk=pk)
+        if job.status == Job.STATUS_QUEUED:
+            job.status = Job.STATUS_ACTIVE
 
-        # ToDO: Figure out how to make sure directory setup runs on SCC
-        # Setup SCC job directory; this may change based on container situation
-        scc_job_dir = str(job.uuid)
-        scc_input_file = str(
-            job.input_file
-        )  # Will this work? Or does the file need to be opened/read?
+            # ToDO: Figure out how to make sure directory setup runs on SCC
+            # Setup SCC job directory; this may change based on container situation
+            scc_job_dir = str(job.uuid)
+            scc_input_file = str(
+                job.input_file
+            )  # Will this work? Or does the file need to be opened/read?
 
-        # Roll a temp folder variable instead
-        if not Path(f"/tmp/{scc_job_dir}").exists():
-            subprocess.run(["mkdir", f"/tmp/{scc_job_dir}"])
+            # Roll a temp folder variable instead
+            if not Path(f"/tmp/{scc_job_dir}").exists():
+                subprocess.run(["mkdir", f"/tmp/{scc_job_dir}"])
 
-        if not Path(f"/tmp/{scc_job_dir}/{scc_input_file}").exists():
-            subprocess.run(
-                ["tar", "-xf", f"{scc_input_file}", "-C", f"/tmp/{scc_job_dir}"]
-            )
+            if not Path(f"/tmp/{scc_job_dir}/{scc_input_file}").exists():
+                subprocess.run(
+                    ["tar", "-xf", f"{scc_input_file}", "-C", f"/tmp/{scc_job_dir}"]
+                )
 
-        JobLog.objects.create(job=job, event="Job status changed to active")
+            JobLog.objects.create(job=job, event="Job status changed to active")
 
-        # ToDo: use subprocess() to run qsub on the submit host
-        # ToDo: how to "point" qsub at the right directory?
-        try:
-            cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
-            if isinstance(cmd, list):
-                job_submit = subprocess.run(cmd, capture_output=True)
-            else:
-                job_submit = subprocess.run([cmd], capture_output=True)
-            return job_submit
-        except Exception as e:
-            job.status = Job.STATUS_ERROR
-        finally:
-            job.save()
-    else:
-        return None
+            # ToDo: use subprocess() to run qsub on the submit host
+            # ToDo: how to "point" qsub at the right directory?
+            try:
+                cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
+                if isinstance(cmd, list):
+                    job_submit = subprocess.run(cmd, capture_output=True)
+                else:
+                    job_submit = subprocess.run([cmd], capture_output=True)
+                return job_submit
+            except Exception as e:
+                job.status = Job.STATUS_ERROR
+            finally:
+                job.save()
+        else:
+            return None
+
+    except Job.DoesNotExist:
+        print(f"Job {pk} does not exist")
 
 
 @task(bind=True)
@@ -63,17 +67,25 @@ def delete_job(self, pk):
     Sets Job.status to STATUS_DELETED in Django
     Also delete job directory and associated files on SCC
     """
-    job = Job.objects.get(pk=pk)
-    # JobLog.objects.create(job=job, event="Job status changed to deleted")
+    try:
+        job = Job.objects.get(pk=pk)
 
-    # ToDo: use subprocess() to run {delete job command} on the submit host
-    cmd = settings.GRID_ENGINE_DELETE_CMD.split(" ")
-    if isinstance(cmd, list):
-        job_delete = subprocess.run(cmd, capture_output=True)
-    else:
-        job_delete = subprocess.run([cmd], capture_output=True)
+        if job.status != Job.STATUS_DELETED:
+            job.status = Job.STATUS_DELETED
+            job.save()
+            JobLog.objects.create(job=job, event="Job status changed to deleted")
 
-    return job_delete
+        # ToDo: use subprocess() to run {delete job command} on the submit host
+        cmd = settings.GRID_ENGINE_DELETE_CMD.split(" ")
+        if isinstance(cmd, list):
+            job_delete = subprocess.run(cmd, capture_output=True)
+        else:
+            job_delete = subprocess.run([cmd], capture_output=True)
+
+        return job_delete
+
+    except Job.DoesNotExist:
+        print(f"Job {pk} does not exist")
 
 
 @task(bind=True)
@@ -134,15 +146,19 @@ def update_job_priority(self, pk, new_priority):
     Update Job.priority
     Update priority on SCC or via Celery (unknown)
     """
-    job = Job.objects.get(pk=pk)
-    # Current assumption, only 2 queues: standard & priority
-    # If more priority levels are added, logic will need to change
-    job.priority = new_priority
-    job.save()
+    try:
+        job = Job.objects.get(pk=pk)
+        # Current assumption, only 2 queues: standard & priority
+        # If more priority levels are added, logic will need to change
+        job.priority = new_priority
+        job.save()
 
-    JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
+        JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
 
-    # ToDo: use subprocess() to run {command to change job priority} on the submit host
-    # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
-    # ToDo: Decide how we're handline priority, mechanically
-    # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
+        # ToDo: use subprocess() to run {command to change job priority} on the submit host
+        # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
+        # ToDo: Decide how we're handline priority, mechanically
+        # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
+
+    except Job.DoesNotExist:
+        print(f"Job {pk} does not exist")
