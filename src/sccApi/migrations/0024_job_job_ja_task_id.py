@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sccApi', '0023_joblog'),
+        ("sccApi", "0023_joblog"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='job_ja_task_id',
+            model_name="job",
+            name="job_ja_task_id",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]
