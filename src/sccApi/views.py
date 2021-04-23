@@ -5,9 +5,15 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from .models import Job, JobLog
 from . import serializers
 from . import tasks
+from .models import Job, JobLog
+
+
+class JobDetail(LoginRequiredMixin, DetailView):
+    model = Job
+    slug_field = "uuid"
+    template_name = "sccApi/job_detail.html"
 
 
 class UserHomeView(LoginRequiredMixin, ListView):
@@ -16,12 +22,6 @@ class UserHomeView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return self.model.objects.all()
-
-
-class JobDetail(LoginRequiredMixin, DetailView):
-    model = Job
-    slug_field = "uuid"
-    template_name = "sccApi/job_detail.html"
 
 
 class JobViewSet(viewsets.ModelViewSet):
