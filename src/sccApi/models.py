@@ -107,6 +107,10 @@ class Job(models.Model):
         help_text="Time when the job was submitted. When the job is running, this field is updated with the time the job started.",
     )
     job_data = models.JSONField(default=dict, blank=True)
+    job_ja_task_id = models.IntegerField(
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         get_latest_by = ["created"]
