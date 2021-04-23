@@ -1,8 +1,12 @@
 import subprocess
 import tarfile
+import tempfile
+
 from celery import task
-from .models import Job, JobLog
 from django.conf import settings
+from pathlib import Path
+
+from .models import Job, JobLog
 
 # Group of Celery task actions
 @task(bind=True)
@@ -21,8 +25,15 @@ def create_scc_job(self, pk):
         scc_input_file = str(
             job.input_file
         )  # Will this work? Or does the file need to be opened/read?
-        subprocess.run(["mkdir", scc_job_dir])
-        subprocess.run(["tar", "-xf", scc_input_file, "-C", scc_job_dir])
+
+        # Roll a temp folder variable instead
+        if not Path(f"/tmp/{scc_job_dir}").exists():
+            subprocess.run(["mkdir", f"/tmp/{scc_job_dir}"])
+
+        if not Path(f"/tmp/{scc_job_dir}/{scc_input_file}").exists():
+            subprocess.run(
+                ["tar", "-xf", f"{scc_input_file}", "-C", f"/tmp/{scc_job_dir}"]
+            )
 
         JobLog.objects.create(job=job, event="Job status changed to active")
 
