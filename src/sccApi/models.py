@@ -29,9 +29,9 @@ class Job(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    # STATUS_QUEUED = model instance created in Django
-    # STATUS_ACTIVE = model instance sent to Celery
-    # STATUS_DELETED = See bin.submit_host_cli.delete()
+    # Status.QUEUED = model instance created in Django
+    # Status.ACTIVE = model instance sent to Celery
+    # Status.DELETED = See bin.submit_host_cli.delete()
     # ToDo: ask Amanda about ERROR & COMPLETE for Django/SCC sides
     status = models.CharField(
         max_length=20,
