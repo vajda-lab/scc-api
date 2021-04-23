@@ -1,9 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.views.generic import ListView, DetailView
+from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.response import Response
 
-from .models import Job
+from .models import Job, JobLog
 from . import serializers
 from . import tasks
 
@@ -47,35 +49,61 @@ class JobViewSet(viewsets.ModelViewSet):
         # Everyone else can only access their own Jobs
         return Job.objects.filter(user=self.request.user)
 
-    # def list(self, request):
-    #     pass
-
     def create(self, request):
         """
         Add a new Job instance to the task queue.
         """
+
+        # Collect the user making the request and pass into our serializer.
         request.data["user"] = request.user.pk
+
+        # Proxy the request to create a new Job.
         response = super().create(request)
+
         # pk = response.data.get("uuid")
         # tasks.create_scc_job.delay(pk=pk)
         return response
 
-    # def retrieve(self, request, pk=None):
-    #     pass
+    def destroy(self, request, pk=None):
+        """
+        Delete a Job.
 
-    def update(self, request, pk=None, new_priority=None, **kwargs):
-        response = super().update(request, pk=pk, **kwargs)
-        with transaction.atomic():
-            tasks.update_job_priority.delay(pk, new_priority)
-        return response
+        Deletes should be "soft" deleted where we mark the Job's status
+        as `STATUS_DELETED` instead of removing the job.
+        """
+        instance = self.get_object()
+        instance.status = Job.STATUS_DELETED
+        instance.save()
+
+        JobLog.objects.create(job=instance, event="Job status changed to deleted")
+
+        # Call Celery to manage our job.
+        tasks.delete_job.delay(pk)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def partial_update(self, request, pk=None, new_priority=None):
+        """
+        Change the priority of a Job.
+        """
+
+        # Proxy the request to partial update the Job.
         response = super().partial_update(request, pk=pk)
+
         with transaction.atomic():
+            # Call Celery update the priority of the job.
             tasks.update_job_priority.delay(pk, new_priority)
         return response
 
-    def destroy(self, request, pk=None):
-        tasks.delete_job.delay(pk)
-        response = super().destroy(request, pk=pk)
+    def update(self, request, pk=None, new_priority=None, **kwargs):
+        """
+        Update a Job
+        """
+
+        # Proxy the request to update the Job.
+        response = super().update(request, pk=pk, **kwargs)
+
+        with transaction.atomic():
+            # Call Celery update the priority of the job.
+            tasks.update_job_priority.delay(pk, new_priority)
         return response

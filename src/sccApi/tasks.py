@@ -29,7 +29,7 @@ def create_scc_job(self, pk):
         # ToDo: use subprocess() to run qsub on the submit host
         # ToDo: how to "point" qsub at the right directory?
         try:
-            cmd = settings.GE_SUBMIT.split(" ")
+            cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
             if isinstance(cmd, list):
                 job_submit = subprocess.run(cmd, capture_output=True)
             else:
@@ -50,13 +50,10 @@ def delete_job(self, pk):
     Also delete job directory and associated files on SCC
     """
     job = Job.objects.get(pk=pk)
-    job.status = Job.STATUS_DELETED
-    job.save()
-
-    JobLog.objects.create(job=job, event="Job status changed to deleted")
+    # JobLog.objects.create(job=job, event="Job status changed to deleted")
 
     # ToDo: use subprocess() to run {delete job command} on the submit host
-    cmd = settings.GE_DELETE.split(" ")
+    cmd = settings.GRID_ENGINE_DELETE_CMD.split(" ")
     if isinstance(cmd, list):
         job_delete = subprocess.run(cmd, capture_output=True)
     else:
@@ -90,7 +87,7 @@ def scheduled_poll_job(self):
     Checks status of current SCC jobs at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     """
-    cmd = settings.GE_STATUS.split(" ")
+    cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
     if isinstance(cmd, list):
         job_poll = subprocess.run(cmd, capture_output=True)
     else:

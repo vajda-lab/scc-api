@@ -210,9 +210,9 @@ REST_FRAMEWORK = {
 }
 
 # Grid Engine Commands
-GE_DELETE = ENV("GE_DELETE", default="/app/bin/qdel")
-GE_SUBMIT = ENV("GE_SUBMIT", default="/app/bin/qsub")
-GE_STATUS = ENV("GE_STATUS", default="/app/bin/qstat")
+GRID_ENGINE_DELETE_CMD = ENV("GRID_ENGINE_DELETE_CMD", default="/app/bin/qdel")
+GRID_ENGINE_STATUS_CMD = ENV("GRID_ENGINE_STATUS_CMD", default="/app/bin/qstat")
+GRID_ENGINE_SUBMIT_CMD = ENV("GRID_ENGINE_SUBMIT_CMD", default="/app/bin/qsub")
 
 # TASK QUEUE SETTINGS
 MAX_HIGH_JOBS = 50
