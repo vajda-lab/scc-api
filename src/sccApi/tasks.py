@@ -7,7 +7,7 @@ from celery import task
 from django.conf import settings
 from pathlib import Path
 
-from .models import Job, JobLog
+from .models import Job, JobLog, Status
 
 
 logger = logging.getLogger(__name__)
@@ -27,8 +27,8 @@ def activate_job(self, pk):
     try:
         job = Job.objects.get(pk=pk)
 
-        if job.status == Job.STATUS_QUEUED:
-            job.status = Job.STATUS_ACTIVE
+        if job.status == Status.QUEUED:
+            job.status = Status.ACTIVE
 
             # ToDO: Figure out how to make sure directory setup runs on SCC
             # Setup SCC job directory; this may change based on container situation
@@ -58,7 +58,7 @@ def activate_job(self, pk):
                     job_submit = subprocess.run([cmd], capture_output=True)
                 return job_submit
             except Exception as e:
-                job.status = Job.STATUS_ERROR
+                job.status = Status.ERROR
                 logger.exception()
             finally:
                 job.save()
@@ -72,14 +72,14 @@ def activate_job(self, pk):
 @task(bind=True)
 def delete_job(self, pk):
     """
-    Sets Job.status to STATUS_DELETED in Django
+    Sets Job.status to Status.DELETED in Django
     Also delete job directory and associated files on SCC
     """
     try:
         job = Job.objects.get(pk=pk)
 
-        if job.status != Job.STATUS_DELETED:
-            job.status = Job.STATUS_DELETED
+        if job.status != Status.DELETED:
+            job.status = Status.DELETED
             job.save()
             JobLog.objects.create(job=job, event="Job status changed to deleted")
 
@@ -103,17 +103,17 @@ def scheduled_allocate_job(self):
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Should do so based on availability of different priority queues
     """
-    # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
-    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED).count()
-    active_jobs = Job.objects.filter(status=Job.STATUS_ACTIVE).count()
+    # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
+    queued_jobs = Job.objects.filter(status=Status.QUEUED).count()
+    active_jobs = Job.objects.filter(status=Status.ACTIVE).count()
 
     # ToDo: add settings for MaxValues of Low, Normal, & High priority jobs
     # settings.MAX_HIGH_JOBS
-    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED)
+    queued_jobs = Job.objects.filter(status=Status.QUEUED)
     for queued_job in queued_jobs:
         activate_job.delay(pk=queued_job.pk)
 
-    # For each priorty, give count of STATUS_ACTIVE jobs
+    # For each priorty, give count of Status.ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
 

@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.utils.translation import gettext_lazy as _
 
 
 class Priority(models.IntegerChoices):
@@ -9,12 +10,19 @@ class Priority(models.IntegerChoices):
     HIGH = (2, "high")
 
 
+class Status(models.TextChoices):
+    ACTIVE = "active", _("active")
+    COMPLETE = "complete", _("complete")
+    DELETED = "deleted", _("deleted")
+    ERROR = "error", _("error")
+    QUEUED = "queued", _("queued")
+
+
 class Job(models.Model):
     priority = models.IntegerField(
         choices=Priority.choices,
         default=Priority.LOW,
     )
-
     uuid = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True
     )
@@ -25,22 +33,10 @@ class Job(models.Model):
     # STATUS_ACTIVE = model instance sent to Celery
     # STATUS_DELETED = See bin.submit_host_cli.delete()
     # ToDo: ask Amanda about ERROR & COMPLETE for Django/SCC sides
-    STATUS_ACTIVE = "active"
-    STATUS_COMPLETE = "complete"
-    STATUS_ERROR = "error"
-    STATUS_DELETED = "deleted"
-    STATUS_QUEUED = "queued"
-    STATUS_CHOICES = (
-        (STATUS_ACTIVE, "active"),
-        (STATUS_COMPLETE, "complete"),
-        (STATUS_ERROR, "error"),
-        (STATUS_DELETED, "deleted"),
-        (STATUS_QUEUED, "queued"),
-    )
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
-        default=STATUS_QUEUED,
+        choices=Status.choices,
+        default=Status.QUEUED,
         null=False,
         db_index=True,
     )

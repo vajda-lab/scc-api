@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from . import serializers
 from . import tasks
-from .models import Job, JobLog
+from .models import Job, JobLog, Status
 
 
 class JobDetail(LoginRequiredMixin, DetailView):
@@ -71,10 +71,10 @@ class JobViewSet(viewsets.ModelViewSet):
         DELETE '/apis/jobs/{pk}/'
 
         Deletes should be "soft" deleted where we mark the Job's status
-        as `STATUS_DELETED` instead of removing the job.
+        as `DELETED` instead of removing the job.
         """
         instance = self.get_object()
-        instance.status = Job.STATUS_DELETED
+        instance.status = Status.DELETED
         instance.save()
 
         JobLog.objects.create(job=instance, event="Job status changed to deleted")
