@@ -20,6 +20,7 @@ def activate_job(self, pk):
     """
     try:
         job = Job.objects.get(pk=pk)
+
         if job.status == Job.STATUS_QUEUED:
             job.status = Job.STATUS_ACTIVE
 
@@ -103,9 +104,8 @@ def scheduled_allocate_job(self):
     # settings.MAX_HIGH_JOBS
     queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED)
     for queued_job in queued_jobs:
-        # queued_job.status = Job.STATUS_ACTIVE
-        # queued_job.save()
         activate_job.delay(pk=queued_job.pk)
+
     # For each priorty, give count of STATUS_ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
