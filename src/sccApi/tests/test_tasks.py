@@ -7,15 +7,15 @@ from sccApi.models import Job
 
 
 @pytest.mark.django_db()
-def test_create_scc_job():
+def test_activate_job():
     """
-    Tests task status properly updated by tasks.create_scc_job()
+    Tests task status properly updated by tasks.activate_job()
     """
     job = baker.make(
         "sccApi.Job",
     )
     assert job.status != models.Job.STATUS_ACTIVE
-    qsub_response = tasks.create_scc_job(job.pk)
+    qsub_response = tasks.activate_job(job.pk)
     job.refresh_from_db()
     assert job.status == models.Job.STATUS_ACTIVE
     assert qsub_response.returncode == 0

@@ -10,10 +10,13 @@ from .models import Job, JobLog
 
 # Group of Celery task actions
 @task(bind=True)
-def create_scc_job(self, pk):
+def activate_job(self, pk):
     """
     Takes existing Job object instances from Django API
     Submits their data to the SCC for processing
+
+    called via: `scheduled_allocate_job`
+
     """
     job = Job.objects.get(pk=pk)
     if job.status == Job.STATUS_QUEUED:
@@ -69,27 +72,30 @@ def delete_job(self, pk):
         job_delete = subprocess.run(cmd, capture_output=True)
     else:
         job_delete = subprocess.run([cmd], capture_output=True)
+
     return job_delete
 
 
 @task(bind=True)
-def update_job_priority(self, pk, new_priority):
+def scheduled_allocate_job(self):
     """
-    Update Job.priority
-    Update priority on SCC or via Celery (unknown)
+    Allocates existing Job instances to Celery at a set interval
+    Interval determined by settings.CELERY_BEAT_SCHEDULE
+    Should do so based on availability of different priority queues
     """
-    job = Job.objects.get(pk=pk)
-    # Current assumption, only 2 queues: standard & priority
-    # If more priority levels are added, logic will need to change
-    job.priority = new_priority
-    job.save()
+    # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
+    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED).count()
+    active_jobs = Job.objects.filter(status=Job.STATUS_ACTIVE).count()
 
-    JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
-
-    # ToDo: use subprocess() to run {command to change job priority} on the submit host
-    # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
-    # ToDo: Decide how we're handline priority, mechanically
-    # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
+    # ToDo: add settings for MaxValues of Low, Normal, & High priority jobs
+    # settings.MAX_HIGH_JOBS
+    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED)
+    for queued_job in queued_jobs:
+        # queued_job.status = Job.STATUS_ACTIVE
+        # queued_job.save()
+        activate_job.delay(pk=queued_job.pk)
+    # For each priorty, give count of STATUS_ACTIVE jobs
+    # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
 
 @task(bind=True)
@@ -123,22 +129,20 @@ def scheduled_poll_job(self):
 
 
 @task(bind=True)
-def scheduled_allocate_job(self):
+def update_job_priority(self, pk, new_priority):
     """
-    Allocates existing Job instances to Celery at a set interval
-    Interval determined by settings.CELERY_BEAT_SCHEDULE
-    Should do so based on availability of different priority queues
+    Update Job.priority
+    Update priority on SCC or via Celery (unknown)
     """
-    # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
-    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED).count()
-    active_jobs = Job.objects.filter(status=Job.STATUS_ACTIVE).count()
+    job = Job.objects.get(pk=pk)
+    # Current assumption, only 2 queues: standard & priority
+    # If more priority levels are added, logic will need to change
+    job.priority = new_priority
+    job.save()
 
-    # ToDo: add settings for MaxValues of Low, Normal, & High priority jobs
-    # settings.MAX_HIGH_JOBS
-    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED)
-    for queued_job in queued_jobs:
-        # queued_job.status = Job.STATUS_ACTIVE
-        # queued_job.save()
-        create_scc_job.delay(pk=queued_job.pk)
-    # For each priorty, give count of STATUS_ACTIVE jobs
-    # Based on limits per priority queue, decide which Celery queue to send new jobs to
+    JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
+
+    # ToDo: use subprocess() to run {command to change job priority} on the submit host
+    # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
+    # ToDo: Decide how we're handline priority, mechanically
+    # Do we need to explicitly create separate queues in settings? Or change priority on SCC?

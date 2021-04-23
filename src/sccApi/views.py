@@ -62,8 +62,6 @@ class JobViewSet(viewsets.ModelViewSet):
         # Proxy the request to create a new Job.
         response = super().create(request)
 
-        # pk = response.data.get("uuid")
-        # tasks.create_scc_job.delay(pk=pk)
         return response
 
     def destroy(self, request, pk=None):
@@ -99,6 +97,7 @@ class JobViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             # Call Celery update the priority of the job.
             tasks.update_job_priority.delay(pk, new_priority)
+
         return response
 
     def update(self, request, pk=None, new_priority=None, **kwargs):
@@ -114,4 +113,5 @@ class JobViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             # Call Celery update the priority of the job.
             tasks.update_job_priority.delay(pk, new_priority)
+
         return response
