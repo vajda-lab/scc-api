@@ -112,6 +112,9 @@ class Job(models.Model):
         get_latest_by = ["created"]
         ordering = ["-created"]
 
+    def __str__(self):
+        return f"{self.uuid}: {self.status}"
+
 
 # Also look breifly into Python's built-in auditing features
 # https://docs.python.org/3/library/sys.html#auditing
@@ -127,3 +130,6 @@ class JobLog(models.Model):
     class Meta:
         get_latest_by = ["created"]
         ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.pk}: {self.event}"
