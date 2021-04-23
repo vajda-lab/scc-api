@@ -1,3 +1,4 @@
+import logging
 import subprocess
 import tarfile
 import tempfile
@@ -7,6 +8,11 @@ from django.conf import settings
 from pathlib import Path
 
 from .models import Job, JobLog
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 # Group of Celery task actions
 @task(bind=True)
@@ -53,13 +59,14 @@ def activate_job(self, pk):
                 return job_submit
             except Exception as e:
                 job.status = Job.STATUS_ERROR
+                logger.exception()
             finally:
                 job.save()
         else:
             return None
 
     except Job.DoesNotExist:
-        print(f"Job {pk} does not exist")
+        logger.exception(f"Job {pk} does not exist")
 
 
 @task(bind=True)
@@ -86,7 +93,7 @@ def delete_job(self, pk):
         return job_delete
 
     except Job.DoesNotExist:
-        print(f"Job {pk} does not exist")
+        logger.exception(f"Job {pk} does not exist")
 
 
 @task(bind=True)
@@ -161,4 +168,4 @@ def update_job_priority(self, pk, new_priority):
         # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
 
     except Job.DoesNotExist:
-        print(f"Job {pk} does not exist")
+        logger.exception(f"Job {pk} does not exist")
