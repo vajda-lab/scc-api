@@ -53,8 +53,13 @@ class JobViewSet(viewsets.ModelViewSet):
         """
         Add a new Job instance to the task queue.
         """
+
+        # Collect the user making the request and pass into our serializer.
         request.data["user"] = request.user.pk
+
+        # Proxy the request to create a new Job.
         response = super().create(request)
+
         # pk = response.data.get("uuid")
         # tasks.create_job.delay(pk=pk)
         return response
@@ -62,6 +67,9 @@ class JobViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk=None):
         """
         Delete a Job.
+
+        Deletes should be "soft" deleted where we mark the Job's status
+        as `STATUS_DELETED` instead of removing the job.
         """
         instance = self.get_object()
         instance.status = Job.STATUS_DELETED
@@ -78,7 +86,10 @@ class JobViewSet(viewsets.ModelViewSet):
         """
         Change the priority of a Job.
         """
+
+        # Proxy the request to partial update the Job.
         response = super().partial_update(request, pk=pk)
+
         with transaction.atomic():
             # Call Celery update the priority of the job.
             tasks.update_job_priority.delay(pk, new_priority)
@@ -88,7 +99,10 @@ class JobViewSet(viewsets.ModelViewSet):
         """
         Update a Job
         """
+
+        # Proxy the request to update the Job.
         response = super().update(request, pk=pk, **kwargs)
+
         with transaction.atomic():
             # Call Celery update the priority of the job.
             tasks.update_job_priority.delay(pk, new_priority)
