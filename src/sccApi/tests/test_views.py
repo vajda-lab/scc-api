@@ -189,7 +189,7 @@ def test_job_delete(
 
 def test_job_partial_update_noauth(tp, job):
     """
-    PATCH '/apis/jobs/{pk}'
+    PATCH '/apis/jobs/{pk}/'
     """
     url = tp.reverse("job-detail", pk=job.pk)
 
@@ -222,7 +222,7 @@ def test_job_partial_update(
     tp, password, creating_user, patching_user, http_status, exp_job_status
 ):
     """
-    PATCH '/apis/jobs/{pk}'
+    PATCH '/apis/jobs/{pk}/'
     Can a creating_user job be patched by patching_user?
     """
     job = baker.make("sccApi.Job", user=creating_user)

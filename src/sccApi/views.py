@@ -52,6 +52,8 @@ class JobViewSet(viewsets.ModelViewSet):
     def create(self, request):
         """
         Add a new Job instance to the task queue.
+
+        POST '/apis/jobs/'
         """
 
         # Collect the user making the request and pass into our serializer.
@@ -67,6 +69,8 @@ class JobViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk=None):
         """
         Delete a Job.
+
+        DELETE '/apis/jobs/{pk}/'
 
         Deletes should be "soft" deleted where we mark the Job's status
         as `STATUS_DELETED` instead of removing the job.
@@ -85,6 +89,8 @@ class JobViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None, new_priority=None):
         """
         Change the priority of a Job.
+
+        PATCH '/apis/jobs/{pk}/'
         """
 
         # Proxy the request to partial update the Job.
@@ -98,6 +104,8 @@ class JobViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None, new_priority=None, **kwargs):
         """
         Update a Job
+
+        PUT '/apis/jobs/{pk}/'
         """
 
         # Proxy the request to update the Job.
