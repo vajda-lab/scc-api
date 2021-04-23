@@ -34,7 +34,7 @@ def test_delete_job():
     assert job.status != models.Job.STATUS_DELETED
     qdel_response = tasks.delete_job(job.pk)
     job.refresh_from_db()
-    # assert job.status == models.Job.STATUS_DELETED
+    assert job.status == models.Job.STATUS_DELETED
     assert qdel_response.returncode == 0
     assert b"5290728.1" in qdel_response.stdout
     assert b"5290728.2" in qdel_response.stdout
