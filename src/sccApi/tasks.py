@@ -15,10 +15,12 @@ def create_scc_job(self, pk):
     if job.status == Job.STATUS_QUEUED:
         job.status = Job.STATUS_ACTIVE
 
-        # ToDO: Figure out how to make sure directory setup runs on SCC 
+        # ToDO: Figure out how to make sure directory setup runs on SCC
         # Setup SCC job directory; this may change based on container situation
         scc_job_dir = str(job.uuid)
-        scc_input_file = str(job.input_file) # Will this work? Or does the file need to be opened/read?
+        scc_input_file = str(
+            job.input_file
+        )  # Will this work? Or does the file need to be opened/read?
         subprocess.run(["mkdir", scc_job_dir])
         subprocess.run(["tar", "-xf", scc_input_file, "-C", scc_job_dir])
 
