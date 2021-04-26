@@ -5,9 +5,15 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from .models import Job, JobLog
 from . import serializers
 from . import tasks
+from .models import Job, JobLog, Status
+
+
+class JobDetail(LoginRequiredMixin, DetailView):
+    model = Job
+    slug_field = "uuid"
+    template_name = "sccApi/job_detail.html"
 
 
 class UserHomeView(LoginRequiredMixin, ListView):
@@ -16,12 +22,6 @@ class UserHomeView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return self.model.objects.all()
-
-
-class JobDetail(LoginRequiredMixin, DetailView):
-    model = Job
-    slug_field = "uuid"
-    template_name = "sccApi/job_detail.html"
 
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -52,6 +52,8 @@ class JobViewSet(viewsets.ModelViewSet):
     def create(self, request):
         """
         Add a new Job instance to the task queue.
+
+        POST '/apis/jobs/'
         """
 
         # Collect the user making the request and pass into our serializer.
@@ -60,31 +62,33 @@ class JobViewSet(viewsets.ModelViewSet):
         # Proxy the request to create a new Job.
         response = super().create(request)
 
-        # pk = response.data.get("uuid")
-        # tasks.create_scc_job.delay(pk=pk)
         return response
 
     def destroy(self, request, pk=None):
         """
         Delete a Job.
 
+        DELETE '/apis/jobs/{pk}/'
+
         Deletes should be "soft" deleted where we mark the Job's status
-        as `STATUS_DELETED` instead of removing the job.
+        as `DELETED` instead of removing the job.
         """
         instance = self.get_object()
-        instance.status = Job.STATUS_DELETED
+        instance.status = Status.DELETED
         instance.save()
 
         JobLog.objects.create(job=instance, event="Job status changed to deleted")
 
         # Call Celery to manage our job.
-        tasks.delete_job.delay(pk)
+        tasks.delete_job.delay(pk=pk)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def partial_update(self, request, pk=None, new_priority=None):
         """
         Change the priority of a Job.
+
+        PATCH '/apis/jobs/{pk}/'
         """
 
         # Proxy the request to partial update the Job.
@@ -92,12 +96,15 @@ class JobViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             # Call Celery update the priority of the job.
-            tasks.update_job_priority.delay(pk, new_priority)
+            tasks.update_job_priority.delay(pk=pk, new_priority=new_priority)
+
         return response
 
     def update(self, request, pk=None, new_priority=None, **kwargs):
         """
         Update a Job
+
+        PUT '/apis/jobs/{pk}/'
         """
 
         # Proxy the request to update the Job.
@@ -105,5 +112,6 @@ class JobViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             # Call Celery update the priority of the job.
-            tasks.update_job_priority.delay(pk, new_priority)
+            tasks.update_job_priority.delay(pk=pk, new_priority=new_priority)
+
         return response

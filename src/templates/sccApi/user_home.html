@@ -20,7 +20,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for job in job_list %} {% if job.status == job.STATUS_ACTIVE %}
+            {% for job in job_list %} {% if job.status == "active" %}
             <tr>
               <td>{{ job.created }}</td>
               <td>
@@ -57,7 +57,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for job in job_list %} {% if job.status != job.STATUS_ACTIVE %}
+            {% for job in job_list %} {% if job.status != "active" %}
             <tr>
               <td>{{ job.created }}</td>
               <td>{{ job.uuid }}</td>

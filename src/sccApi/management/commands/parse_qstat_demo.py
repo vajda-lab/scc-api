@@ -102,6 +102,7 @@ def main(input_filename):
 
             try:
                 job_id = row["job-ID"]
+                job_ja_task_id = row.get("ja-task-ID")
                 job_state = row["state"]
                 job_submitted = f"{row['submit-start-at']}".replace("/", "-")
                 job_submitted = parse(job_submitted)
@@ -115,6 +116,7 @@ def main(input_filename):
                     sge_task_id=job_id,
                     defaults={
                         "job_data": row,
+                        "job_ja_task_id": job_ja_task_id,
                         "job_state": job_state,
                         "job_submitted": job_submitted,
                         "user": user,

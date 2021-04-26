@@ -1,84 +1,120 @@
+import logging
 import subprocess
 import tarfile
+import tempfile
+
 from celery import task
-from .models import Job, JobLog
 from django.conf import settings
+from pathlib import Path
+
+from .models import Job, JobLog, Status
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 
 # Group of Celery task actions
 @task(bind=True)
-def create_scc_job(self, pk):
+def activate_job(self, *, pk, **kwargs):
     """
     Takes existing Job object instances from Django API
     Submits their data to the SCC for processing
+
+    called via: `scheduled_allocate_job`
+
     """
-    job = Job.objects.get(pk=pk)
-    if job.status == Job.STATUS_QUEUED:
-        job.status = Job.STATUS_ACTIVE
+    try:
+        job = Job.objects.get(pk=pk)
 
-        # ToDO: Figure out how to make sure directory setup runs on SCC
-        # Setup SCC job directory; this may change based on container situation
-        scc_job_dir = str(job.uuid)
-        scc_input_file = str(
-            job.input_file
-        )  # Will this work? Or does the file need to be opened/read?
-        subprocess.run(["mkdir", scc_job_dir])
-        subprocess.run(["tar", "-xf", scc_input_file, "-C", scc_job_dir])
+        if job.status == Status.QUEUED:
+            job.status = Status.ACTIVE
 
-        JobLog.objects.create(job=job, event="Job status changed to active")
+            # ToDO: Figure out how to make sure directory setup runs on SCC
+            # Setup SCC job directory; this may change based on container situation
+            scc_job_dir = str(job.uuid)
+            scc_input_file = str(
+                job.input_file
+            )  # Will this work? Or does the file need to be opened/read?
 
-        # ToDo: use subprocess() to run qsub on the submit host
-        # ToDo: how to "point" qsub at the right directory?
-        try:
-            cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
-            if isinstance(cmd, list):
-                job_submit = subprocess.run(cmd, capture_output=True)
-            else:
-                job_submit = subprocess.run([cmd], capture_output=True)
-            return job_submit
-        except Exception as e:
-            job.status = Job.STATUS_ERROR
-        finally:
-            job.save()
-    else:
-        return None
+            # Roll a temp folder variable instead
+            if not Path(f"/tmp/{scc_job_dir}").exists():
+                subprocess.run(["mkdir", f"/tmp/{scc_job_dir}"])
+
+            if not Path(f"/tmp/{scc_job_dir}/{scc_input_file}").exists():
+                subprocess.run(
+                    ["tar", "-xf", f"{scc_input_file}", "-C", f"/tmp/{scc_job_dir}"]
+                )
+
+            JobLog.objects.create(job=job, event="Job status changed to active")
+
+            # ToDo: use subprocess() to run qsub on the submit host
+            # ToDo: how to "point" qsub at the right directory?
+            try:
+                cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
+                if isinstance(cmd, list):
+                    job_submit = subprocess.run(cmd, capture_output=True)
+                else:
+                    job_submit = subprocess.run([cmd], capture_output=True)
+                return job_submit
+            except Exception as e:
+                job.status = Status.ERROR
+                logger.exception()
+            finally:
+                job.save()
+        else:
+            return None
+
+    except Job.DoesNotExist:
+        logger.exception(f"Job {pk} does not exist")
 
 
 @task(bind=True)
-def delete_job(self, pk):
+def delete_job(self, *, pk, **kwargs):
     """
-    Sets Job.status to STATUS_DELETED in Django
+    Sets Job.status to Status.DELETED in Django
     Also delete job directory and associated files on SCC
     """
-    job = Job.objects.get(pk=pk)
-    # JobLog.objects.create(job=job, event="Job status changed to deleted")
+    try:
+        job = Job.objects.get(pk=pk)
 
-    # ToDo: use subprocess() to run {delete job command} on the submit host
-    cmd = settings.GRID_ENGINE_DELETE_CMD.split(" ")
-    if isinstance(cmd, list):
-        job_delete = subprocess.run(cmd, capture_output=True)
-    else:
-        job_delete = subprocess.run([cmd], capture_output=True)
-    return job_delete
+        if job.status != Status.DELETED:
+            job.status = Status.DELETED
+            job.save()
+            JobLog.objects.create(job=job, event="Job status changed to deleted")
+
+        # ToDo: use subprocess() to run {delete job command} on the submit host
+        cmd = settings.GRID_ENGINE_DELETE_CMD.split(" ")
+        if isinstance(cmd, list):
+            job_delete = subprocess.run(cmd, capture_output=True)
+        else:
+            job_delete = subprocess.run([cmd], capture_output=True)
+
+        return job_delete
+
+    except Job.DoesNotExist:
+        logger.exception(f"Job {pk} does not exist")
 
 
 @task(bind=True)
-def update_job_priority(self, pk, new_priority):
+def scheduled_allocate_job(self):
     """
-    Update Job.priority
-    Update priority on SCC or via Celery (unknown)
+    Allocates existing Job instances to Celery at a set interval
+    Interval determined by settings.CELERY_BEAT_SCHEDULE
+    Should do so based on availability of different priority queues
     """
-    job = Job.objects.get(pk=pk)
-    # Current assumption, only 2 queues: standard & priority
-    # If more priority levels are added, logic will need to change
-    job.priority = new_priority
-    job.save()
+    # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
+    queued_jobs = Job.objects.filter(status=Status.QUEUED).count()
+    active_jobs = Job.objects.filter(status=Status.ACTIVE).count()
 
-    JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
+    # ToDo: add settings for MaxValues of Low, Normal, & High priority jobs
+    # settings.MAX_HIGH_JOBS
+    queued_jobs = Job.objects.filter(status=Status.QUEUED)
+    for queued_job in queued_jobs:
+        activate_job.delay(pk=queued_job.pk)
 
-    # ToDo: use subprocess() to run {command to change job priority} on the submit host
-    # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
-    # ToDo: Decide how we're handline priority, mechanically
-    # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
+    # For each priorty, give count of Status.ACTIVE jobs
+    # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
 
 @task(bind=True)
@@ -112,22 +148,24 @@ def scheduled_poll_job(self):
 
 
 @task(bind=True)
-def scheduled_allocate_job(self):
+def update_job_priority(self, *, pk, new_priority, **kwargs):
     """
-    Allocates existing Job instances to Celery at a set interval
-    Interval determined by settings.CELERY_BEAT_SCHEDULE
-    Should do so based on availability of different priority queues
+    Update Job.priority
+    Update priority on SCC or via Celery (unknown)
     """
-    # Look at how many jobs are STATUS_QUEUED, and STATUS_ACTIVE
-    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED).count()
-    active_jobs = Job.objects.filter(status=Job.STATUS_ACTIVE).count()
+    try:
+        job = Job.objects.get(pk=pk)
+        # Current assumption, only 2 queues: standard & priority
+        # If more priority levels are added, logic will need to change
+        job.priority = new_priority
+        job.save()
 
-    # ToDo: add settings for MaxValues of Low, Normal, & High priority jobs
-    # settings.MAX_HIGH_JOBS
-    queued_jobs = Job.objects.filter(status=Job.STATUS_QUEUED)
-    for queued_job in queued_jobs:
-        # queued_job.status = Job.STATUS_ACTIVE
-        # queued_job.save()
-        create_scc_job.delay(pk=queued_job.pk)
-    # For each priorty, give count of STATUS_ACTIVE jobs
-    # Based on limits per priority queue, decide which Celery queue to send new jobs to
+        JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
+
+        # ToDo: use subprocess() to run {command to change job priority} on the submit host
+        # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
+        # ToDo: Decide how we're handline priority, mechanically
+        # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
+
+    except Job.DoesNotExist:
+        logger.exception(f"Job {pk} does not exist")

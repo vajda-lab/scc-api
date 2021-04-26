@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.utils.translation import gettext_lazy as _
 
 
 class Priority(models.IntegerChoices):
@@ -9,38 +10,33 @@ class Priority(models.IntegerChoices):
     HIGH = (2, "high")
 
 
+class Status(models.TextChoices):
+    ACTIVE = "active", _("active")
+    COMPLETE = "complete", _("complete")
+    DELETED = "deleted", _("deleted")
+    ERROR = "error", _("error")
+    QUEUED = "queued", _("queued")
+
+
 class Job(models.Model):
     priority = models.IntegerField(
         choices=Priority.choices,
         default=Priority.LOW,
     )
-
     uuid = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    # STATUS_QUEUED = model instance created in Django
-    # STATUS_ACTIVE = model instance sent to Celery
-    # STATUS_DELETED = See bin.submit_host_cli.delete()
+    # Status.QUEUED = model instance created in Django
+    # Status.ACTIVE = model instance sent to Celery
+    # Status.DELETED = See bin.submit_host_cli.delete()
     # ToDo: ask Amanda about ERROR & COMPLETE for Django/SCC sides
-    STATUS_ACTIVE = "active"
-    STATUS_COMPLETE = "complete"
-    STATUS_ERROR = "error"
-    STATUS_DELETED = "deleted"
-    STATUS_QUEUED = "queued"
-    STATUS_CHOICES = (
-        (STATUS_ACTIVE, "active"),
-        (STATUS_COMPLETE, "complete"),
-        (STATUS_ERROR, "error"),
-        (STATUS_DELETED, "deleted"),
-        (STATUS_QUEUED, "queued"),
-    )
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
-        default=STATUS_QUEUED,
+        choices=Status.choices,
+        default=Status.QUEUED,
         null=False,
         db_index=True,
     )
@@ -107,10 +103,17 @@ class Job(models.Model):
         help_text="Time when the job was submitted. When the job is running, this field is updated with the time the job started.",
     )
     job_data = models.JSONField(default=dict, blank=True)
+    job_ja_task_id = models.IntegerField(
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         get_latest_by = ["created"]
         ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.uuid}: {self.status}"
 
 
 # Also look breifly into Python's built-in auditing features
@@ -127,3 +130,6 @@ class JobLog(models.Model):
     class Meta:
         get_latest_by = ["created"]
         ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.pk}: {self.event}"
