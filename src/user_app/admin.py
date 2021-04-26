@@ -7,7 +7,7 @@ from sccApi.models import Job
 
 
 class JobRelationshipInline(admin.TabularInline):
-    """ Make binds model accessible from another model's admin page """
+    """Make binds model accessible from another model's admin page"""
 
     model = Job
     extra = 0

@@ -3,7 +3,7 @@ from .models import Job
 
 
 class JobSerializer(serializers.ModelSerializer):
-    """ Serializer for Job model."""
+    """Serializer for Job model."""
 
     class Meta:
         model = Job
