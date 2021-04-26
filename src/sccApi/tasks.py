@@ -74,6 +74,9 @@ def delete_job(self, *, pk, **kwargs):
     """
     Sets Job.status to Status.DELETED in Django
     Also delete job directory and associated files on SCC
+    On SCC: # ToDo
+        Stop the selected job (Job.sge_task_id) ask Amanda about command
+        Delete all related files
     """
     try:
         job = Job.objects.get(pk=pk)

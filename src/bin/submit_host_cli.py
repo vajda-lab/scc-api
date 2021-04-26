@@ -24,16 +24,13 @@ def delete(job_id):
     Using job_id (Job.uuid)
     For Django object:
         Set Job.status to STATUS_DELETED
-    On SCC: # ToDo
-        Stop the selected job (Job.sge_task_id)
-        Delete all related files
     """
 
     click.echo("delete")
     # I can't get Job.STATUS_DELETED to work
-    data = {"status": "deleted"}
+    data = {}
     try:
-        response = requests.patch(
+        response = requests.delete(
             f"{SCC_API_URL}jobs/{job_id}/",
             data=data,
             auth=HTTPBasicAuth("kojo@revsys.com", "kojo"),
