@@ -4,7 +4,7 @@ django-constance[redis]
 django-environ
 django-extensions
 django-improved-user
-django-sql-dashboard
+django-sql-dashboard==0.10a1
 Django<3.2
 djangorestframework<3.13
 flower
