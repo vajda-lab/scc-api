@@ -80,7 +80,7 @@ class JobViewSet(viewsets.ModelViewSet):
         JobLog.objects.create(job=instance, event="Job status changed to deleted")
 
         # Call Celery to manage our job.
-        tasks.delete_job.delay(pk)
+        tasks.delete_job.delay(pk=pk)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -96,7 +96,7 @@ class JobViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             # Call Celery update the priority of the job.
-            tasks.update_job_priority.delay(pk, new_priority)
+            tasks.update_job_priority.delay(pk=pk, new_priority=new_priority)
 
         return response
 
@@ -112,6 +112,6 @@ class JobViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             # Call Celery update the priority of the job.
-            tasks.update_job_priority.delay(pk, new_priority)
+            tasks.update_job_priority.delay(pk=pk, new_priority=new_priority)
 
         return response

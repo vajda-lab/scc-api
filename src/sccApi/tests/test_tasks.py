@@ -15,7 +15,7 @@ def test_activate_job():
         "sccApi.Job",
     )
     assert job.status != Status.ACTIVE
-    qsub_response = tasks.activate_job(job.pk)
+    qsub_response = tasks.activate_job(pk=job.pk)
     job.refresh_from_db()
     assert job.status == Status.ACTIVE
     assert qsub_response.returncode == 0
@@ -32,7 +32,7 @@ def test_delete_job():
         "sccApi.Job",
     )
     assert job.status != Status.DELETED
-    qdel_response = tasks.delete_job(job.pk)
+    qdel_response = tasks.delete_job(pk=job.pk)
     job.refresh_from_db()
     assert job.status == Status.DELETED
     assert qdel_response.returncode == 0
@@ -55,11 +55,11 @@ def test_update_job_priority():
     # 0 or Low is the default value
     assert job.priority == Priority.LOW
     # Update to High
-    tasks.update_job_priority(job.pk, Priority.HIGH)
+    tasks.update_job_priority(pk=job.pk, new_priority=Priority.HIGH)
     job.refresh_from_db()
     assert job.priority == Priority.HIGH
     # Update to Normal
-    tasks.update_job_priority(job.pk, Priority.NORMAL)
+    tasks.update_job_priority(pk=job.pk, new_priority=Priority.NORMAL)
     job.refresh_from_db()
     assert job.priority == Priority.NORMAL
 

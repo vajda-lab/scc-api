@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 
 # Group of Celery task actions
 @task(bind=True)
-def activate_job(self, pk):
+def activate_job(self, *, pk, **kwargs):
     """
     Takes existing Job object instances from Django API
     Submits their data to the SCC for processing
@@ -70,7 +70,7 @@ def activate_job(self, pk):
 
 
 @task(bind=True)
-def delete_job(self, pk):
+def delete_job(self, *, pk, **kwargs):
     """
     Sets Job.status to Status.DELETED in Django
     Also delete job directory and associated files on SCC
@@ -148,7 +148,7 @@ def scheduled_poll_job(self):
 
 
 @task(bind=True)
-def update_job_priority(self, pk, new_priority):
+def update_job_priority(self, *, pk, new_priority, **kwargs):
     """
     Update Job.priority
     Update priority on SCC or via Celery (unknown)
