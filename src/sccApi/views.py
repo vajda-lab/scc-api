@@ -84,7 +84,7 @@ class JobViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def partial_update(self, request, pk=None, new_priority=None):
+    def partial_update(self, request, pk=None):
         """
         Change the priority of a Job.
 
@@ -94,13 +94,14 @@ class JobViewSet(viewsets.ModelViewSet):
         # Proxy the request to partial update the Job.
         response = super().partial_update(request, pk=pk)
 
+        instance = self.get_object()
         with transaction.atomic():
             # Call Celery update the priority of the job.
-            tasks.update_job_priority.delay(pk=pk, new_priority=new_priority)
+            tasks.update_job_priority.delay(pk=pk, new_priority=instance.priority)
 
         return response
 
-    def update(self, request, pk=None, new_priority=None, **kwargs):
+    def update(self, request, pk=None, **kwargs):
         """
         Update a Job
 
@@ -110,8 +111,9 @@ class JobViewSet(viewsets.ModelViewSet):
         # Proxy the request to update the Job.
         response = super().update(request, pk=pk, **kwargs)
 
+        instance = self.get_object()
         with transaction.atomic():
             # Call Celery update the priority of the job.
-            tasks.update_job_priority.delay(pk=pk, new_priority=new_priority)
+            tasks.update_job_priority.delay(pk=pk, new_priority=instance.priority)
 
         return response
