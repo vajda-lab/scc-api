@@ -5,11 +5,14 @@
 @build:
     docker-compose build
 
-@up +ARGS="":
-    docker-compose up {{ARGS}}
+@build-sge-submit-host:
+    docker-compose -f docker-compose-sge-submit-host.yml build
 
 @down:
     docker-compose down
+
+@up +ARGS="":
+    docker-compose up {{ARGS}}
 
 @watch:
     watch docker ps
