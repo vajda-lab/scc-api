@@ -74,9 +74,6 @@ def delete_job(self, *, pk, **kwargs):
     """
     Sets Job.status to Status.DELETED in Django
     Also delete job directory and associated files on SCC
-    On SCC: # ToDo
-        Stop the selected job (Job.sge_task_id) ask Amanda about command
-        Delete all related files
     """
     try:
         job = Job.objects.get(pk=pk)
@@ -86,12 +83,17 @@ def delete_job(self, *, pk, **kwargs):
             job.save()
             JobLog.objects.create(job=job, event="Job status changed to deleted")
 
-        # ToDo: use subprocess() to run {delete job command} on the submit host
+        # Grid Engine Qdel ONLY stops/deletes a job. We have to handle file system.
         cmd = settings.GRID_ENGINE_DELETE_CMD.split(" ")
         if isinstance(cmd, list):
             job_delete = subprocess.run(cmd, capture_output=True)
         else:
             job_delete = subprocess.run([cmd], capture_output=True)
+
+        # Remove temp dir created in activate_job
+        scc_job_dir = str(job.uuid)
+        if Path(f"/tmp/{scc_job_dir}").exists():
+            subprocess.run(["rm", "-rf", f"/tmp/{scc_job_dir}"])
 
         return job_delete
 
