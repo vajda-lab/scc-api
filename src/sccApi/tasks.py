@@ -95,6 +95,7 @@ def delete_job(self, *, pk, **kwargs):
         if Path(f"/tmp/{scc_job_dir}").exists():
             subprocess.run(["rm", "-rf", f"/tmp/{scc_job_dir}"])
 
+        # This return was for testing early mocked command
         return job_delete
 
     except Job.DoesNotExist:
@@ -127,6 +128,13 @@ def scheduled_poll_job(self):
     """
     Checks status of current SCC jobs at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
+
+    This task (or another?) should find finished jobs & capture output files.
+    To find finished jobs do there are 3 options:
+    1. Check that the job is NOT in the queue (so, we shouldn’t see that job_id in qstat results)
+    2. Look for the Output and/or Error files in the job’s target directory
+    3. Do Both
+
     """
     cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
     if isinstance(cmd, list):
