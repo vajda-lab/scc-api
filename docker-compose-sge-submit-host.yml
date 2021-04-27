@@ -15,7 +15,7 @@ services:
   django:
     build:
       context: .
-      dockerfile: ./docker/submit-host-django/Dockerfile
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
     depends_on:
       - redis
       - postgres
@@ -28,7 +28,7 @@ services:
   scheduler:
     build:
       context: .
-      dockerfile: ./docker/submit-host-django/Dockerfile
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
     command: /start-scheduler
     depends_on:
       - redis
@@ -40,7 +40,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: ./docker/submit-host-django/Dockerfile
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
     command: celery -A config worker --queues celery,priority -l INFO
     depends_on:
       - redis
