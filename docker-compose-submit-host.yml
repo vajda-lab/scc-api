@@ -1,0 +1,66 @@
+version: '3.6'
+
+services:
+
+  postgres:
+    image: postgres:10.4-alpine
+    env_file: ./.docker-env
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - postgres_backup_dev:/backups
+
+  redis:
+    image: redis:3.2
+
+  django:
+    build:
+      context: .
+      dockerfile: ./docker/submit-host-django/Dockerfile
+    depends_on:
+      - redis
+      - postgres
+    env_file: ./.docker-env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: ./docker/submit-host-django/Dockerfile
+    command: /start-scheduler
+    depends_on:
+      - redis
+      - postgres
+    env_file: ./.docker-env
+    volumes:
+      - ./src:/app
+
+  worker:
+    build:
+      context: .
+      dockerfile: ./docker/submit-host-django/Dockerfile
+    command: celery -A config worker --queues celery,priority -l INFO
+    depends_on:
+      - redis
+      - postgres
+    env_file: ./.docker-env
+    volumes:
+      - ./src:/app
+
+  flower:
+    image: mher/flower
+    command: /start-flower
+    depends_on:
+      - redis
+      - postgres
+    env_file: ./.docker-env
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./src:/app
+
+volumes:
+  postgres_data_dev: {}
+  postgres_backup_dev: {}
