@@ -2,11 +2,13 @@ FROM revolutionsystems/python:3.6.13-wee-optimized-lto
 
 WORKDIR /app
 
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-RUN python3.6 -m pip install -U pip
+
+RUN python3 -m pip install -U pip
 
 COPY requirements.txt /tmp/requirements.txt
-RUN python3.6 -m pip install -U --no-cache-dir -r /tmp/requirements.txt
+RUN python3 -m pip install -U --no-cache-dir -r /tmp/requirements.txt
 
 COPY docker/django/celery/beat_start.sh /start-scheduler
 RUN chmod +x /start-scheduler
