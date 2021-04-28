@@ -122,6 +122,21 @@ def scheduled_allocate_job(self):
     # For each priorty, give count of Status.ACTIVE jobs
     # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
+@task(bind=True)
+def scheduled_find_complete_job(self):
+    """
+    Periodically identifies completed jobs so their output can be captured by web app
+    Interval determined by settings.CELERY_BEAT_SCHEDULE
+    """
+    active_jobs = Job.objects.filter(status=Status.ACTIVE)
+    # Parse results of qstat to get list of current job-ID values: qstat_jobs 
+
+    for job in active_jobs:
+        if job.sge_task_id not in qstat_jobs:
+            job.status = Status.COMPLETE
+        # Find and TAR output files
+        # Assign TAR file to job.output_file
+        job.save()
 
 @task(bind=True)
 def scheduled_poll_job(self):
