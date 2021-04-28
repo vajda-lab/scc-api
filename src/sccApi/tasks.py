@@ -124,17 +124,17 @@ def scheduled_allocate_job(self):
 
 
 @task(bind=True)
-def scheduled_find_complete_job(self):
+def scheduled_get_completed_job_output(self):
     """
-    Periodically identifies completed jobs so their output can be captured by web app
+    Periodically captures & sends output files from completed jobs to the web app
     Interval determined by settings.CELERY_BEAT_SCHEDULE
+    Should this run on it's own schedule or just be called by scheduled_poll_job?
+    If it's going to query for Status.COMPLETE, it should run on it's own schedule
     """
-    active_jobs = Job.objects.filter(status=Status.ACTIVE)
+    complete_jobs = Job.objects.filter(status=Status.COMPLETE)
     # Parse results of qstat to get list of current job-ID values: qstat_jobs
 
-    for job in active_jobs:
-        if job.sge_task_id not in qstat_jobs:
-            job.status = Status.COMPLETE
+    for job in complete_jobs:
         # Find and TAR output files
         # Assign TAR file to job.output_file
         job.save()
@@ -146,8 +146,7 @@ def scheduled_poll_job(self):
     Checks status of current SCC jobs at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
 
-    This task (or another?) should find finished jobs & capture output files.
-    To find finished jobs do there are 3 options:
+    This task will also find finished jobs:
     1. Check that the job is NOT in the queue (so, we shouldn’t see that job_id in qstat results)
     2. Look for the Output and/or Error files in the job’s target directory
     3. Do Both
@@ -159,12 +158,18 @@ def scheduled_poll_job(self):
     else:
         job_poll = subprocess.run([cmd], capture_output=True)
 
-    # Ask Amanda if the want output from this captured in the model?
-    # Do we want an automated running w/ Job ID or USER ID?
-    # If so, do you want it captured in the model?
+    # Capture QSTAT info
+    # Parse QSTAT output to save to model
+    # Create qstat_jobs (list of {uuid: sge_task_id} dicts)
+    # Figure out mapping of qstat statuses to API statuses
 
-    # Capturing QSTAT info
-    # Parsing QSTAT output to save to model
+    active_jobs = Job.objects.filter(status=Status.ACTIVE)
+    # Broken pseudocode below
+    for job in active_jobs:
+        if job.sge_task_id not in qstat_jobs:
+        # Find and TAR output files
+        # Assign TAR file to job.output_file
+        job.save()
 
     # kombu.exceptions.EncodeError: Object of type CompletedProcess is not JSON serializable
     # Returning portions of CompletedProcess to avoid error
