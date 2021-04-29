@@ -169,6 +169,7 @@ def scheduled_capture_job_output(self):
     Periodically captures output files from Status.COMPLETE & Status.ERROR jobs to the web app
     Will also delete those directories from SCC
     Interval determined by settings.CELERY_BEAT_SCHEDULE
+    UNFINISHED!
     """
     complete_jobs = Job.objects.filter(status=Status.COMPLETE)
     # Parse results of qstat to get list of current job-ID values: qstat_jobs
@@ -199,7 +200,9 @@ def scheduled_poll_job(self):
 
     # Capture qstat info as a list of dictionaries
     qstat_output = parse_output(job_poll)
-    # Parse QSTAT output to save to model
+    # Update jobs w/ qstat info
+    update_jobs(qstat_output)
+
     # Create qstat_jobs (list of {uuid: sge_task_id} dicts)
 
     active_jobs = Job.objects.filter(status=Status.ACTIVE)
@@ -220,7 +223,7 @@ def scheduled_poll_job(self):
 
 
 def update_jobs(qstat_output):
-    # Update jobs w/ their qstat results
+    # Update all jobs w/ their qstat results
     for row in qstat_output:
         try:
             job_id = row["job-ID"]
@@ -244,6 +247,7 @@ def update_jobs(qstat_output):
                     # "user": user,
                 },
             )
+            JobLog.objects.create(job=job, event="Job updated with qstat info")
         except Exception as e:
             print(f"{job_id} :: {e}")
 
@@ -251,6 +255,7 @@ def update_jobs(qstat_output):
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
+        JobLog.objects.create(job=job, event="Job status changed to error")
     Job.objects.bulk_update(error_jobs, ["status"])
 
 
