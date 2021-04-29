@@ -222,7 +222,8 @@ def scheduled_poll_job(self):
     # ToDo: Scheduling model code https://github.com/revsys/git-shoes/blob/main/config/settings.py#L249-L251
 
 
-def udpate_jobs(qstat_output):
+def update_jobs(qstat_output):
+    # Update jobs w/ their qstat results
     for row in qstat_output:
         try:
             job_id = row["job-ID"]
@@ -249,6 +250,11 @@ def udpate_jobs(qstat_output):
         except Exception as e:
             print(f"{job_id} :: {e}")
 
+    # Update status for Error jobs 
+    error_jobs = Job.objects.filter(job_state="Eqw")
+    for job in error_jobs:
+        job.status = Status.ERROR
+    Job.objects.bulk_update(error_jobs, ["status"])
 
 @task(bind=True)
 def update_job_priority(self, *, pk, new_priority, **kwargs):
