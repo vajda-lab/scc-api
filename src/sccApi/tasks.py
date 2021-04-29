@@ -243,7 +243,7 @@ def udpate_jobs(qstat_output):
                     "job_ja_task_id": job_ja_task_id,
                     "job_state": job_state,
                     "job_submitted": job_submitted,
-                    "user": user,
+                    # "user": user,
                 },
             )
         except Exception as e:
