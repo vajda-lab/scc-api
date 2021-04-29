@@ -228,6 +228,11 @@ def scheduled_poll_job(self):
 
 
 def update_jobs(qstat_output):
+    """
+    Takes input from scheduled_poll_job (a list of dictionaries)
+    Parses that and saves the results to job objects in the web app
+    Also updates Job.Status on jobs that have Errored or are complete
+    """
     # Update all jobs w/ their qstat results
     for row in qstat_output:
         try:
