@@ -8,7 +8,7 @@ from django.conf import settings
 from pathlib import Path
 
 from .models import Job, JobLog, Status
-
+from sccApi.mangement.commands.parse_qstat_demo import parse_output
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -159,6 +159,7 @@ def scheduled_poll_job(self):
         job_poll = subprocess.run([cmd], capture_output=True, text=True)
 
     # Capture QSTAT info
+    parse_output(job_poll)
     # Parse QSTAT output to save to model
     # Create qstat_jobs (list of {uuid: sge_task_id} dicts)
     # Figure out mapping of qstat statuses to API statuses
