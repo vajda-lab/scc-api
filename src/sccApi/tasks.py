@@ -154,9 +154,9 @@ def scheduled_poll_job(self):
     """
     cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
     if isinstance(cmd, list):
-        job_poll = subprocess.run(cmd, capture_output=True)
+        job_poll = subprocess.run(cmd, capture_output=True, text=True)
     else:
-        job_poll = subprocess.run([cmd], capture_output=True)
+        job_poll = subprocess.run([cmd], capture_output=True, text=True)
 
     # Capture QSTAT info
     # Parse QSTAT output to save to model
