@@ -8,6 +8,7 @@ from django.conf import settings
 from pathlib import Path
 
 from .models import Job, JobLog, Status
+
 # from sccApi.mangement.commands.parse_qstat_demo import parse_output
 
 logger = logging.getLogger(__name__)
@@ -217,6 +218,35 @@ def scheduled_poll_job(self):
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
     # ToDo: search for "assert_called_once_with" section in Thea's article
     # ToDo: Scheduling model code https://github.com/revsys/git-shoes/blob/main/config/settings.py#L249-L251
+
+
+def udpate_jobs(qstat_output):
+    for row in rows:
+
+        try:
+            job_id = row["job-ID"]
+            job_ja_task_id = row.get("ja-task-ID")
+            job_state = row["state"]
+            job_submitted = f"{row['submit-start-at']}".replace("/", "-")
+            job_submitted = parse(job_submitted)
+
+            if job_submitted:
+                job_submitted = pytz.timezone(settings.TIME_ZONE).localize(
+                    job_submitted, is_dst=None
+                )
+
+            job, created = Job.objects.update_or_create(
+                sge_task_id=job_id,
+                defaults={
+                    "job_data": row,
+                    "job_ja_task_id": job_ja_task_id,
+                    "job_state": job_state,
+                    "job_submitted": job_submitted,
+                    "user": user,
+                },
+            )
+        except Exception as e:
+            print(f"{job_id} :: {e}")
 
 
 @task(bind=True)
