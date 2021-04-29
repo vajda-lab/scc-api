@@ -199,7 +199,8 @@ def scheduled_poll_job(self):
     parse_output(job_poll)
     # Parse QSTAT output to save to model
     # Create qstat_jobs (list of {uuid: sge_task_id} dicts)
-    # Figure out mapping of qstat statuses to API statuses
+    # Figure out mapping of qstat states to API statuses
+    # qstat: Eqw ==> Job.Status.ERROR; compress, capture & delete SCC dir
 
     active_jobs = Job.objects.filter(status=Status.ACTIVE)
     # Broken pseudocode below
