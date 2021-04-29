@@ -167,8 +167,8 @@ def scheduled_poll_job(self):
     # Broken pseudocode below
     for job in active_jobs:
         if job.sge_task_id not in qstat_jobs:
-        # Find and TAR output files
-        # Assign TAR file to job.output_file
+            # Find and TAR output files
+            # Assign TAR file to job.output_file
             job.save()
 
     # kombu.exceptions.EncodeError: Object of type CompletedProcess is not JSON serializable
@@ -176,8 +176,6 @@ def scheduled_poll_job(self):
     # kombu.exceptions.EncodeError: Object of type bytes is not JSON serializable
     # return (job_poll.args, job_poll.returncode, job_poll.stdout)
     # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
-    # ToDo: need to process qstat output to know what to do
-    # ToDo: Read about mocking (Thea's article)
     # ToDo: search for "assert_called_once_with" section in Thea's article
     # ToDo: Scheduling model code https://github.com/revsys/git-shoes/blob/main/config/settings.py#L249-L251
 
