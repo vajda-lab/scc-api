@@ -250,11 +250,12 @@ def update_jobs(qstat_output):
         except Exception as e:
             print(f"{job_id} :: {e}")
 
-    # Update status for Error jobs 
+    # Update status for Error jobs
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
     Job.objects.bulk_update(error_jobs, ["status"])
+
 
 @task(bind=True)
 def update_job_priority(self, *, pk, new_priority, **kwargs):
