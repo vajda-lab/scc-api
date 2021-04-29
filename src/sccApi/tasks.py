@@ -8,7 +8,7 @@ from django.conf import settings
 from pathlib import Path
 
 from .models import Job, JobLog, Status
-from sccApi.mangement.commands.parse_qstat_demo import parse_output
+# from sccApi.mangement.commands.parse_qstat_demo import parse_output
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -100,6 +100,43 @@ def delete_job(self, *, pk, **kwargs):
 
     except Job.DoesNotExist:
         logger.exception(f"Job {pk} does not exist")
+
+
+def parse_output(output):
+    lines = [line for line in output.split("\n") if len(line)]
+    header_keys = [column for column in lines[0].split(" ") if len(column)]
+    print(header_keys)
+
+    headers = {}
+    header_cols = []
+    for header_col in range(len(header_keys)):
+        header = header_keys[header_col]
+        start = lines[0].find(header)
+        try:
+            next_header = header_keys[header_col + 1]
+            end = lines[0].find(next_header)
+        except IndexError:
+            end = None
+
+        header_cols.append(start)
+        headers[header] = {
+            "name": header,
+            "start": start,
+            "end": end,
+        }
+
+    rows = []
+    for row in lines[2:]:
+        data = {}
+        for column in headers:
+            start = headers[column]["start"]
+            end = headers[column]["end"]
+            if end:
+                data[column] = row[start:end]
+            else:
+                data[column] = row[start:]
+        rows.append(data)
+    return rows
 
 
 @task(bind=True)
