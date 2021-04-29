@@ -172,7 +172,6 @@ def scheduled_capture_job_output(self):
     UNFINISHED!
     """
     complete_jobs = Job.objects.filter(status=Status.COMPLETE)
-    # Parse results of qstat to get list of current job-ID values: qstat_jobs
 
     for job in complete_jobs:
         # Find and TAR output files
@@ -203,12 +202,12 @@ def scheduled_poll_job(self):
     # Update jobs w/ qstat info
     update_jobs(qstat_output)
 
-    # Create qstat_jobs (list of {uuid: sge_task_id} dicts)
+    # Create django_scc_map (list of {uuid: sge_task_id} dicts)
 
     active_jobs = Job.objects.filter(status=Status.ACTIVE)
     # Broken pseudocode below
     for job in active_jobs:
-        if job.sge_task_id not in qstat_jobs:
+        if job.sge_task_id not in django_scc_map:
             # Find and TAR output files
             # Assign TAR file to job.output_file
             job.save()
@@ -257,6 +256,8 @@ def update_jobs(qstat_output):
         job.status = Status.ERROR
         JobLog.objects.create(job=job, event="Job status changed to error")
     Job.objects.bulk_update(error_jobs, ["status"])
+
+    # Update status for Complete jobs
 
 
 @task(bind=True)
