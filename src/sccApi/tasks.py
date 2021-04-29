@@ -164,12 +164,11 @@ def scheduled_allocate_job(self):
 
 
 @task(bind=True)
-def scheduled_get_completed_job_output(self):
+def scheduled_capture_job_output(self):
     """
-    Periodically captures & sends output files from completed jobs to the web app
+    Periodically captures output files from Status.COMPLETE & Status.ERROR jobs to the web app
+    Will also delete those directories from SCC
     Interval determined by settings.CELERY_BEAT_SCHEDULE
-    Should this run on it's own schedule or just be called by scheduled_poll_job?
-    If it's going to query for Status.COMPLETE, it should run on it's own schedule
     """
     complete_jobs = Job.objects.filter(status=Status.COMPLETE)
     # Parse results of qstat to get list of current job-ID values: qstat_jobs
