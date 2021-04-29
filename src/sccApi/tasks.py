@@ -233,6 +233,8 @@ def update_jobs(qstat_output):
     Parses that and saves the results to job objects in the web app
     Also updates Job.Status on jobs that have Errored or are complete
     """
+   
+    scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
         try:
@@ -258,6 +260,7 @@ def update_jobs(qstat_output):
                 },
             )
             JobLog.objects.create(job=job, event="Job updated with qstat info")
+            scc_job_list.append(job_id)
         except Exception as e:
             print(f"{job_id} :: {e}")
 
