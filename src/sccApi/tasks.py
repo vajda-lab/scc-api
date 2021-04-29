@@ -169,7 +169,7 @@ def scheduled_poll_job(self):
         if job.sge_task_id not in qstat_jobs:
         # Find and TAR output files
         # Assign TAR file to job.output_file
-        job.save()
+            job.save()
 
     # kombu.exceptions.EncodeError: Object of type CompletedProcess is not JSON serializable
     # Returning portions of CompletedProcess to avoid error
