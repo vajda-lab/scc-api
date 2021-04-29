@@ -1,9 +1,11 @@
 import logging
+import pytz
 import subprocess
 import tarfile
 import tempfile
 
 from celery import task
+from dateutil.parser import parse
 from django.conf import settings
 from pathlib import Path
 
@@ -196,7 +198,7 @@ def scheduled_poll_job(self):
     else:
         job_poll = subprocess.run([cmd], capture_output=True, text=True)
 
-    # Capture QSTAT info
+    # Capture qstat info as a list of dictionaries
     qstat_output = parse_output(job_poll)
     # Parse QSTAT output to save to model
     # Create qstat_jobs (list of {uuid: sge_task_id} dicts)
@@ -221,8 +223,7 @@ def scheduled_poll_job(self):
 
 
 def udpate_jobs(qstat_output):
-    for row in rows:
-
+    for row in qstat_output:
         try:
             job_id = row["job-ID"]
             job_ja_task_id = row.get("ja-task-ID")
