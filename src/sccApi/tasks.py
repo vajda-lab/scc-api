@@ -56,9 +56,15 @@ def activate_job(self, *, pk, **kwargs):
             try:
                 cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
                 if isinstance(cmd, list):
-                    job_submit = subprocess.run(cmd, capture_output=True)
+                    job_submit = subprocess.run(cmd, capture_output=True, text=True)
                 else:
-                    job_submit = subprocess.run([cmd], capture_output=True)
+                    job_submit = subprocess.run([cmd], capture_output=True, text=True)
+
+                # Assign SGE ID to job
+                # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
+                sge_task_id = job_submit.stdout.split(" ")[2]
+                job.sge_task_id = int(sge_task_id)
+                JobLog.objects.create(job=job, event="Job sge_task_id added")
                 return job_submit
             except Exception as e:
                 job.status = Status.ERROR
