@@ -196,7 +196,7 @@ def scheduled_poll_job(self):
         job_poll = subprocess.run([cmd], capture_output=True, text=True)
 
     # Capture QSTAT info
-    parse_output(job_poll)
+    qstat_output = parse_output(job_poll)
     # Parse QSTAT output to save to model
     # Create qstat_jobs (list of {uuid: sge_task_id} dicts)
     # Figure out mapping of qstat states to API statuses
