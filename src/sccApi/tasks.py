@@ -10,6 +10,7 @@ from django.conf import settings
 from pathlib import Path
 
 from .models import Job, JobLog, Status
+from user_app.models import User
 
 # from sccApi.mangement.commands.parse_qstat_demo import parse_output
 
@@ -177,24 +178,18 @@ def scheduled_capture_job_output(self):
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     UNFINISHED!
     """
-    complete_jobs = Job.objects.filter(status=Status.COMPLETE)
-    error_jobs = Job.objects.filter(status=Status.ERROR)
+    capture_jobs = Job.objects.filter(status__in=[Status.COMPLETE, Status.ERROR], output_file=None)
 
-    # Can I concatonate the above QuerySets? Would there be any benefit to that?
-    for job in complete_jobs:
+    for job in capture_jobs:
         scc_job_dir = str(job.uuid)
+        # Improve this file name
         scc_job_output_file = f"{job.input_file}_results"
         if Path(f"/tmp/{scc_job_dir}").exists():
             subprocess.run(["tar", "-czf", scc_job_output_file, f"/tmp/{scc_job_dir}"])
-            # Assign scc_job_output_file file to job.output_file
-            # Does this need to be a request.patch or just job.output_file = scc_job_output_file
+            job.output_file = scc_job_output_file
             job.save()
             # Delete SCC directory
             subprocess.run(["rm", "-rf", f"/tmp/{scc_job_dir}"])
-
-    for job in error_jobs:
-        # repeat above
-        pass
 
 
 @task(bind=True)
