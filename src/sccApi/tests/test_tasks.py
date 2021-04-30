@@ -90,15 +90,18 @@ def test_scheduled_allocate_job():
     assert Job.objects.filter(status=Status.QUEUED).count() == 0
     assert Job.objects.filter(status=Status.ACTIVE).count() == 2
 
+
 @pytest.mark.django_db()
 def test_scheduled_capture_job_output():
     # Create jobs with and without output files and appropriate statuses
     pass
 
+
 @pytest.mark.django_db()
 def test_update_jobs():
     pass
 
+
 @pytest.mark.django_db()
-def test_parse_output:
+def test_parse_output():
     pass
