@@ -98,10 +98,11 @@ def test_scheduled_capture_job_output():
 
 
 @pytest.mark.django_db()
+def test_parse_qstat_output():
+    pass
+
+@pytest.mark.django_db()
 def test_update_jobs():
     pass
 
 
-@pytest.mark.django_db()
-def test_parse_output():
-    pass

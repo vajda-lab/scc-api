@@ -12,7 +12,6 @@ from pathlib import Path
 from .models import Job, JobLog, Status
 from user_app.models import User
 
-# from sccApi.mangement.commands.parse_qstat_demo import parse_output
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -112,7 +111,7 @@ def delete_job(self, *, pk, **kwargs):
         logger.exception(f"Job {pk} does not exist")
 
 
-def parse_output(output):
+def parse_qstat_output(output):
     lines = [line for line in output.split("\n") if len(line)]
     header_keys = [column for column in lines[0].split(" ") if len(column)]
     print(header_keys)
@@ -213,7 +212,7 @@ def scheduled_poll_job(self):
         job_poll = subprocess.run([cmd], capture_output=True, text=True)
 
     # Capture qstat info as a list of dictionaries
-    qstat_output = parse_output(job_poll.stdout)
+    qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
     update_jobs(qstat_output)
 
