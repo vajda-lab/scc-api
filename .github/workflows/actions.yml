@@ -96,6 +96,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v2
         with:
+          context: ./docker/django/
           push: true # Will only build if this is not here
           tags: |
             ghcr.io/${{ github.repository.lowercase }}:latest
