@@ -93,58 +93,55 @@ def test_scheduled_allocate_job():
 
 @pytest.mark.django_db()
 def test_scheduled_capture_job_output():
-    pass
     # Create jobs with and without output files and appropriate statuses
-    # error_job = baker.make(
-    #     "sccApi.Job", status=Status.ERROR, sge_task_id=1, output_file=None
-    # )
-    # complete_job = baker.make(
-    #     "sccApi.Job", status=Status.COMPLETE, sge_task_id=9, output_file=None
-    # )
+    error_job = baker.make(
+        "sccApi.Job", status=Status.ERROR, sge_task_id=1, output_file=None
+    )
+    complete_job = baker.make(
+        "sccApi.Job", status=Status.COMPLETE, sge_task_id=9, output_file=None
+    )
 
-    # ignore_me_job = baker.make(
-    #     "sccApi.Job",
-    #     status=Status.ERROR,
-    #     sge_task_id=10,
-    #     output_file="i_had_errors.tar.gz",
-    # )
-    # ignore_me_too_job = baker.make(
-    #     "sccApi.Job",
-    #     status=Status.COMPLETE,
-    #     sge_task_id=90,
-    #     output_file="i_am_done.tar.gz",
-    # )
+    ignore_me_job = baker.make(
+        "sccApi.Job",
+        status=Status.ERROR,
+        sge_task_id=10,
+        output_file="i_had_errors.tar.gz",
+    )
+    ignore_me_too_job = baker.make(
+        "sccApi.Job",
+        status=Status.COMPLETE,
+        sge_task_id=90,
+        output_file="i_am_done.tar.gz",
+    )
 
-    # # Setup directories to compress/attach
-    # tasks.scheduled_capture_job_output()
+    # Setup directories to compress/attach
+    tasks.scheduled_capture_job_output()
 
-    # assert error_job.output_file != None
-    # print(f"error_job.output_file: {error_job.output_file}")
-    # assert complete_job.output_file != None
-    # print(f"complete_job.output_file: {complete_job.output_file}")
-    # assert ignore_me_job.output_file == "i_had_errors.tar.gz"
-    # assert ignore_me_too_job.output_file == "i_am_done.tar.gz"
+    assert error_job.output_file != None
+    print(f"error_job.output_file: {error_job.output_file}")
+    assert complete_job.output_file != None
+    print(f"complete_job.output_file: {complete_job.output_file}")
+    assert ignore_me_job.output_file == "i_had_errors.tar.gz"
+    assert ignore_me_too_job.output_file == "i_am_done.tar.gz"
 
 
 @pytest.mark.django_db()
 def test_parse_qstat_output():
-    pass
     # How do I point to sample_qstat_output_short.txt?
-    # qstat_rows = tasks.parse_qstat_output("sample_qstat_output_short.txt")
-    # assert len(qstat_rows) > 1
+    qstat_rows = tasks.parse_qstat_output("sample_qstat_output_short.txt")
+    assert len(qstat_rows) > 1
 
 
 @pytest.mark.django_db()
 def test_update_jobs():
-    pass
     # Job names are their inteded FINAL state
-    # error_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=1)
-    # complete_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=9)
+    error_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=1)
+    complete_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=9)
 
-    # # waves hands
-    # qstat_output = {}
+    # waves hands
+    qstat_output = {}
 
-    # tasks.update_jobs(qstat_output)
-    # assert error_job.status == Status.ERROR
-    # assert error_job.job_state == "Eqw"
-    # assert complete_job.status == Status.COMPLETE
+    tasks.update_jobs(qstat_output)
+    assert error_job.status == Status.ERROR
+    assert error_job.job_state == "Eqw"
+    assert complete_job.status == Status.COMPLETE
