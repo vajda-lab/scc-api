@@ -99,5 +99,5 @@ jobs:
           context: ./docker/django/
           push: true # Will only build if this is not here
           tags: |
-            ghcr.io/${{ github.repository.lowercase }}:latest
-          #   ghcr.io/vajdalab/scc-api:latest
+            ghcr.io/vajdalab/scc-api:latest
+          #   ghcr.io/${{ github.repository }}:latest
