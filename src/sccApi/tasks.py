@@ -185,9 +185,7 @@ def scheduled_capture_job_output(self):
         scc_job_dir = str(job.uuid)
         scc_job_output_file = f"{job.input_file}_results"
         if Path(f"/tmp/{scc_job_dir}").exists():
-            subprocess.run(
-                ["tar", "-czf", scc_job_output_file, f"/tmp/{scc_job_dir}"]
-            )
+            subprocess.run(["tar", "-czf", scc_job_output_file, f"/tmp/{scc_job_dir}"])
             # Assign scc_job_output_file file to job.output_file
             # Does this need to be a request.patch or just job.output_file = scc_job_output_file
             job.save()
@@ -196,6 +194,8 @@ def scheduled_capture_job_output(self):
 
     for job in error_jobs:
         # repeat above
+        pass
+
 
 @task(bind=True)
 def scheduled_poll_job(self):
