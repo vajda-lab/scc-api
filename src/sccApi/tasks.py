@@ -236,6 +236,7 @@ def update_jobs(qstat_output):
     Also updates Job.Status on jobs that have Errored or are complete
     """
 
+    user, created = User.objects.get_or_create(email="awake@bu.edu")
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
@@ -258,7 +259,7 @@ def update_jobs(qstat_output):
                     "job_ja_task_id": job_ja_task_id,
                     "job_state": job_state,
                     "job_submitted": job_submitted,
-                    # "user": user,
+                    "user": user,
                 },
             )
             JobLog.objects.create(job=job, event="Job updated with qstat info")
