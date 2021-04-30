@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import django_sql_dashboard
+# import django_sql_dashboard
 
 from django.conf import settings
 from django.contrib import admin
@@ -34,7 +34,7 @@ router.register("users", UserViewSet, basename="user")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.HomeView.as_view(), name="home"),
-    path("dashboard/", include(django_sql_dashboard.urls)),
+    # path("dashboard/", include(django_sql_dashboard.urls)),
     path("sccApi/", include(("sccApi.urls", "sccApi"), namespace="sccApi")),
     path("users/", include(("user_app.urls", "user_app"), namespace="user_app")),
     path("accounts/", include("django.contrib.auth.urls")),
