@@ -172,18 +172,30 @@ def scheduled_allocate_job(self):
 @task(bind=True)
 def scheduled_capture_job_output(self):
     """
-    Periodically captures output files from Status.COMPLETE & Status.ERROR jobs to the web app
+    Periodically send TARed output directories from Status.COMPLETE & Status.ERROR jobs to web app
     Will also delete those directories from SCC
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     UNFINISHED!
     """
     complete_jobs = Job.objects.filter(status=Status.COMPLETE)
+    error_jobs = Job.objects.filter(status=Status.ERROR)
 
+    # Can I concatonate the above QuerySets? Would there be any benefit to that?
     for job in complete_jobs:
-        # Find and TAR output files
-        # Assign TAR file to job.output_file
-        job.save()
+        scc_job_dir = str(job.uuid)
+        scc_job_output_file = f"{job.input_file}_results"
+        if Path(f"/tmp/{scc_job_dir}").exists():
+            subprocess.run(
+                ["tar", "-czf", scc_job_output_file, f"/tmp/{scc_job_dir}"]
+            )
+            # Assign scc_job_output_file file to job.output_file
+            # Does this need to be a request.patch or just job.output_file = scc_job_output_file
+            job.save()
+            # Delete SCC directory
+            subprocess.run(["rm", "-rf", f"/tmp/{scc_job_dir}"])
 
+    for job in error_jobs:
+        # repeat above
 
 @task(bind=True)
 def scheduled_poll_job(self):
