@@ -133,6 +133,7 @@ def test_parse_qstat_output():
     # qstat_rows = tasks.parse_qstat_output("sample_qstat_output_short.txt")
     # assert len(qstat_rows) > 1
 
+
 @pytest.mark.django_db()
 def test_update_jobs():
     pass
