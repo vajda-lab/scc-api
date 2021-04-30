@@ -1,4 +1,4 @@
-FROM revolutionsystems/python:3.6.13-wee-optimized-lto
+FROM revolutionsystems/python:3.8.9-wee-optimized-lto
 
 WORKDIR /app
 
