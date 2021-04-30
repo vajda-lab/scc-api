@@ -75,7 +75,7 @@ jobs:
     needs: [test]
     name: Build and Publish Docker image
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/completed_jobs'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v2
