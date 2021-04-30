@@ -178,7 +178,9 @@ def scheduled_capture_job_output(self):
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     UNFINISHED!
     """
-    capture_jobs = Job.objects.filter(status__in=[Status.COMPLETE, Status.ERROR], output_file=None)
+    capture_jobs = Job.objects.filter(
+        status__in=[Status.COMPLETE, Status.ERROR], output_file=None
+    )
 
     for job in capture_jobs:
         scc_job_dir = str(job.uuid)
