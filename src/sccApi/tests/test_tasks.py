@@ -1,6 +1,7 @@
 import pytest
 
 from model_bakery import baker
+from pathlib import Path
 
 from sccApi import tasks
 from sccApi.models import Job, Priority, Status
@@ -127,14 +128,26 @@ def test_scheduled_capture_job_output():
 
 @pytest.mark.django_db()
 def test_parse_qstat_output():
-    # How do I point to sample_qstat_output_short.txt?
-    qstat_rows = tasks.parse_qstat_output("sample_qstat_output_short.txt")
+    """
+    Tests parse_qstat_output task.
+    """
+
+    # NOTE: input_filename & input_buffer are mocks
+    input_filename = "/app/sccApi/tests/qstat_test_output.txt"
+    if Path(input_filename).exists():
+        input_buffer = Path(input_filename).read_text()
+        input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
+    else:
+        print(f"\nNo Such File as {input_filename} in {Path.cwd()}")
+
+    qstat_rows = tasks.parse_qstat_output(input_buffer)
     assert len(qstat_rows) > 1
+    print (qstat_rows[:2])
 
 
 @pytest.mark.django_db()
 def test_update_jobs():
-    # Job names are their inteded FINAL state
+    # Job names are their intended FINAL state
     error_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=1)
     complete_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=9)
 
