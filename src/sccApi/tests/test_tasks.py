@@ -184,8 +184,9 @@ def test_update_jobs():
     assert error_job.status == Status.ERROR
     assert error_job.job_state == "Eqw"
     # Was new object created for the exogenous job?
-    assert Job.objects.filter(sge_task_id=6260963)
-    rprint(f"\n{Job.objects.filter(sge_task_id=6260963)}")
+    assert Job.objects.get(sge_task_id=6260963)
+    assert Job.objects.get(sge_task_id=6260963).status == Status.ACTIVE
     # Was complete_job's status changed?
     complete_job.refresh_from_db()
     assert complete_job.status == Status.COMPLETE
+    assert len(Job.objects.all()) == 3

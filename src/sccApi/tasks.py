@@ -114,7 +114,6 @@ def delete_job(self, *, pk, **kwargs):
 def parse_qstat_output(output):
     lines = [line for line in output.split("\n") if len(line)]
     header_keys = [column for column in lines[0].split(" ") if len(column)]
-    print(header_keys)
 
     headers = {}
     header_cols = []
@@ -258,8 +257,18 @@ def update_jobs(qstat_output):
                     "user": user,
                 },
             )
-            JobLog.objects.create(job=job, event="Job updated with qstat info")
-            scc_job_list.append(job_id)
+            # JobLog.objects.create(job=job, event="Job updated with qstat info")
+
+            # If exogenous job created, set to active; they can also be recorded in our web app
+            # ToDo: This may need adjusting for other statuses. Now works for exo running jobs
+            if created:
+                job.status = Status.ACTIVE
+                job.save()
+                JobLog.objects.create(job=job, event="Exogenous job added to web app")
+            else:
+                JobLog.objects.create(job=job, event="Job updated with qstat info")
+
+            scc_job_list.append(int(job_id))
         except Exception as e:
             print(f"{job_id} :: {e}")
 
