@@ -1,4 +1,5 @@
 import pytest
+from rich import print as rprint
 
 from model_bakery import baker
 from pathlib import Path
@@ -132,17 +133,17 @@ def test_parse_qstat_output():
     Tests parse_qstat_output task.
     """
 
-    # NOTE: input_filename & input_buffer are mocks
+    # NOTE: input_filename & input_buffer: TEST MOCKS BEFORE CONTAINER ISSUES SORTED
     input_filename = "/app/sccApi/tests/qstat_test_output.txt"
     if Path(input_filename).exists():
         input_buffer = Path(input_filename).read_text()
         input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
     else:
-        print(f"\nNo Such File as {input_filename} in {Path.cwd()}")
+        print(f"\nNO SUCH FILE AS {input_filename} in {Path.cwd()}")
 
     qstat_rows = tasks.parse_qstat_output(input_buffer)
     assert len(qstat_rows) > 1
-    print (qstat_rows[:2])
+    # rprint(qstat_rows[:2])
 
 
 @pytest.mark.django_db()
@@ -151,10 +152,40 @@ def test_update_jobs():
     error_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=1)
     complete_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=9)
 
-    # waves hands
-    qstat_output = {}
+    # MOCK INPUT FOR TEST BEFORE CONTAINER ISSUES SORTED
+    qstat_output = [
+        {
+            "job-ID": "1",
+            "prior": "0.10000 ",
+            "name": "nf-analysi ",
+            "user": "xrzhou       ",
+            "state": "Eqw",
+            "submit-start-at": "04/28/2021 19:32:38 ",
+            "queue": "linga@scc-kb3.scc.bu.edu       ",
+            "slots": "    1 ",
+            "ja-task-ID": "11",
+        },
+        {
+            "job-ID": "6260963",
+            "prior": "0.10000 ",
+            "name": "nf-analysi ",
+            "user": "xrzhou       ",
+            "state": "r     ",
+            "submit-start-at": "04/28/2021 19:33:25 ",
+            "queue": "linga@scc-kb8.scc.bu.edu       ",
+            "slots": "    1 ",
+            "ja-task-ID": "19",
+        },
+    ]
 
     tasks.update_jobs(qstat_output)
+    error_job.refresh_from_db()
+    # error_job tests
     assert error_job.status == Status.ERROR
     assert error_job.job_state == "Eqw"
+    # Was new object created for the exogenous job?
+    assert Job.objects.filter(sge_task_id=6260963)
+    rprint(f"\n{Job.objects.filter(sge_task_id=6260963)}")
+    # Was complete_job's status changed?
+    complete_job.refresh_from_db()
     assert complete_job.status == Status.COMPLETE
