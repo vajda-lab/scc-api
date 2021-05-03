@@ -134,6 +134,7 @@ def parse_qstat_output(output):
         }
 
     rows = []
+    #ToDo: ask Jeff if we want to or can .strip() some values. 
     for row in lines[2:]:
         data = {}
         for column in headers:
