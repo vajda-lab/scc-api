@@ -143,6 +143,7 @@ def test_parse_qstat_output():
 
     qstat_rows = tasks.parse_qstat_output(input_buffer)
     assert len(qstat_rows) > 1
+    assert qstat_rows[1]['job-ID'].strip() == '6260963'
     # rprint(qstat_rows[:2])
 
 
