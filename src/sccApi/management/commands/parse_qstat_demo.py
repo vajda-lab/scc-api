@@ -58,7 +58,7 @@ def main(input_filename):
         input_buffer = Path(input_filename).read_text()
         input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
 
-        user, created = User.objects.get_or_create(email="jeff.triplett@gmail.com")
+        user, created = User.objects.get_or_create(email="test@example.com")
 
         rows = parse_output(input_buffer)
 
