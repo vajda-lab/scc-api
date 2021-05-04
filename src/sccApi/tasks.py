@@ -175,13 +175,16 @@ def scheduled_capture_job_output(self):
     Periodically send TARed output directories from Status.COMPLETE & Status.ERROR jobs to web app
     Will also delete those directories from SCC
     Interval determined by settings.CELERY_BEAT_SCHEDULE
+    Directory will be based on a setting
     UNFINISHED!
     """
     capture_jobs = Job.objects.filter(
-        status__in=[Status.COMPLETE, Status.ERROR], output_file=None
+        status__in=[Status.COMPLETE, Status.ERROR], 
+        output_file__in=["", None],
     )
     print(f"IN TEST CAPTURE_JOBS SHOULD HAVE 4 OBJECTS:{len(capture_jobs)};\n{capture_jobs};")
     for job in capture_jobs:
+        print(f"\nJOB.OUTPUT_FILE: {job.output_file}")
         scc_job_dir = str(job.uuid)
         # Improve this file name
         scc_job_output_file = f"{job.input_file}_results"
