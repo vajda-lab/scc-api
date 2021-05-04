@@ -1,5 +1,6 @@
 import pytest
 from rich import print as rprint
+import subprocess
 
 from model_bakery import baker
 from pathlib import Path
@@ -118,6 +119,7 @@ def test_scheduled_capture_job_output():
 
     rprint(f"\nTHE OBJECTS I JUST MADE{Job.objects.all()}")
     # Setup directories to compress/attach
+    # Decide where to put temporary files
 
     tasks.scheduled_capture_job_output()
 
@@ -136,7 +138,7 @@ def test_parse_qstat_output():
     """
 
     # NOTE: input_filename & input_buffer: TEST MOCKS BEFORE CONTAINER ISSUES SORTED
-    input_filename = "/app/sccApi/tests/qstat_test_output.txt"
+    input_filename = "sccApi/tests/qstat_test_output.txt"
     if Path(input_filename).exists():
         input_buffer = Path(input_filename).read_text()
         input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
