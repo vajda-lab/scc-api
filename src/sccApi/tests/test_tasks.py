@@ -142,14 +142,13 @@ def test_parse_qstat_output():
     if Path(input_filename).exists():
         input_buffer = Path(input_filename).read_text()
         input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
+        qstat_rows = tasks.parse_qstat_output(input_buffer)
+        assert len(qstat_rows) > 1
+        assert qstat_rows[1]['job-ID'].strip() == '6260963'
+        # rprint(qstat_rows[:2])
     else:
         print(f"\nNO SUCH FILE AS {input_filename} in {Path.cwd()}")
-        input_buffer = None
-
-    qstat_rows = tasks.parse_qstat_output(input_buffer)
-    assert len(qstat_rows) > 1
-    assert qstat_rows[1]['job-ID'].strip() == '6260963'
-    # rprint(qstat_rows[:2])
+        input_buffer = ""
 
 
 @pytest.mark.django_db()
