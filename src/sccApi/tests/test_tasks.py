@@ -140,6 +140,7 @@ def test_parse_qstat_output():
         input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
     else:
         print(f"\nNO SUCH FILE AS {input_filename} in {Path.cwd()}")
+        input_buffer = None
 
     qstat_rows = tasks.parse_qstat_output(input_buffer)
     assert len(qstat_rows) > 1
