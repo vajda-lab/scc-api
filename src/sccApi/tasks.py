@@ -182,7 +182,7 @@ def scheduled_capture_job_output(self):
         status__in=[Status.COMPLETE, Status.ERROR], 
         output_file__in=["", None],
     )
-    print(f"IN TEST CAPTURE_JOBS SHOULD HAVE 4 OBJECTS:{len(capture_jobs)};\n{capture_jobs};")
+    print(f"IN TEST CAPTURE_JOBS SHOULD HAVE 2 OBJECTS:{len(capture_jobs)};\n{capture_jobs};")
     for job in capture_jobs:
         print(f"\nJOB.OUTPUT_FILE: {job.output_file}")
         scc_job_dir = str(job.uuid)
