@@ -124,8 +124,8 @@ def test_scheduled_capture_job_output():
     tasks.scheduled_capture_job_output()
 
     # print(f"\nERROR_JOB.OUTPUT_FILE: {error_job};{type(error_job.output_file)};")
-    assert error_job.output_file.name == None
-    assert complete_job.output_file == None
+    assert error_job.output_file.name != ""
+    assert complete_job.output_file != ""
     print(f"complete_job.output_file: {complete_job.output_file}")
     assert ignore_me_job.output_file == "i_had_errors.tar.gz"
     assert ignore_me_too_job.output_file == "i_am_done.tar.gz"
