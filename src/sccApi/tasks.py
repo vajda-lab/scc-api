@@ -286,7 +286,6 @@ def update_jobs(qstat_output):
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
             job.status = Status.COMPLETE
-            # job.save()
             JobLog.objects.create(job=job, event="Job status changed to complete")
     Job.objects.bulk_update(active_jobs, ["status"])
 
