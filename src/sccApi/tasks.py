@@ -134,7 +134,7 @@ def parse_qstat_output(output):
         }
 
     rows = []
-    #ToDo: ask Jeff if we want to or can .strip() some values. 
+    # ToDo: ask Jeff if we want to or can .strip() some values.
     for row in lines[2:]:
         data = {}
         for column in headers:
@@ -179,10 +179,12 @@ def scheduled_capture_job_output(self):
     UNFINISHED!
     """
     capture_jobs = Job.objects.filter(
-        status__in=[Status.COMPLETE, Status.ERROR], 
+        status__in=[Status.COMPLETE, Status.ERROR],
         output_file__in=["", None],
     )
-    print(f"IN TEST CAPTURE_JOBS SHOULD HAVE 2 OBJECTS:{len(capture_jobs)};\n{capture_jobs};")
+    print(
+        f"IN TEST CAPTURE_JOBS SHOULD HAVE 2 OBJECTS:{len(capture_jobs)};\n{capture_jobs};"
+    )
     for job in capture_jobs:
         print(f"\nJOB.OUTPUT_FILE: {job.output_file}")
         scc_job_dir = str(job.uuid)
@@ -291,6 +293,7 @@ def update_jobs(qstat_output):
             job.status = Status.COMPLETE
             JobLog.objects.create(job=job, event="Job status changed to complete")
     Job.objects.bulk_update(active_jobs, ["status"])
+
 
 @task(bind=True)
 def update_job_priority(self, *, pk, new_priority, **kwargs):
