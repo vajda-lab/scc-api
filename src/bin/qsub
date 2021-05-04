@@ -1,2 +1,4 @@
 #!/usr/bin/env python
-print('Your job-array 5290723.1-2:1 ("atlas_whole.py") has been submitted')
+print('Your job 5290723 ("atlas_whole.py") has been submitted')
+# Line below for array job submisssion
+# print('Your job-array 5290723.1-2:1 ("atlas_whole.py") has been submitted')

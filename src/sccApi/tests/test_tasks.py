@@ -1,6 +1,9 @@
 import pytest
+from rich import print as rprint
+import subprocess
 
 from model_bakery import baker
+from pathlib import Path
 
 from sccApi import tasks
 from sccApi.models import Job, Priority, Status
@@ -19,8 +22,8 @@ def test_activate_job():
     job.refresh_from_db()
     assert job.status == Status.ACTIVE
     assert qsub_response.returncode == 0
-    assert b"5290723" in qsub_response.stdout
-    assert b"has been submitted" in qsub_response.stdout
+    assert "5290723" in qsub_response.stdout
+    assert "has been submitted" in qsub_response.stdout
 
 
 @pytest.mark.django_db()
@@ -89,3 +92,106 @@ def test_scheduled_allocate_job():
 
     assert Job.objects.filter(status=Status.QUEUED).count() == 0
     assert Job.objects.filter(status=Status.ACTIVE).count() == 2
+
+
+@pytest.mark.django_db()
+def test_scheduled_capture_job_output():
+    # Create jobs with and without output files and appropriate statuses
+    error_job = baker.make(
+        "sccApi.Job", status=Status.ERROR, sge_task_id=1, output_file=None
+    )
+    complete_job = baker.make(
+        "sccApi.Job", status=Status.COMPLETE, sge_task_id=9, output_file=None
+    )
+
+    ignore_me_job = baker.make(
+        "sccApi.Job",
+        status=Status.ERROR,
+        sge_task_id=10,
+        output_file="i_had_errors.tar.gz",
+    )
+    ignore_me_too_job = baker.make(
+        "sccApi.Job",
+        status=Status.COMPLETE,
+        sge_task_id=90,
+        output_file="i_am_done.tar.gz",
+    )
+
+    rprint(f"\nTHE OBJECTS I JUST MADE{Job.objects.all()}")
+    # Setup directories to compress/attach
+    # Decide where to put temporary files
+
+    tasks.scheduled_capture_job_output()
+
+    # print(f"\nERROR_JOB.OUTPUT_FILE: {error_job};{type(error_job.output_file)};")
+    assert error_job.output_file.name != ""
+    assert complete_job.output_file != ""
+    print(f"complete_job.output_file: {complete_job.output_file}")
+    assert ignore_me_job.output_file == "i_had_errors.tar.gz"
+    assert ignore_me_too_job.output_file == "i_am_done.tar.gz"
+
+
+@pytest.mark.django_db()
+def test_parse_qstat_output():
+    """
+    Tests parse_qstat_output task.
+    """
+
+    # NOTE: input_filename & input_buffer: TEST MOCKS BEFORE CONTAINER ISSUES SORTED
+    input_filename = "sccApi/tests/qstat_test_output.txt"
+    if Path(input_filename).exists():
+        input_buffer = Path(input_filename).read_text()
+        input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
+        qstat_rows = tasks.parse_qstat_output(input_buffer)
+        assert len(qstat_rows) > 1
+        assert qstat_rows[1]["job-ID"].strip() == "6260963"
+        # rprint(qstat_rows[:2])
+    else:
+        print(f"\nNO SUCH FILE AS {input_filename} in {Path.cwd()}")
+        input_buffer = ""
+
+
+@pytest.mark.django_db()
+def test_update_jobs():
+    # Job names are their intended FINAL state
+    error_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=1)
+    complete_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=9)
+
+    # MOCK INPUT FOR TEST BEFORE CONTAINER ISSUES SORTED
+    qstat_output = [
+        {
+            "job-ID": "1",
+            "prior": "0.10000 ",
+            "name": "nf-analysi ",
+            "user": "xrzhou       ",
+            "state": "Eqw",
+            "submit-start-at": "04/28/2021 19:32:38 ",
+            "queue": "linga@scc-kb3.scc.bu.edu       ",
+            "slots": "    1 ",
+            "ja-task-ID": "11",
+        },
+        {
+            "job-ID": "6260963",
+            "prior": "0.10000 ",
+            "name": "nf-analysi ",
+            "user": "xrzhou       ",
+            "state": "r     ",
+            "submit-start-at": "04/28/2021 19:33:25 ",
+            "queue": "linga@scc-kb8.scc.bu.edu       ",
+            "slots": "    1 ",
+            "ja-task-ID": "19",
+        },
+    ]
+
+    tasks.update_jobs(qstat_output)
+    error_job.refresh_from_db()
+    # error_job tests
+    assert error_job.status == Status.ERROR
+    assert error_job.job_state == "Eqw"
+    # Was new object created for the exogenous job?
+    assert Job.objects.get(sge_task_id=6260963)
+    assert Job.objects.get(sge_task_id=6260963).status == Status.ACTIVE
+    # Was complete_job's status changed?
+    complete_job.refresh_from_db()
+    assert complete_job.status == Status.COMPLETE
+    assert len(Job.objects.all()) == 3
