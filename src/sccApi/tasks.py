@@ -112,6 +112,9 @@ def delete_job(self, *, pk, **kwargs):
 
 
 def parse_qstat_output(output):
+    if "submit/start at" in output:
+        output = output.replace("submit/start at", "submit-start-at")
+
     lines = [line for line in output.split("\n") if len(line)]
     header_keys = [column for column in lines[0].split(" ") if len(column)]
 
