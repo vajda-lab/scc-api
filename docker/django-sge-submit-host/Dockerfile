@@ -1,4 +1,3 @@
-# FROM revolutionsystems/python:3.6.13-wee-optimized-lto
 FROM submit-host
 
 WORKDIR /app
