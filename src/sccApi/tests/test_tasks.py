@@ -139,9 +139,9 @@ def test_parse_qstat_output():
     """
 
     # NOTE: input_filename & input_buffer: TEST MOCKS BEFORE CONTAINER ISSUES SORTED
-    input_filename = "sccApi/tests/qstat_test_output.txt"
-    input_buffer = Path(input_filename).read_text()
-    input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
+    input_filename = Path("sccApi", "tests", "qstat_test_output.txt")
+    input_buffer = input_filename.read_text()
+    # input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
     qstat_rows = tasks.parse_qstat_output(input_buffer)
     assert len(qstat_rows) > 1
     assert qstat_rows[1]["job-ID"].strip() == "6260963"
