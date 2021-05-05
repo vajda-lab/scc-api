@@ -1,9 +1,10 @@
 import pytest
-from rich import print as rprint
 import subprocess
+import tempfile
 
 from model_bakery import baker
 from pathlib import Path
+from rich import print as rprint
 
 from sccApi import tasks
 from sccApi.models import Job, Priority, Status
@@ -139,16 +140,12 @@ def test_parse_qstat_output():
 
     # NOTE: input_filename & input_buffer: TEST MOCKS BEFORE CONTAINER ISSUES SORTED
     input_filename = "sccApi/tests/qstat_test_output.txt"
-    if Path(input_filename).exists():
-        input_buffer = Path(input_filename).read_text()
-        input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
-        qstat_rows = tasks.parse_qstat_output(input_buffer)
-        assert len(qstat_rows) > 1
-        assert qstat_rows[1]["job-ID"].strip() == "6260963"
-        # rprint(qstat_rows[:2])
-    else:
-        print(f"\nNO SUCH FILE AS {input_filename} in {Path.cwd()}")
-        input_buffer = ""
+    input_buffer = Path(input_filename).read_text()
+    input_buffer = input_buffer.replace("submit/start at", "submit-start-at")
+    qstat_rows = tasks.parse_qstat_output(input_buffer)
+    assert len(qstat_rows) > 1
+    assert qstat_rows[1]["job-ID"].strip() == "6260963"
+    # rprint(qstat_rows[:2])
 
 
 @pytest.mark.django_db()
