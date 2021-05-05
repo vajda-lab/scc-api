@@ -236,7 +236,7 @@ def update_jobs(qstat_output):
     Also updates Job.Status on jobs that have Errored or are complete
     """
 
-    user, created = User.objects.get_or_create(email="awake@bu.edu")
+    user, created = User.objects.get_or_create(email=settings.DEFAULT_SCC_EMAIL)
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:

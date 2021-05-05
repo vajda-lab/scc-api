@@ -209,12 +209,14 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
+# SCC Settings...
+DEFAULT_SCC_EMAIL = ENV("DEFAULT_SCC_EMAIL", default="awake@bu.edu")
+FTPLUS_PATH = ENV("FTPLUS_PATH", default="/tmp/")
+
 # Grid Engine Commands
 GRID_ENGINE_DELETE_CMD = ENV("GRID_ENGINE_DELETE_CMD", default="/app/bin/qdel")
 GRID_ENGINE_STATUS_CMD = ENV("GRID_ENGINE_STATUS_CMD", default="/app/bin/qstat")
 GRID_ENGINE_SUBMIT_CMD = ENV("GRID_ENGINE_SUBMIT_CMD", default="/app/bin/qsub")
-
-FTPLUS_PATH = ENV("FTPLUS_PATH", default="/tmp/")
 
 # TASK QUEUE SETTINGS
 MAX_HIGH_JOBS = 50
