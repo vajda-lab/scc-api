@@ -118,16 +118,14 @@ def test_scheduled_capture_job_output():
         output_file="i_am_done.tar.gz",
     )
 
-    rprint(f"\nTHE OBJECTS I JUST MADE{Job.objects.all()}")
+    assert Job.objects.all().count() == 4
     # Setup directories to compress/attach
     # Decide where to put temporary files
 
     tasks.scheduled_capture_job_output()
 
-    # print(f"\nERROR_JOB.OUTPUT_FILE: {error_job};{type(error_job.output_file)};")
     assert error_job.output_file.name != ""
     assert complete_job.output_file != ""
-    print(f"complete_job.output_file: {complete_job.output_file}")
     assert ignore_me_job.output_file == "i_had_errors.tar.gz"
     assert ignore_me_too_job.output_file == "i_am_done.tar.gz"
 
