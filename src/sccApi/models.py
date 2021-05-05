@@ -40,26 +40,6 @@ class JobQuerySet(models.QuerySet):
         return self.filter(priority=Priority.NORMAL)
 
 
-class JobManager(models.Manager):
-    def get_queryset(self):
-        return JobQuerySet(self.model, using=self._db)
-
-    def active(self):
-        return self.get_queryset().active()
-
-    def queued(self):
-        return self.get_queryset().queued()
-
-    def high_priority(self):
-        return self.get_queryset().high_priority()
-
-    def low_priority(self):
-        return self.get_queryset().low_priority()
-
-    def normal_priority(self):
-        return self.get_queryset().normal_priority()
-
-
 class Job(models.Model):
     priority = models.IntegerField(
         choices=Priority.choices,
@@ -146,7 +126,7 @@ class Job(models.Model):
         null=True,
     )
 
-    objects = JobManager()
+    objects = JobQuerySet.as_manager()
 
     class Meta:
         get_latest_by = ["created"]
