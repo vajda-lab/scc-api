@@ -175,9 +175,13 @@ def scheduled_allocate_job(self):
         active_jobs = Job.objects.high_priority().active()
         queued_jobs = Job.objects.high_priority().queued()
         jobs_in_queue = active_jobs.count()
+        logger.debug(
+            f"{jobs_in_queue} of {settings.SCC_MAX_HIGH_JOBS} high priority jobs are active"
+        )
 
         if jobs_in_queue < settings.SCC_MAX_HIGH_JOBS:
             jobs_to_allocate = settings.SCC_MAX_HIGH_JOBS - jobs_in_queue
+            logger.debug(f"{jobs_to_allocate} new high priority jobs were allocated")
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
@@ -185,9 +189,13 @@ def scheduled_allocate_job(self):
         active_jobs = Job.objects.normal_priority().active()
         queued_jobs = Job.objects.normal_priority().queued()
         jobs_in_queue = active_jobs.count()
+        logger.debug(
+            f"{jobs_in_queue} of {settings.SCC_MAX_NORMAL_JOBS} normal priority jobs are active"
+        )
 
         if jobs_in_queue < settings.SCC_MAX_NORMAL_JOBS:
             jobs_to_allocate = settings.SCC_MAX_NORMAL_JOBS - jobs_in_queue
+            logger.debug(f"{jobs_to_allocate} new medium priority jobs were allocated")
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
@@ -195,9 +203,13 @@ def scheduled_allocate_job(self):
         active_jobs = Job.objects.low_priority().active()
         queued_jobs = Job.objects.low_priority().queued()
         jobs_in_queue = active_jobs.count()
+        logger.debug(
+            f"{jobs_in_queue} of {settings.SCC_MAX_LOW_JOBS} low priority jobs are active"
+        )
 
         if jobs_in_queue < settings.SCC_MAX_LOW_JOBS:
             jobs_to_allocate = settings.SCC_MAX_LOW_JOBS - jobs_in_queue
+            logger.debug(f"{jobs_to_allocate} new low priority jobs were allocated")
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
