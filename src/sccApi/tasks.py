@@ -44,9 +44,17 @@ def activate_job(self, *, pk, **kwargs):
             if not Path(settings.FTPLUS_PATH, f"{scc_job_dir}").exists():
                 subprocess.run(["mkdir", f"{settings.FTPLUS_PATH}{scc_job_dir}"])
 
-            if not Path(settings.FTPLUS_PATH, f"{scc_job_dir}/{scc_input_file}").exists():
+            if not Path(
+                settings.FTPLUS_PATH, f"{scc_job_dir}/{scc_input_file}"
+            ).exists():
                 subprocess.run(
-                    ["tar", "-xf", f"{scc_input_file}", "-C", f"{settings.FTPLUS_PATH}{scc_job_dir}"]
+                    [
+                        "tar",
+                        "-xf",
+                        f"{scc_input_file}",
+                        "-C",
+                        f"{settings.FTPLUS_PATH}{scc_job_dir}",
+                    ]
                 )
 
             JobLog.objects.create(job=job, event="Job status changed to active")
@@ -190,7 +198,14 @@ def scheduled_capture_job_output(self):
         # Improve this file name
         scc_job_output_file = f"{job.input_file}_results"
         if Path(settings.FTPLUS_PATH, f"{scc_job_dir}").exists():
-            subprocess.run(["tar", "-czf", scc_job_output_file, f"{settings.FTPLUS_PATH}{scc_job_dir}"])
+            subprocess.run(
+                [
+                    "tar",
+                    "-czf",
+                    scc_job_output_file,
+                    f"{settings.FTPLUS_PATH}{scc_job_dir}",
+                ]
+            )
             job.output_file = scc_job_output_file
             job.save()
             # Delete SCC directory
