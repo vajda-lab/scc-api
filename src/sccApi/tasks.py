@@ -41,19 +41,18 @@ def activate_job(self, *, pk, **kwargs):
             )  # Will this work? Or does the file need to be opened/read?
 
             # Roll a temp folder variable instead
-            if not Path(settings.FTPLUS_PATH, f"{scc_job_dir}").exists():
-                subprocess.run(["mkdir", f"{settings.FTPLUS_PATH}{scc_job_dir}"])
+            ftplus_path = Path(settings.FTPLUS_PATH, f"{scc_job_dir}")
+            if not ftplus_path.exists():
+                subprocess.run(["mkdir", f"{ftplus_path}"])
 
-            if not Path(
-                settings.FTPLUS_PATH, f"{scc_job_dir}/{scc_input_file}"
-            ).exists():
+            if not ftplus_path.joinpath(f"{scc_input_file}").exists():
                 subprocess.run(
                     [
                         "tar",
                         "-xf",
                         f"{scc_input_file}",
                         "-C",
-                        f"{settings.FTPLUS_PATH}{scc_job_dir}",
+                        f"{ftplus_path}",
                     ]
                 )
 

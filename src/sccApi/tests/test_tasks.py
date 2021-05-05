@@ -109,13 +109,13 @@ def test_scheduled_capture_job_output():
         "sccApi.Job",
         status=Status.ERROR,
         sge_task_id=10,
-        output_file="i_had_errors.tar.gz",
+        output_file=tempfile.NamedTemporaryFile(suffix=".tar.gz").name,
     )
     ignore_me_too_job = baker.make(
         "sccApi.Job",
         status=Status.COMPLETE,
         sge_task_id=90,
-        output_file="i_am_done.tar.gz",
+        output_file=tempfile.NamedTemporaryFile(suffix=".tar.gz").name,
     )
 
     assert Job.objects.all().count() == 4
@@ -126,8 +126,8 @@ def test_scheduled_capture_job_output():
 
     assert error_job.output_file.name != ""
     assert complete_job.output_file != ""
-    assert ignore_me_job.output_file == "i_had_errors.tar.gz"
-    assert ignore_me_too_job.output_file == "i_am_done.tar.gz"
+    assert ignore_me_job.output_file
+    assert ignore_me_too_job.output_file
 
 
 @pytest.mark.django_db()
