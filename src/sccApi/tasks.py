@@ -325,7 +325,7 @@ def update_jobs(qstat_output):
     Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status for Complete jobs
-    active_jobs = Job.objects.filter(status=Status.ACTIVE)
+    active_jobs = Job.objects.active()
     # Completed SCC jobs show NO result in qstat
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
