@@ -215,10 +215,10 @@ GRID_ENGINE_STATUS_CMD = env("GRID_ENGINE_STATUS_CMD", default="/app/bin/qstat")
 GRID_ENGINE_SUBMIT_CMD = env("GRID_ENGINE_SUBMIT_CMD", default="/app/bin/qsub")
 
 # SCC Settings...
-SCC_DEFAULT_EMAIL = env("DEFAULT_SCC_EMAIL", default="awake@bu.edu")
-SCC_FTPLUS_PATH = env("FTPLUS_PATH", default="/tmp/")
+SCC_DEFAULT_EMAIL = env("SCC_DEFAULT_EMAIL", default="awake@bu.edu")
+SCC_FTPLUS_PATH = env("SCC_FTPLUS_PATH", default="/tmp/")
 
 # TASK QUEUE SETTINGS
-SCC_MAX_HIGH_JOBS = 50
-SCC_MAX_NORMAL_JOBS = 25
-SCC_MAX_LOW_JOBS = 25
+SCC_MAX_HIGH_JOBS = env.int("SCC_MAX_HIGH_JOBS", default=50)
+SCC_MAX_LOW_JOBS = env.int("SCC_MAX_LOW_JOBS", default=25)
+SCC_MAX_NORMAL_JOBS = env.int("SCC_MAX_NORMAL_JOBS", default=25)
