@@ -41,7 +41,7 @@ def activate_job(self, *, pk, **kwargs):
             )  # Will this work? Or does the file need to be opened/read?
 
             # Roll a temp folder variable instead
-            ftplus_path = Path(settings.FTPLUS_PATH, f"{scc_job_dir}")
+            ftplus_path = Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}")
             if not ftplus_path.exists():
                 subprocess.run(["mkdir", f"{ftplus_path}"])
 
@@ -108,8 +108,8 @@ def delete_job(self, *, pk, **kwargs):
 
         # Remove temp dir created in activate_job
         scc_job_dir = str(job.uuid)
-        if Path(settings.FTPLUS_PATH, f"{scc_job_dir}").exists():
-            subprocess.run(["rm", "-rf", f"{settings.FTPLUS_PATH}{scc_job_dir}"])
+        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
+            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
 
         # This return was for testing early mocked command
         return job_delete
@@ -196,19 +196,19 @@ def scheduled_capture_job_output(self):
         scc_job_dir = str(job.uuid)
         # Improve this file name
         scc_job_output_file = f"{job.input_file}_results"
-        if Path(settings.FTPLUS_PATH, f"{scc_job_dir}").exists():
+        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
             subprocess.run(
                 [
                     "tar",
                     "-czf",
                     scc_job_output_file,
-                    f"{settings.FTPLUS_PATH}{scc_job_dir}",
+                    f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}",
                 ]
             )
             job.output_file = scc_job_output_file
             job.save()
             # Delete SCC directory
-            subprocess.run(["rm", "-rf", f"{settings.FTPLUS_PATH}{scc_job_dir}"])
+            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
 
 
 @task(bind=True)
@@ -250,7 +250,7 @@ def update_jobs(qstat_output):
     Also updates Job.Status on jobs that have Errored or are complete
     """
 
-    user, created = User.objects.get_or_create(email=settings.DEFAULT_SCC_EMAIL)
+    user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
