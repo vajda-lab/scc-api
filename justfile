@@ -81,5 +81,6 @@ bootstrap:
 
 # Environment
 @pip-compile:
-    pip install --upgrade --requirement ./requirements.in
-    pip-compile --rebuild ./requirements.in
+    # pip install --upgrade --requirement ./requirements.in
+    pip-compile --upgrade ./requirements.in
+    # pip-compile --rebuild ./requirements.in
