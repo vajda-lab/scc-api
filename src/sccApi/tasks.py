@@ -166,33 +166,39 @@ def scheduled_allocate_job(self):
     Should do so based on availability of different priority queues
     """
     # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
-    queued_jobs = Job.objects.filter(status=Status.QUEUED)
+    queued_jobs = Job.objects.queued()
 
     # Do we have any queued jobs ready to schedule?
     if queued_jobs.exists():
 
-        # Allocate high priority jobs?
-        queued_jobs = Job.objects.filter(priority=Priority.HIGH, status=Status.QUEUED)
-        jobs_in_queue = queued_jobs.count()
+        # Allocate *high* priority jobs?
+        active_jobs = Job.objects.high_priority().active()
+        queued_jobs = Job.objects.high_priority().queued()
+        jobs_in_queue = active_jobs.count()
+
         if jobs_in_queue < settings.SCC_MAX_HIGH_JOBS:
             jobs_to_allocate = settings.SCC_MAX_HIGH_JOBS - jobs_in_queue
-            for queued_job in queued_jobs.all()[:jobs_to_allocate]:
+            for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
-        # Allocate normal priority jobs?
-        queued_jobs = Job.objects.filter(priority=Priority.NORMAL, status=Status.QUEUED)
-        jobs_in_queue = queued_jobs.count()
+        # Allocate *normal* priority jobs?
+        active_jobs = Job.objects.normal_priority().active()
+        queued_jobs = Job.objects.normal_priority().queued()
+        jobs_in_queue = active_jobs.count()
+
         if jobs_in_queue < settings.SCC_MAX_NORMAL_JOBS:
             jobs_to_allocate = settings.SCC_MAX_NORMAL_JOBS - jobs_in_queue
-            for queued_job in queued_jobs.all()[:jobs_to_allocate]:
+            for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
-        # Allocate low priority jobs?
-        queued_jobs = Job.objects.filter(priority=Priority.LOW, status=Status.QUEUED)
-        jobs_in_queue = queued_jobs.count()
+        # Allocate *low* priority jobs?
+        active_jobs = Job.objects.low_priority().active()
+        queued_jobs = Job.objects.low_priority().queued()
+        jobs_in_queue = active_jobs.count()
+
         if jobs_in_queue < settings.SCC_MAX_LOW_JOBS:
             jobs_to_allocate = settings.SCC_MAX_LOW_JOBS - jobs_in_queue
-            for queued_job in queued_jobs.all()[:jobs_to_allocate]:
+            for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
         # For each priorty, give count of Status.ACTIVE jobs

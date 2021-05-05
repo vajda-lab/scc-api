@@ -23,6 +23,43 @@ class Status(models.TextChoices):
     QUEUED = "queued", _("queued")
 
 
+class JobQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(status=Status.ACTIVE)
+
+    def queued(self):
+        return self.filter(status=Status.QUEUED)
+
+    def high_priority(self):
+        return self.filter(priority=Priority.HIGH)
+
+    def low_priority(self):
+        return self.filter(priority=Priority.LOW)
+
+    def normal_priority(self):
+        return self.filter(priority=Priority.NORMAL)
+
+
+class JobManager(models.Manager):
+    def get_queryset(self):
+        return JobQuerySet(self.model, using=self._db)
+
+    def active(self):
+        return self.get_queryset().active()
+
+    def queued(self):
+        return self.get_queryset().queued()
+
+    def high_priority(self):
+        return self.get_queryset().high_priority()
+
+    def low_priority(self):
+        return self.get_queryset().low_priority()
+
+    def normal_priority(self):
+        return self.get_queryset().normal_priority()
+
+
 class Job(models.Model):
     priority = models.IntegerField(
         choices=Priority.choices,
@@ -108,6 +145,8 @@ class Job(models.Model):
         blank=True,
         null=True,
     )
+
+    objects = JobManager()
 
     class Meta:
         get_latest_by = ["created"]
