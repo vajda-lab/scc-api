@@ -54,7 +54,7 @@ django-sql-dashboard==0.10a1
     # via -r ./requirements.in
 django-test-plus==1.4.0
     # via -r ./requirements.in
-django==3.1.8
+django==3.1.9
     # via
     #   -r ./requirements.in
     #   django-extensions
@@ -66,7 +66,7 @@ djangorestframework==3.12.4
     # via -r ./requirements.in
 factory-boy==3.2.0
     # via -r ./requirements.in
-faker==8.1.1
+faker==8.1.2
     # via
     #   -r ./requirements.in
     #   factory-boy
@@ -84,7 +84,7 @@ flake8==3.9.1
     #   flake8-polyfill
 flower==0.9.7
     # via -r ./requirements.in
-humanize==3.4.1
+humanize==3.5.0
     # via flower
 idna==2.10
     # via requests
@@ -133,7 +133,7 @@ pydocstyle==6.0.0
     # via flake8-docstrings
 pyflakes==2.3.1
     # via flake8
-pygments==2.8.1
+pygments==2.9.0
     # via rich
 pyparsing==2.4.7
     # via packaging
@@ -141,7 +141,7 @@ pytest-django==4.2.0
     # via -r ./requirements.in
 pytest-lazy-fixture==0.6.3
     # via -r ./requirements.in
-pytest==6.2.3
+pytest==6.2.4
     # via
     #   -r ./requirements.in
     #   pytest-django
@@ -166,7 +166,7 @@ requests==2.23.0
     # via -r ./requirements.in
 rich==10.1.0
     # via -r ./requirements.in
-six==1.15.0
+six==1.16.0
     # via
     #   bleach
     #   python-dateutil
@@ -185,7 +185,7 @@ tornado==6.1
     # via flower
 typed-ast==1.4.3
     # via black
-typing-extensions==3.7.4.3
+typing-extensions==3.10.0.0
     # via
     #   asgiref
     #   black
