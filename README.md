@@ -12,7 +12,7 @@ script.
 To run the Docker containers use the command below.
 
 ```shell
-# docker-compose up
+$ docker-compose up
 ```
 
 If you wish to run the servers in the background use the `-d`

@@ -1,0 +1,19 @@
+version: '3.6'
+
+services:
+
+  django:
+    volumes:
+      - ./src:/app
+
+  scheduler:
+    volumes:
+      - ./src:/app
+
+  worker:
+    volumes:
+      - ./src:/app
+
+  flower:
+    volumes:
+      - ./src:/app

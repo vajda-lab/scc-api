@@ -65,7 +65,6 @@ services:
     volumes:
       - ./src:/app
 
-
 volumes:
   postgres_data_dev: {}
   postgres_backup_dev: {}
