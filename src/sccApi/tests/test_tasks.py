@@ -139,7 +139,7 @@ def test_parse_qstat_output():
     """
 
     # NOTE: input_filename & input_buffer: TEST MOCKS BEFORE CONTAINER ISSUES SORTED
-    input_filename = Path("sccApi", "tests", "qstat_test_output.txt")
+    input_filename = Path(__file__).parent.joinpath("qstat_test_output.txt")
     input_buffer = input_filename.read_text()
     qstat_rows = tasks.parse_qstat_output(input_buffer)
     assert len(qstat_rows) > 1
