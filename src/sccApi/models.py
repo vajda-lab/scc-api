@@ -1,6 +1,7 @@
 import uuid
-from django.db import models
+
 from django.core.validators import FileExtensionValidator
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
@@ -21,6 +22,32 @@ class Status(models.TextChoices):
     DELETED = "deleted", _("deleted")
     ERROR = "error", _("error")
     QUEUED = "queued", _("queued")
+
+
+class JobQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(status=Status.ACTIVE)
+
+    def complete(self):
+        return self.filter(status=Status.COMPLETE)
+
+    def deleted(self):
+        return self.filter(status=Status.DELETED)
+
+    def error(self):
+        return self.filter(status=Status.ERROR)
+
+    def queued(self):
+        return self.filter(status=Status.QUEUED)
+
+    def high_priority(self):
+        return self.filter(priority=Priority.HIGH)
+
+    def low_priority(self):
+        return self.filter(priority=Priority.LOW)
+
+    def normal_priority(self):
+        return self.filter(priority=Priority.NORMAL)
 
 
 class Job(models.Model):
@@ -108,6 +135,8 @@ class Job(models.Model):
         blank=True,
         null=True,
     )
+
+    objects = JobQuerySet.as_manager()
 
     class Meta:
         get_latest_by = ["created"]

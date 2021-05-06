@@ -14,13 +14,13 @@ from environ import Env, Path
 
 from celery.schedules import crontab
 
-ENV = Env()
+env = Env()
 
 BASE_DIR = Path(__file__) - 3
 
-SECRET_KEY = ENV.str("SECRET_KEY")
+SECRET_KEY = env.str("SECRET_KEY")
 
-DEBUG = ENV.bool("DEBUG", default=False)
+DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = ["0.0.0.0", "trinity.bu.edu", "localhost"]
 
@@ -83,7 +83,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    "default": ENV.db("DATABASE_URL"),
+    "default": env.db("DATABASE_URL"),
 }
 # dashboard database for `django-sql-dashboard`
 DATABASES["dashboard"] = DATABASES["default"].copy()
@@ -171,7 +171,7 @@ if USE_TZ:
     # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-timezone
     CELERY_TIMEZONE = TIME_ZONE
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-broker_url
-CELERY_BROKER_URL = ENV("CELERY_BROKER_URL")
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_backend
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-accept_content
@@ -210,11 +210,15 @@ REST_FRAMEWORK = {
 }
 
 # Grid Engine Commands
-GRID_ENGINE_DELETE_CMD = ENV("GRID_ENGINE_DELETE_CMD", default="/app/bin/qdel")
-GRID_ENGINE_STATUS_CMD = ENV("GRID_ENGINE_STATUS_CMD", default="/app/bin/qstat")
-GRID_ENGINE_SUBMIT_CMD = ENV("GRID_ENGINE_SUBMIT_CMD", default="/app/bin/qsub")
+GRID_ENGINE_DELETE_CMD = env("GRID_ENGINE_DELETE_CMD", default="/app/bin/qdel")
+GRID_ENGINE_STATUS_CMD = env("GRID_ENGINE_STATUS_CMD", default="/app/bin/qstat")
+GRID_ENGINE_SUBMIT_CMD = env("GRID_ENGINE_SUBMIT_CMD", default="/app/bin/qsub")
+
+# SCC Settings...
+SCC_DEFAULT_EMAIL = env("SCC_DEFAULT_EMAIL", default="awake@bu.edu")
+SCC_FTPLUS_PATH = env("SCC_FTPLUS_PATH", default="/tmp/")
 
 # TASK QUEUE SETTINGS
-MAX_HIGH_JOBS = 50
-MAX_NORMAL_JOBS = 25
-MAX_LOW_JOBS = 25
+SCC_MAX_HIGH_JOBS = env.int("SCC_MAX_HIGH_JOBS", default=50)
+SCC_MAX_LOW_JOBS = env.int("SCC_MAX_LOW_JOBS", default=25)
+SCC_MAX_NORMAL_JOBS = env.int("SCC_MAX_NORMAL_JOBS", default=25)

@@ -1,8 +1,6 @@
 import logging
 import pytz
 import subprocess
-import tarfile
-import tempfile
 
 from celery import task
 from dateutil.parser import parse
@@ -41,12 +39,19 @@ def activate_job(self, *, pk, **kwargs):
             )  # Will this work? Or does the file need to be opened/read?
 
             # Roll a temp folder variable instead
-            if not Path(f"/tmp/{scc_job_dir}").exists():
-                subprocess.run(["mkdir", f"/tmp/{scc_job_dir}"])
+            ftplus_path = Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}")
+            if not ftplus_path.exists():
+                subprocess.run(["mkdir", f"{ftplus_path}"])
 
-            if not Path(f"/tmp/{scc_job_dir}/{scc_input_file}").exists():
+            if not ftplus_path.joinpath(f"{scc_input_file}").exists():
                 subprocess.run(
-                    ["tar", "-xf", f"{scc_input_file}", "-C", f"/tmp/{scc_job_dir}"]
+                    [
+                        "tar",
+                        "-xf",
+                        f"{scc_input_file}",
+                        "-C",
+                        f"{ftplus_path}",
+                    ]
                 )
 
             JobLog.objects.create(job=job, event="Job status changed to active")
@@ -101,8 +106,8 @@ def delete_job(self, *, pk, **kwargs):
 
         # Remove temp dir created in activate_job
         scc_job_dir = str(job.uuid)
-        if Path(f"/tmp/{scc_job_dir}").exists():
-            subprocess.run(["rm", "-rf", f"/tmp/{scc_job_dir}"])
+        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
+            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
 
         # This return was for testing early mocked command
         return job_delete
@@ -112,6 +117,9 @@ def delete_job(self, *, pk, **kwargs):
 
 
 def parse_qstat_output(output):
+    if "submit/start at" in output:
+        output = output.replace("submit/start at", "submit-start-at")
+
     lines = [line for line in output.split("\n") if len(line)]
     header_keys = [column for column in lines[0].split(" ") if len(column)]
 
@@ -156,17 +164,55 @@ def scheduled_allocate_job(self):
     Should do so based on availability of different priority queues
     """
     # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
-    queued_jobs = Job.objects.filter(status=Status.QUEUED).count()
-    active_jobs = Job.objects.filter(status=Status.ACTIVE).count()
+    queued_jobs = Job.objects.queued()
 
-    # ToDo: add settings for MaxValues of Low, Normal, & High priority jobs
-    # settings.MAX_HIGH_JOBS
-    queued_jobs = Job.objects.filter(status=Status.QUEUED)
-    for queued_job in queued_jobs:
-        activate_job.delay(pk=queued_job.pk)
+    # Do we have any queued jobs ready to schedule?
+    if queued_jobs.exists():
 
-    # For each priorty, give count of Status.ACTIVE jobs
-    # Based on limits per priority queue, decide which Celery queue to send new jobs to
+        # Allocate *high* priority jobs?
+        active_jobs = Job.objects.high_priority().active()
+        queued_jobs = Job.objects.high_priority().queued()
+        jobs_in_queue = active_jobs.count()
+        logger.debug(
+            f"{jobs_in_queue} of {settings.SCC_MAX_HIGH_JOBS} high priority jobs are active"
+        )
+
+        if jobs_in_queue < settings.SCC_MAX_HIGH_JOBS:
+            jobs_to_allocate = settings.SCC_MAX_HIGH_JOBS - jobs_in_queue
+            logger.debug(f"{jobs_to_allocate} new high priority jobs were allocated")
+            for queued_job in queued_jobs[:jobs_to_allocate]:
+                activate_job.delay(pk=queued_job.pk)
+
+        # Allocate *normal* priority jobs?
+        active_jobs = Job.objects.normal_priority().active()
+        queued_jobs = Job.objects.normal_priority().queued()
+        jobs_in_queue = active_jobs.count()
+        logger.debug(
+            f"{jobs_in_queue} of {settings.SCC_MAX_NORMAL_JOBS} normal priority jobs are active"
+        )
+
+        if jobs_in_queue < settings.SCC_MAX_NORMAL_JOBS:
+            jobs_to_allocate = settings.SCC_MAX_NORMAL_JOBS - jobs_in_queue
+            logger.debug(f"{jobs_to_allocate} new medium priority jobs were allocated")
+            for queued_job in queued_jobs[:jobs_to_allocate]:
+                activate_job.delay(pk=queued_job.pk)
+
+        # Allocate *low* priority jobs?
+        active_jobs = Job.objects.low_priority().active()
+        queued_jobs = Job.objects.low_priority().queued()
+        jobs_in_queue = active_jobs.count()
+        logger.debug(
+            f"{jobs_in_queue} of {settings.SCC_MAX_LOW_JOBS} low priority jobs are active"
+        )
+
+        if jobs_in_queue < settings.SCC_MAX_LOW_JOBS:
+            jobs_to_allocate = settings.SCC_MAX_LOW_JOBS - jobs_in_queue
+            logger.debug(f"{jobs_to_allocate} new low priority jobs were allocated")
+            for queued_job in queued_jobs[:jobs_to_allocate]:
+                activate_job.delay(pk=queued_job.pk)
+
+        # For each priorty, give count of Status.ACTIVE jobs
+        # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
 
 @task(bind=True)
@@ -182,20 +228,23 @@ def scheduled_capture_job_output(self):
         status__in=[Status.COMPLETE, Status.ERROR],
         output_file__in=["", None],
     )
-    print(
-        f"IN TEST CAPTURE_JOBS SHOULD HAVE 2 OBJECTS:{len(capture_jobs)};\n{capture_jobs};"
-    )
     for job in capture_jobs:
-        print(f"\nJOB.OUTPUT_FILE: {job.output_file}")
         scc_job_dir = str(job.uuid)
         # Improve this file name
         scc_job_output_file = f"{job.input_file}_results"
-        if Path(f"/tmp/{scc_job_dir}").exists():
-            subprocess.run(["tar", "-czf", scc_job_output_file, f"/tmp/{scc_job_dir}"])
+        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
+            subprocess.run(
+                [
+                    "tar",
+                    "-czf",
+                    scc_job_output_file,
+                    f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}",
+                ]
+            )
             job.output_file = scc_job_output_file
             job.save()
             # Delete SCC directory
-            subprocess.run(["rm", "-rf", f"/tmp/{scc_job_dir}"])
+            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
 
 
 @task(bind=True)
@@ -237,7 +286,7 @@ def update_jobs(qstat_output):
     Also updates Job.Status on jobs that have Errored or are complete
     """
 
-    user, created = User.objects.get_or_create(email="awake@bu.edu")
+    user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
@@ -286,7 +335,7 @@ def update_jobs(qstat_output):
     Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status for Complete jobs
-    active_jobs = Job.objects.filter(status=Status.ACTIVE)
+    active_jobs = Job.objects.active()
     # Completed SCC jobs show NO result in qstat
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
