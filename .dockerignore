@@ -160,6 +160,7 @@ env.template
 .bumpversion.cfg
 .dependabot
 .docker
+.docker-env
 .dockerignore
 .editorconfig
 .git
@@ -167,6 +168,6 @@ env.template
 .gitignore
 .gitlab-ci.yml
 .version
+docker-compose*.yml
 Makefile
 README.md
-docker-compose*.yml
