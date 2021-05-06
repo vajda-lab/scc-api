@@ -28,6 +28,15 @@ class JobQuerySet(models.QuerySet):
     def active(self):
         return self.filter(status=Status.ACTIVE)
 
+    def complete(self):
+        return self.filter(status=Status.COMPLETE)
+
+    def deleted(self):
+        return self.filter(status=Status.DELETED)
+
+    def error(self):
+        return self.filter(status=Status.ERROR)
+
     def queued(self):
         return self.filter(status=Status.QUEUED)
 
