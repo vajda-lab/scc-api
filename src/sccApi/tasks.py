@@ -1,15 +1,13 @@
 import logging
 import pytz
 import subprocess
-import tarfile
-import tempfile
 
 from celery import task
 from dateutil.parser import parse
 from django.conf import settings
 from pathlib import Path
 
-from .models import Job, JobLog, Priority, Status
+from .models import Job, JobLog, Status
 from user_app.models import User
 
 

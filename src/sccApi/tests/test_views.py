@@ -3,7 +3,6 @@ import pytest
 from model_bakery import baker
 
 from sccApi import models, serializers
-from user_app.models import User
 
 
 # The noauth tests can probably get grouped in a class

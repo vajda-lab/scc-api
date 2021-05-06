@@ -1,13 +1,11 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.views.generic.list import ListView
-
 from rest_framework import viewsets
 
 from .forms import SignUpForm
-
 from .models import User
-from . import serializers
+from .serializers import UserSerializer
 
 
 class UserListView(ListView):
@@ -36,5 +34,5 @@ class UserViewSet(viewsets.ModelViewSet):
     """A viewset for viewing and editing User instances."""
 
     queryset = User.objects.all()
-    serializer_class = serializers.UserSerializer
+    serializer_class = UserSerializer
     ordering = "organization"

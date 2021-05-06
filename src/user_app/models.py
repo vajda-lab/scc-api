@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from improved_user.model_mixins import AbstractUser
+
 from sccApi.models import Job, Priority
-import datetime
 
 
 AFFILIATION_CHOICES = (

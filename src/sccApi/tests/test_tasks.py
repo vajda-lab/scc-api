@@ -1,10 +1,8 @@
 import pytest
-import subprocess
 import tempfile
 
 from model_bakery import baker
 from pathlib import Path
-from rich import print as rprint
 
 from sccApi import tasks
 from sccApi.models import Job, Priority, Status
