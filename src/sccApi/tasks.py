@@ -223,6 +223,8 @@ def scheduled_capture_job_output(self):
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Directory will be based on a setting
     UNFINISHED!
+
+    ALSO: NOT YET ADDED TO settings.CELERY_BEAT_SCHEDULE
     """
     capture_jobs = Job.objects.filter(
         status__in=[Status.COMPLETE, Status.ERROR],
