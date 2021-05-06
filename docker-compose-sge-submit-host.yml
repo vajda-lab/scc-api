@@ -36,7 +36,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/django-sge-submit-host/Dockerfile
-    command: celery -A config worker --queues celery,priority -l INFO
+    command: celery -A config worker --queues celery -l INFO
     depends_on:
       - redis
     env_file: ./.docker-env
