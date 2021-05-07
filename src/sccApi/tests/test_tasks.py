@@ -144,6 +144,15 @@ def test_parse_qstat_output():
 
 @pytest.mark.django_db()
 def test_update_jobs():
+    """
+    Tests tasks.update_jobs
+    
+    qstat_output[0] should convert error_job from Status.ACTIVE to Status.ERROR
+    qstat_output[1] should create a new job w/ Status.ACTIVE
+    complete_job should convert from Status.ACTIVE to Status.COMPLETE
+    """
+
+
     # Job names are their intended FINAL state
     error_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=1)
     complete_job = baker.make("sccApi.Job", status=Status.ACTIVE, sge_task_id=9)
