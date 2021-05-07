@@ -2,13 +2,14 @@ version: '3.6'
 
 services:
 
-#   This isn't needed if when we have a custom database server.
-#   postgres:
-#     image: postgres:10.4-alpine
-#     env_file: ./.docker-env
-#     volumes:
-#       - postgres_data_dev:/var/lib/postgresql/data
-#       - postgres_backup_dev:/backups
+  # The "postgres" database can be removed after we have a production
+  # database to point it to
+  postgres:
+    image: postgres:10.4-alpine
+    env_file: ./.docker-env
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - postgres_backup_dev:/backups
 
   redis:
     image: redis:3.2
@@ -18,6 +19,7 @@ services:
       context: .
       dockerfile: ./docker/django-sge-submit-host/Dockerfile
     depends_on:
+      - postgres
       - redis
     env_file: ./.docker-env
     ports:
@@ -29,6 +31,7 @@ services:
       dockerfile: ./docker/django-sge-submit-host/Dockerfile
     command: /start-scheduler
     depends_on:
+      - postgres
       - redis
     env_file: ./.docker-env
 
@@ -38,6 +41,7 @@ services:
       dockerfile: ./docker/django-sge-submit-host/Dockerfile
     command: celery -A config worker --queues celery -l INFO
     depends_on:
+      - postgres
       - redis
     env_file: ./.docker-env
 
