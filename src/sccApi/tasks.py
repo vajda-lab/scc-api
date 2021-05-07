@@ -316,8 +316,8 @@ def update_jobs(qstat_output):
             )
             # JobLog.objects.create(job=job, event="Job updated with qstat info")
 
-            # If exogenous job created, set to active; they can also be recorded in our web app
-            # ToDo: This may need adjusting for other statuses. Now works for exo running jobs
+            # If an exogenous job is created, set to Status.ACTIVE
+            # Error jobs will be updated later
             if created:
                 job.status = Status.ACTIVE
                 job.save()
