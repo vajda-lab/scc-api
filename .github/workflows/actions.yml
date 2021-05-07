@@ -75,7 +75,7 @@ jobs:
     needs: [test]
     name: Build and Publish Docker image
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
 
     steps:
       - uses: actions/checkout@v2
@@ -100,5 +100,4 @@ jobs:
           file: ./docker/django/Dockerfile
           push: true # Will only build if this is not here
           tags: |
-            ghcr.io/vajdalab/scc-api:latest
-          #  ghcr.io/${{ github.repository }}:latest
+           ghcr.io/${{ github.repository }}:latest
