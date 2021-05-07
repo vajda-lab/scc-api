@@ -11,7 +11,8 @@ bootstrap:
     FILE=.docker-env
     if [ ! -f "$FILE" ]; then
         echo "$FILE created"
-        echo "CELERY_BROKER_URL="redis://redis:6379/0"
+        echo "ALLOWED_HOSTS=*
+    CELERY_BROKER_URL="redis://redis:6379/0"
     CELERY_FLOWER_PASSWORD=awake
     CELERY_FLOWER_USER=awake
     DATABASE_URL="postgres://$PG_USER:$PG_PASSWORD@$PG_SERVICE_NAME:5432/$PG_DB"
