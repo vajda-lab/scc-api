@@ -149,6 +149,7 @@ def test_update_jobs():
 
     qstat_output[0] should convert error_job from Status.ACTIVE to Status.ERROR
     qstat_output[1] should create a new job w/ Status.ACTIVE
+    qstat_output[2] should create a new job w/ Status.ERROR
     complete_job should convert from Status.ACTIVE to Status.COMPLETE
     """
 
@@ -180,6 +181,17 @@ def test_update_jobs():
             "slots": "    1 ",
             "ja-task-ID": "19",
         },
+        {
+            "job-ID": "4260964",
+            "prior": "0.10000 ",
+            "name": "nf-analysi ",
+            "user": "xrzhou       ",
+            "state": "Eqw",
+            "submit-start-at": "04/28/2021 19:32:38 ",
+            "queue": "linga@scc-kb3.scc.bu.edu       ",
+            "slots": "    1 ",
+            "ja-task-ID": "11",
+        },
     ]
 
     tasks.update_jobs(qstat_output)
@@ -187,10 +199,12 @@ def test_update_jobs():
     # error_job tests
     assert error_job.status == Status.ERROR
     assert error_job.job_state == "Eqw"
-    # Was new object created for the exogenous job?
+    # Were correcte new objectd created for the exogenous jobs?
     assert Job.objects.get(sge_task_id=6260963)
     assert Job.objects.get(sge_task_id=6260963).status == Status.ACTIVE
+    assert Job.objects.get(sge_task_id=4260964)
+    assert Job.objects.get(sge_task_id=4260964).status == Status.ERROR
     # Was complete_job's status changed?
     complete_job.refresh_from_db()
     assert complete_job.status == Status.COMPLETE
-    assert len(Job.objects.all()) == 3
+    assert len(Job.objects.all()) == 4
