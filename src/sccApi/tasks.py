@@ -234,6 +234,7 @@ def scheduled_capture_job_output(self):
         scc_job_dir = str(job.uuid)
         # Improve this file name
         scc_job_output_file = f"{job.input_file}_results"
+        # directory existence check so only endogenous jobs have output captured & deleted from SCC
         if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
             subprocess.run(
                 [
