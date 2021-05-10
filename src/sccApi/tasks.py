@@ -149,9 +149,9 @@ def parse_qstat_output(output):
             start = headers[column]["start"]
             end = headers[column]["end"]
             if end:
-                data[column] = row[start:end]
+                data[column] = row[start:end].strip()
             else:
-                data[column] = row[start:]
+                data[column] = row[start:].strip()
         rows.append(data)
     return rows
 
