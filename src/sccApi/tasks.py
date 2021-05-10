@@ -256,11 +256,7 @@ def scheduled_poll_job(self):
     Checks status of current SCC jobs at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
 
-    This task will also find finished jobs:
-    1. Check that the job is NOT in the queue (so, we shouldn’t see that job_id in qstat results)
-    2. Look for the Output and/or Error files in the job’s target directory
-    3. Do Both
-
+    Processing of those jobs will be handled by update_jobs() 
     """
     cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
     if isinstance(cmd, list):
@@ -287,6 +283,7 @@ def update_jobs(qstat_output):
     Takes input from scheduled_poll_job (a list of dictionaries)
     Parses that and saves the results to job objects in the web app
     Also updates Job.Status on jobs that have Errored or are complete
+    Creation and processing of exogenous job objects is also handled here
     """
 
     user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
@@ -330,7 +327,7 @@ def update_jobs(qstat_output):
         except Exception as e:
             print(f"{job_id} :: {e}")
 
-    # Update status for Error jobs
+    # Update status for Error jobs; will also catch exogenous Error jobs
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
