@@ -1,5 +1,5 @@
 # Read Me
-![Build Status](https://github.com/github/docs/actions/workflows/actions.yml/badge.svg)
+![Build Status](https://github.com/vajda-lab/scc-api/actions/workflows/actions.yml/badge.svg)
 
 ### Docker Setup
 
