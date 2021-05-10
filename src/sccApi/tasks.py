@@ -256,7 +256,7 @@ def scheduled_poll_job(self):
     Checks status of current SCC jobs at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
 
-    Processing of those jobs will be handled by update_jobs() 
+    Processing of those jobs will be handled by update_jobs()
     """
     cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
     if isinstance(cmd, list):
