@@ -162,6 +162,7 @@ def scheduled_allocate_job(self):
     Allocates existing Job instances to Celery at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Should do so based on availability of different priority queues
+    Availability based on settings.SCC_MAX_{priority}_JOBS
     """
     # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
     queued_jobs = Job.objects.queued()
