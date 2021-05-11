@@ -8,8 +8,8 @@ services:
     image: postgres:10.4-alpine
     env_file: ./.docker-env
     volumes:
-      - postgres_data_dev:/var/lib/postgresql/data
-      - postgres_backup_dev:/backups
+      - ./postgres_data_dev:/var/lib/postgresql/data
+      - ./postgres_backup_dev:/backups
 
   redis:
     image: redis:3.2
