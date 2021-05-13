@@ -6,24 +6,24 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user_app', '0005_user_priority'),
+        ("user_app", "0005_user_priority"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='user',
-            name='affiliation',
+            model_name="user",
+            name="affiliation",
         ),
         migrations.RemoveField(
-            model_name='user',
-            name='max_job_submission',
+            model_name="user",
+            name="max_job_submission",
         ),
         migrations.RemoveField(
-            model_name='user',
-            name='notes',
+            model_name="user",
+            name="notes",
         ),
         migrations.RemoveField(
-            model_name='user',
-            name='organization',
+            model_name="user",
+            name="organization",
         ),
     ]
