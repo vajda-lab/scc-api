@@ -109,10 +109,10 @@ def test_user_partial_update(tp, user, password):
     """
     PATCH '/apis/users/{pk}'
     """
-    new_organization = "new-organization"
-    assert user.organization is not new_organization
+    new_name = "Jacob Lyons"
+    assert user.full_name is not new_name
     url = tp.reverse("user-detail", pk=user.pk)
-    payload = {"organization": new_organization}
+    payload = {"full_name": new_name}
 
     # Without auth, API should return 401
     tp.get(url)
@@ -124,7 +124,7 @@ def test_user_partial_update(tp, user, password):
     tp.response_200(response)
 
     user_obj = models.User.objects.get(pk=user.pk)
-    assert user_obj.organization == new_organization
+    assert user_obj.full_name == new_name
 
 
 @pytest.mark.django_db()
@@ -132,12 +132,12 @@ def test_user_update(tp, user, password):
     """
     PUT '/apis/users/{pk}/'
     """
-    new_organization = "new-organization"
-    assert user.organization is not new_organization
+    new_name = "Jacob Lyons"
+    assert user.full_name is not new_name
 
     url = tp.reverse("user-detail", pk=user.pk)
     payload = serializers.UserSerializer(instance=user).data
-    payload["organization"] = new_organization
+    payload["full_name"] = new_name
 
     # Without auth, API should return 401
     tp.get(url)
@@ -149,4 +149,4 @@ def test_user_update(tp, user, password):
     tp.response_200(response)
 
     user_obj = models.User.objects.get(pk=user.pk)
-    assert user_obj.organization == new_organization
+    assert user_obj.full_name == new_name
