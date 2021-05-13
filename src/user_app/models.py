@@ -5,12 +5,6 @@ from improved_user.model_mixins import AbstractUser
 from sccApi.models import Job, Priority
 
 
-AFFILIATION_CHOICES = (
-    ("I", "Industry"),
-    ("A", "Academia"),
-    ("O", "Other"),
-)
-
 # yesterday = datetime.date.today() - datetime.timedelta(days=1)
 # orders = Order.objects.filter(date__gt=yesterday)
 
