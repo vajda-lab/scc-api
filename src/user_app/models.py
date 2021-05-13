@@ -19,12 +19,6 @@ AFFILIATION_CHOICES = (
 class User(AbstractUser):
     """A User model that extends the Improved User"""
 
-    affiliation = models.CharField(
-        max_length=1, choices=AFFILIATION_CHOICES, default="O", null=False
-    )
-    organization = models.CharField(max_length=250)
-    notes = models.CharField(max_length=1000, blank=True, null=True)
-    max_job_submission = models.IntegerField(default=20)
     priority = models.IntegerField(
         choices=Priority.choices,
         default=Priority.LOW,
