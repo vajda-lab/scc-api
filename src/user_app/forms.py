@@ -16,8 +16,6 @@ class SignUpForm(UserCreationForm):
         fields = (
             "full_name",
             "short_name",
-            "affiliation",
-            "organization",
             "email",
             "password1",
             "password2",
