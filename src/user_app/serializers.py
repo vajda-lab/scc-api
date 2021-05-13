@@ -9,10 +9,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "affiliation",
             "full_name",
             "pk",
-            "max_job_submission",
-            "notes",
-            "organization",
         ]
