@@ -1,13 +1,14 @@
 import click
+from django.conf import settings
 import requests
 from requests.auth import HTTPBasicAuth
 from rich import print as rprint
 
 
-SCC_API_TOKEN = ""
+SCC_API_TOKEN = settings.SCC_API_TOKEN
 # TODO: pull from the environment
 # Will this token provide auth for Django app and user_id for submit host?
-SCC_API_URL = "http://localhost:8000/apis/"
+SCC_API_URL = settings.SCC_API_URL
 
 
 @click.group()
