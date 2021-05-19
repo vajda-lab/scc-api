@@ -1,4 +1,4 @@
-pdb_file = open("/home/awake/ftplus/src/ftmap/management/commands/6pav.pdb", "r")
+pdb_file = open("/home/awake/ftplus/src/ftmap/management/commands/6pav.pdb")
 lines = pdb_file.readlines()
 pdb_file.close()
 

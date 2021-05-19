@@ -4,7 +4,7 @@ from .models import Job
 
 
 class JobSubmitform(ModelForm):
-    class Meta(object):
+    class Meta:
         model = Job
         fields = "__all__"
 

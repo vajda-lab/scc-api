@@ -21,7 +21,7 @@ app.autodiscover_tasks()
 
 @app.task(bind=True)
 def debug_task(self):
-    print("Request: {0!r}".format(self.request))
+    print("Request: {!r}".format(self.request))
 
 
 # @periodic_task(run_every=(crontab(minute='*/1')), name="some_task", ignore_result=True)
