@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class FtmapConfig(AppConfig):
+class JobAppConfig(AppConfig):
     name = "jobs"
