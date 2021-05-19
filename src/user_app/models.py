@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from improved_user.model_mixins import AbstractUser
 
-from sccApi.models import Job, Priority
+from jobs.models import Job, Priority
 
 
 # yesterday = datetime.date.today() - datetime.timedelta(days=1)
