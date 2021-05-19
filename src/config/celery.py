@@ -7,7 +7,7 @@ from celery.schedules import crontab
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
-app = Celery("sccApi")
+app = Celery("jobs")
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
@@ -21,7 +21,7 @@ app.autodiscover_tasks()
 
 @app.task(bind=True)
 def debug_task(self):
-    print("Request: {0!r}".format(self.request))
+    print("Request: {!r}".format(self.request))
 
 
 # @periodic_task(run_every=(crontab(minute='*/1')), name="some_task", ignore_result=True)

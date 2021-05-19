@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     # "django_sql_dashboard",
     "rest_framework",
     # first party
-    "sccApi",
-    # 'sccApi.apps.SccApiConfig',
+    "jobs",
+    # 'jobs.apps.SccApiConfig',
     "user_app.apps.UserAppConfig",
 ]
 
@@ -189,11 +189,11 @@ CELERYD_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULE = {
     "poll-job": {
         "schedule": crontab(minute="*/1"),  # every minute
-        "task": "sccApi.tasks.scheduled_poll_job",
+        "task": "jobs.tasks.scheduled_poll_job",
     },
     "allocate-job": {
         "schedule": crontab(minute="*/1"),  # every minute
-        "task": "sccApi.tasks.scheduled_allocate_job",
+        "task": "jobs.tasks.scheduled_allocate_job",
     },
 }
 

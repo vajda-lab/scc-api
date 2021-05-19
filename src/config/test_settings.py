@@ -18,7 +18,7 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 
 # Disable migrations for all-the-things
-class DisableMigrations(object):
+class DisableMigrations:
     def __contains__(self, item):
         return True
 
