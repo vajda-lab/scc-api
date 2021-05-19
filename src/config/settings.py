@@ -38,10 +38,9 @@ INSTALLED_APPS = [
     "django_extensions",
     # "django_sql_dashboard",
     "rest_framework",
-    # first party
+    # our apps
     "jobs",
-    # 'jobs.apps.SccApiConfig',
-    "users.apps.UserAppConfig",
+    "users",
 ]
 
 MIDDLEWARE = [
