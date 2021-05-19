@@ -34,7 +34,7 @@
   {# Assumes you setup the password_reset view in your URLconf #}
   <p>
     <a href="{% url 'password_reset' %}">Forgot password?</a><br />
-    <a href="{% url 'user_app:signup' %}">Create an account</a>
+    <a href="{% url 'users:signup' %}">Create an account</a>
   </p>
 </div>
 {% endblock %}

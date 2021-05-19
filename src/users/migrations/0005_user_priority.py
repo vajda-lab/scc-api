@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("user_app", "0004_user_max_job_submission"),
+        ("users", "0004_user_max_job_submission"),
     ]
 
     operations = [

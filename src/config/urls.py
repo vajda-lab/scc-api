@@ -24,7 +24,7 @@ from rest_framework.routers import DefaultRouter
 
 from . import views
 from jobs.views import JobViewSet
-from user_app.views import UserViewSet
+from users.views import UserViewSet
 
 router = DefaultRouter()
 router.register("jobs", JobViewSet, basename="job")
@@ -36,7 +36,7 @@ urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
     # path("dashboard/", include(django_sql_dashboard.urls)),
     path("jobs/", include(("jobs.urls", "jobs"), namespace="jobs")),
-    path("users/", include(("user_app.urls", "user_app"), namespace="user_app")),
+    path("users/", include(("users.urls", "users"), namespace="users")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("apis/", include(router.urls)),
 ]

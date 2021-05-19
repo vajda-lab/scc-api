@@ -2,7 +2,7 @@ import pytest
 
 from model_bakery import baker
 
-from user_app import models, serializers
+from users import models, serializers
 
 
 # Test User List url
@@ -45,7 +45,7 @@ def test_user_create(tp, user, password):
     tp.get(url)
     tp.response_401()
 
-    new_user = baker.prepare("user_app.User")
+    new_user = baker.prepare("users.User")
     # Does API work with auth?
     tp.client.login(email=user.email, password=password)
     payload = serializers.UserSerializer(instance=new_user).data
@@ -90,7 +90,7 @@ def test_user_delete(tp, user, password):
     """
     DELETE '/apis/users/{pk}/'
     """
-    new_user = baker.make("user_app.User")
+    new_user = baker.make("users.User")
     url = tp.reverse("user-detail", pk=new_user.pk)
 
     # Without auth, API should return 401

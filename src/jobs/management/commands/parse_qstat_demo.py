@@ -10,7 +10,7 @@ from rich.console import Console
 from rich.table import Table
 
 from jobs.models import Job
-from user_app.models import User
+from users.models import User
 
 
 def parse_output(output):

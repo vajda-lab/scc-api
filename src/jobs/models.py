@@ -68,7 +68,7 @@ class Job(models.Model):
         null=False,
         db_index=True,
     )
-    user = models.ForeignKey("user_app.User", on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     # input_file will be INPUT TAR file
     # making sure input file path is accessible to other machines? Combined containers should fix this
     # Are these all (Django/submit host/SCC) running on the same server, or separate servers
@@ -155,7 +155,7 @@ class JobLog(models.Model):
     event = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     # TODO: We may want a user?
-    # user = models.ForeignKey("user_app.User", on_delete=models.CASCADE)
+    # user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     class Meta:
         get_latest_by = ["created"]

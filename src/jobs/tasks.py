@@ -8,7 +8,7 @@ from django.conf import settings
 from pathlib import Path
 
 from .models import Job, JobLog, Status
-from user_app.models import User
+from users.models import User
 
 
 logger = logging.getLogger(__name__)
