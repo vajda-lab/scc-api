@@ -3,7 +3,7 @@
 
 bootstrap:
     #!/usr/bin/env bash
-    # set -euxo pipefail
+    set -euxo pipefail
     PG_DB=webdev21videos2
     PG_PASSWORD=`head -c 18 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 12`
     PG_SERVICE_NAME=postgres
@@ -17,10 +17,17 @@ bootstrap:
     CELERY_FLOWER_USER=awake
     DATABASE_URL="postgres://$PG_USER:$PG_PASSWORD@$PG_SERVICE_NAME:5432/$PG_DB"
     DEBUG=true
+    GRID_ENGINE_DELETE_CMD=/app/bin/qdel
+    GRID_ENGINE_STATUS_CMD=/app/bin/qstat
+    GRID_ENGINE_SUBMIT_CMD=/app/bin/qsub
     POSTGRES_DB=$PG_DB
     POSTGRES_PASSWORD=$PG_PASSWORD
     POSTGRES_USER=$PG_USER
     REDIS_URL="redis://redis:6379/0"
+    SCC_FTPLUS_PATH=/tmp/
+    SCC_MAX_HIGH_JOBS=50
+    SCC_MAX_LOW_JOBS=25
+    SCC_MAX_NORMAL_JOBS=25
     SECRET_KEY=`head -c 75 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 50`" > $FILE
     fi
 
@@ -52,7 +59,6 @@ bootstrap:
 
 @fmt:
     -black .
-    -npx prettier --config=./prettier.config.js --write ./src/templates/
 
 @manage +ARGS="--help":
     docker-compose run --rm django python manage.py {{ARGS}}
@@ -60,7 +66,6 @@ bootstrap:
 @lint:
     -black --check .
     -curlylint src/templates/
-    -npx prettier --config=./prettier.config.js  --check ./src/templates/
 
 @run +ARGS="":
     docker-compose run --rm django {{ARGS}}
