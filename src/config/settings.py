@@ -38,10 +38,9 @@ INSTALLED_APPS = [
     "django_extensions",
     # "django_sql_dashboard",
     "rest_framework",
-    # first party
+    # our apps
     "jobs",
-    # 'jobs.apps.SccApiConfig',
-    "user_app.apps.UserAppConfig",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -120,7 +119,7 @@ CONSTANCE_CONFIG = {
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = "user_app.User"
+AUTH_USER_MODEL = "users.User"
 AUTH_PREFIX = "django.contrib.auth.password_validation."
 AUTH_PASSWORD_VALIDATORS = [
     {
