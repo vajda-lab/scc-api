@@ -6,6 +6,7 @@ from celery import task
 from dateutil.parser import parse
 from django.conf import settings
 from pathlib import Path
+from rich import print as rprint
 
 from .models import Job, JobLog, Status
 from users.models import User
@@ -270,14 +271,6 @@ def scheduled_poll_job(self):
     # Update jobs w/ qstat info
     update_jobs(qstat_output)
 
-    # kombu.exceptions.EncodeError: Object of type CompletedProcess is not JSON serializable
-    # Returning portions of CompletedProcess to avoid error
-    # kombu.exceptions.EncodeError: Object of type bytes is not JSON serializable
-    # return (job_poll.args, job_poll.returncode, job_poll.stdout)
-    # ToDo: use subprocess() to run qstat {get status of current jobs} on the submit host
-    # ToDo: search for "assert_called_once_with" section in Thea's article
-    # ToDo: Scheduling model code https://github.com/revsys/git-shoes/blob/main/config/settings.py#L249-L251
-
 
 def update_jobs(qstat_output):
     """
@@ -291,6 +284,7 @@ def update_jobs(qstat_output):
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
+        rprint(row)
         try:
             job_id = row["job-ID"]
             job_ja_task_id = row.get("ja-task-ID")
