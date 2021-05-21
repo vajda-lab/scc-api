@@ -6,7 +6,6 @@ from celery import task
 from dateutil.parser import parse
 from django.conf import settings
 from pathlib import Path
-from rich import print as rprint
 
 from .models import Job, JobLog, Status
 from users.models import User
@@ -284,7 +283,6 @@ def update_jobs(qstat_output):
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
-        rprint(row)
         try:
             job_id = row["job-ID"]
             job_ja_task_id = row.get("ja-task-ID")
