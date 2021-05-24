@@ -31,23 +31,26 @@ bootstrap:
     SECRET_KEY=`head -c 75 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 50`" > $FILE
     fi
 
-# Docker
+# Build Docker images
 @build:
     docker-compose build
 
+# Build Sun Grid Engine Submit Host images
 @build-sge-submit-host:
     docker-compose -f docker-compose-sge-submit-host.yml build
 
 @down:
     docker-compose down
 
+# Starts containers; also takes arguments
 @up +ARGS="":
     docker-compose up {{ARGS}}
 
+# Monitors container status
 @watch:
     watch docker ps
 
-# Django
+# Uses Django system check framework to inspect project for common problems
 @check:
     docker-compose run --rm django python manage.py check
 
@@ -85,7 +88,7 @@ bootstrap:
 @test +ARGS="":
     docker-compose run --rm django pytest -s {{ARGS}}
 
-# Environment
+# Builds upgraded requirements.txt from requirements.in
 @pip-compile:
     # pip install --upgrade --requirement ./requirements.in
     pip-compile --upgrade ./requirements.in
