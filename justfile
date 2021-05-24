@@ -39,6 +39,7 @@ bootstrap:
 @build-sge-submit-host:
     docker-compose -f docker-compose-sge-submit-host.yml build
 
+# Stops containers
 @down:
     docker-compose down
 
@@ -50,22 +51,27 @@ bootstrap:
 @watch:
     watch docker ps
 
-# Uses Django system check framework to inspect project for common problems
+# Uses Django System Check Framework to inspect project for common problems
 @check:
     docker-compose run --rm django python manage.py check
 
+# Runs Django command in container
 @makemigrations:
     docker-compose run --rm django python manage.py makemigrations
 
+# Runs Django command in container
 @migrate:
     docker-compose run --rm django python manage.py migrate --noinput
 
+# Runs Black
 @fmt:
     -black .
 
+# Runs Django's manage.py in container; takes arguments
 @manage +ARGS="--help":
     docker-compose run --rm django python manage.py {{ARGS}}
 
+# Runs black --check and curlylint
 @lint:
     -black --check .
     -curlylint src/templates/
@@ -73,18 +79,23 @@ bootstrap:
 @run +ARGS="":
     docker-compose run --rm django {{ARGS}}
 
+# Runs Django runserver in container
 @serve:
     docker-compose run --rm django python manage.py runserver
 
+# Starts Bash in Django container
 @shell:
     docker-compose run --rm django /bin/bash
 
+# Starts Django shell in container
 @django-shell:
     docker-compose run --rm django python manage.py shell
 
+# Runs Django showmigrations in container
 @showmigrations:
     docker-compose run --rm django python manage.py showmigrations
 
+# Runs pytest in container
 @test +ARGS="":
     docker-compose run --rm django pytest -s {{ARGS}}
 
