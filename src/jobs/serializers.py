@@ -8,4 +8,13 @@ class JobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ["uuid", "status", "user", "input_file", "output_file", "sge_task_id"]
+        fields = [
+            "uuid",
+            "status",
+            "user",
+            "input_file",
+            "output_file",
+            "sge_task_id",
+            "job_state",
+            "job_data",
+        ]
