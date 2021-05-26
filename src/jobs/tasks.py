@@ -267,6 +267,7 @@ def scheduled_poll_job(self):
     # Capture qstat info as a list of dictionaries
     qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
+    logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
     update_jobs(qstat_output)
 
 
@@ -282,6 +283,7 @@ def update_jobs(qstat_output):
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
+        logger.debug(f"\nROW IS {row}")
         try:
             job_id = row["job-ID"]
             job_ja_task_id = row.get("ja-task-ID")
