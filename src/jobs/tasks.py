@@ -233,7 +233,6 @@ def scheduled_capture_job_output(self):
     )
     for job in capture_jobs:
         scc_job_dir = str(job.uuid)
-        # Improve this file name
         scc_job_output_file = f"{job.input_file}_results"
         # directory existence check so only endogenous jobs have output captured & deleted from SCC
         if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
@@ -266,6 +265,7 @@ def scheduled_poll_job(self):
         job_poll = subprocess.run([cmd], capture_output=True, text=True)
 
     # Capture qstat info as a list of dictionaries
+    logger.debug(f"JOB_POLL.STDOUT{job_poll.stdout}")
     qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
     logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
