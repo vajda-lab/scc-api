@@ -56,8 +56,7 @@ def activate_job(self, *, pk, **kwargs):
 
             JobLog.objects.create(job=job, event="Job status changed to active")
 
-            # ToDo: use subprocess() to run qsub on the submit host
-            # ToDo: how to "point" qsub at the right directory?
+            # ToDo: do we need to cd into scc_job_dir to run qsub?
             try:
                 cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
                 if isinstance(cmd, list):
@@ -117,6 +116,11 @@ def delete_job(self, *, pk, **kwargs):
 
 
 def parse_qstat_output(output):
+    """
+    Takes output from qstat, captured by job_poll in scheduled_poll_job()
+    Returns list of dictionaries. Each dict represents 1 row of qstat output
+    That data is sent to update_jobs(), to update Job instances in web app 
+    """
     if "submit/start at" in output:
         output = output.replace("submit/start at", "submit-start-at")
 
