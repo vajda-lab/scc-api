@@ -119,7 +119,7 @@ def parse_qstat_output(output):
     """
     Takes output from qstat, captured by job_poll in scheduled_poll_job()
     Returns list of dictionaries. Each dict represents 1 row of qstat output
-    That data is sent to update_jobs(), to update Job instances in web app 
+    That data is sent to update_jobs(), to update Job instances in web app
     """
     if "submit/start at" in output:
         output = output.replace("submit/start at", "submit-start-at")
