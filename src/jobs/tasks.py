@@ -265,7 +265,7 @@ def scheduled_poll_job(self):
         job_poll = subprocess.run([cmd], capture_output=True, text=True)
 
     # Capture qstat info as a list of dictionaries
-    logger.debug(f"JOB_POLL.STDOUT{job_poll.stdout}")
+    logger.debug(f"\nJOB_POLL.STDOUT{job_poll.stdout}")
     qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
     logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
