@@ -173,7 +173,7 @@ def scheduled_allocate_job(self):
     # Do we have any queued jobs ready to schedule?
     if queued_jobs.exists():
 
-        # Allocate *high* priority jobs?
+        # Allocate *high* priority jobs
         active_jobs = Job.objects.high_priority().active()
         queued_jobs = Job.objects.high_priority().queued()
         jobs_in_process = active_jobs.count()
@@ -187,7 +187,7 @@ def scheduled_allocate_job(self):
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
-        # Allocate *normal* priority jobs?
+        # Allocate *normal* priority jobs
         active_jobs = Job.objects.normal_priority().active()
         queued_jobs = Job.objects.normal_priority().queued()
         jobs_in_process = active_jobs.count()
@@ -201,7 +201,7 @@ def scheduled_allocate_job(self):
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
-        # Allocate *low* priority jobs?
+        # Allocate *low* priority jobs
         active_jobs = Job.objects.low_priority().active()
         queued_jobs = Job.objects.low_priority().queued()
         jobs_in_process = active_jobs.count()
@@ -214,9 +214,6 @@ def scheduled_allocate_job(self):
             logger.debug(f"{jobs_to_allocate} new low priority jobs were allocated")
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
-
-        # For each priorty, give count of Status.ACTIVE jobs
-        # Based on limits per priority queue, decide which Celery queue to send new jobs to
 
 
 @task(bind=True)
