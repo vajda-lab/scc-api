@@ -307,7 +307,6 @@ def update_jobs(qstat_output):
                     "user": user,
                 },
             )
-            # JobLog.objects.create(job=job, event="Job updated with qstat info")
 
             # If an exogenous job is created, set to Status.ACTIVE
             # Error jobs will be updated later
@@ -343,21 +342,16 @@ def update_jobs(qstat_output):
 def update_job_priority(self, *, pk, new_priority, **kwargs):
     """
     Update Job.priority
-    Update priority on SCC or via Celery (unknown)
+    Current assumption: 3 priority levels: Low/Normal/High
+    Due to design changes, this task isn't in use at 2021-06-01
+    It is tested by test_update_job_priority
     """
     try:
         job = Job.objects.get(pk=pk)
-        # Current assumption, only 2 queues: standard & priority
-        # If more priority levels are added, logic will need to change
         job.priority = new_priority
         job.save()
 
         JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
-
-        # ToDo: use subprocess() to run {command to change job priority} on the submit host
-        # ToDo: https://github.com/tveastman/secateur/blob/master/secateur/settings.py#L241-L245
-        # ToDo: Decide how we're handline priority, mechanically
-        # Do we need to explicitly create separate queues in settings? Or change priority on SCC?
 
     except Job.DoesNotExist:
         logger.exception(f"Job {pk} does not exist")
