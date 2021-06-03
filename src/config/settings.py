@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django_extensions",
     # "django_sql_dashboard",
     "rest_framework",
+    "rest_framework.authtoken",
     # our apps
     "jobs",
     "users",
@@ -201,6 +202,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_FILTER_BACKENDS": ["rest_framework.filters.OrderingFilter"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.CursorPagination",
