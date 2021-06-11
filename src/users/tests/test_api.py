@@ -1,7 +1,6 @@
 import pytest
-from rest_framework.authtoken.models import Token
-
 from model_bakery import baker
+from rest_framework.authtoken.models import Token
 
 from users import models, serializers
 
