@@ -7,6 +7,7 @@ from . import models
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
     form = forms.JobAdminForm
+    list_display = ["user", "input_file", "output_file", "status", "priority"]
     raw_id_fields = ["user"]
 
 
