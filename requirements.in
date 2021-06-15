@@ -5,7 +5,7 @@ django-environ
 django-extensions
 django-improved-user
 django-sql-dashboard==0.10a1
-Django<3.2
+Django<4.0
 djangorestframework<3.13
 flower
 psycopg2-binary
