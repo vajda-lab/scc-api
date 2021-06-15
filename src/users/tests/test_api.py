@@ -57,8 +57,7 @@ def test_user_create(tp, user, password):
 
     user_obj = models.User.objects.get(pk=pk)
     assert user_obj.pk
-    user_token = Token.objects.get(user=user_obj)
-    assert user_token
+    assert Token.objects.filter(user=user_obj).exists()
 
 
 # Test User Detail url
