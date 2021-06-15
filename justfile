@@ -39,6 +39,9 @@ bootstrap:
 @build-sge-submit-host:
     docker-compose -f docker-compose-sge-submit-host.yml build
 
+@bump:
+    bumpver update
+
 # Stops containers
 @down:
     docker-compose down

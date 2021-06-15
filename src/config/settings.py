@@ -92,6 +92,7 @@ DATABASES["dashboard"]["OPTIONS"] = {
 }
 DATABASES["dashboard"]["TEST"] = {"LEGACY": True}
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CONSTANCE_REDIS_CONNECTION = "redis://redis:6379/0"
 
