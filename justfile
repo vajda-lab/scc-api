@@ -69,15 +69,16 @@ bootstrap:
 # Runs Black
 @fmt:
     -black .
+    -djhtml --in-place src/templates/*.html src/templates/**/*.html
 
 # Runs Django's manage.py in container; takes arguments
 @manage +ARGS="--help":
     docker-compose run --rm django python manage.py {{ARGS}}
 
-# Runs black --check and curlylint
+# Runs code and template linters
 @lint:
     -black --check .
-    -curlylint src/templates/
+    -djhtml --check src/templates/*.html src/templates/**/*.html
 
 @run +ARGS="":
     docker-compose run --rm django {{ARGS}}
