@@ -13,6 +13,6 @@ push = true
 "src/config/__init__.py" = [
     '__version__ = "{version}"',
 ]
-"README.md" = [
-    "{version}",
-]
+# "README.md" = [
+#     "{version}",
+# ]
