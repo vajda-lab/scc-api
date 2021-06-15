@@ -6,5 +6,5 @@ class UserAppConfig(AppConfig):
 
 
     def ready(self):
-        from .signals import create_auth_token
-        create_auth_token()
+        from . import signals
+        signals.create_auth_token(sender=settings.AUTH_USER_MODEL)
