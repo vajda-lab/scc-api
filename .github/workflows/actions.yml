@@ -69,7 +69,7 @@ jobs:
 
       - name: Lints HTML templates
         run: |
-          curlylint src/templates/
+          djhtml --check src/templates/*.html src/templates/**/*.html
 
   build:
     needs: [test]
