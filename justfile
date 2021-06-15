@@ -101,6 +101,14 @@ bootstrap:
 
 # Builds upgraded requirements.txt from requirements.in
 @pip-compile:
-    # pip install --upgrade --requirement ./requirements.in
-    pip-compile --upgrade ./requirements.in
-    # pip-compile --rebuild ./requirements.in
+    pip install --upgrade -r ./requirements.in
+    # pip-compile ./requirements.in
+    docker-compose run --rm django \
+        rm -f ./requirements.txt && \
+        pip install -U pip pip-tools && \
+        pip install \
+            --upgrade \
+            --requirement ./requirements.in && \
+        pip-compile \
+            ./requirements.in \
+            --output-file ./requirements.txt
