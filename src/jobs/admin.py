@@ -7,7 +7,15 @@ from . import models
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
     form = forms.JobAdminForm
-    list_display = ["user", "input_file", "output_file", "status", "priority", "uuid", "sge_task_id"]
+    list_display = [
+        "user",
+        "input_file",
+        "output_file",
+        "status",
+        "priority",
+        "uuid",
+        "sge_task_id",
+    ]
     raw_id_fields = ["user"]
 
 
