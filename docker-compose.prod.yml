@@ -1,0 +1,34 @@
+version: '3.6'
+
+services:
+
+  redis:
+    image: redis:3.2
+
+  django:
+    image: submit-host:latest
+    depends_on:
+      - redis
+    env_file: ./.docker-env
+    ports:
+      - "8000:8000"
+    volumes:
+      - nfs-ftplus:/projectnb/ftplus
+
+  scheduler:
+    image: submit-host:latest
+    command: /start-scheduler
+    depends_on:
+      - redis
+    env_file: ./.docker-env
+    volumes:
+      - nfs-ftplus:/projectnb/ftplus
+
+  worker:
+    image: submit-host:latest
+    command: celery -A config worker --queues celery -l INFO
+    depends_on:
+      - redis
+    env_file: ./.docker-env
+    volumes:
+      - nfs-ftplus:/projectnb/ftplus
