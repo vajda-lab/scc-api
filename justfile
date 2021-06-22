@@ -23,6 +23,7 @@ bootstrap:
     POSTGRES_DB=$PG_DB
     POSTGRES_PASSWORD=$PG_PASSWORD
     POSTGRES_USER=$PG_USER
+    POSTGRES_HOST=$PG_SERVICE_NAME
     REDIS_URL="redis://redis:6379/0"
     SCC_FTPLUS_PATH=/tmp/
     SCC_MAX_HIGH_JOBS=50
@@ -41,6 +42,19 @@ bootstrap:
 
 @bump:
     bumpver update
+
+@deploy +ARGS="":
+    rsync -av \
+        {{ARGS}} \
+        --exclude '*.xz' \
+        --exclude '*.bz2' \
+        --exclude '*.git' \
+        --exclude '.docker-env' \
+        --exclude '__pycache__' \
+        --exclude '*.pyc' \
+        --exclude '.DS_Store' \
+        --exclude 'docker-compose.yml' \
+        . kojo@ftplus-dev.bu.edu:/home/kojo/scc-api
 
 # Stops containers
 @down:
