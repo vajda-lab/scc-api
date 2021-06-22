@@ -24,6 +24,8 @@ services:
     env_file: ./.docker-env
     ports:
       - "8000:8000"
+    # volumes:
+    #   - ./nfs-ftplus:/projectnb/ftplus
 
   scheduler:
     build:
@@ -34,6 +36,8 @@ services:
       # - postgres
       - redis
     env_file: ./.docker-env
+    # volumes:
+    #   - ./nfs-ftplus:/projectnb/ftplus
 
   worker:
     build:
@@ -44,6 +48,8 @@ services:
       # - postgres
       - redis
     env_file: ./.docker-env
+    # volumes:
+    #   - ./nfs-ftplus:/projectnb/ftplus
 
   # flower:
   #   image: mher/flower
