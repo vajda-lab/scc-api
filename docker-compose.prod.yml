@@ -13,7 +13,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - nfs-ftplus:/projectnb/ftplus
+      - ./nfs-ftplus:/projectnb/ftplus
 
   scheduler:
     image: submit-host:latest
@@ -22,7 +22,7 @@ services:
       - redis
     env_file: ./.docker-env
     volumes:
-      - nfs-ftplus:/projectnb/ftplus
+      - ./nfs-ftplus:/projectnb/ftplus
 
   worker:
     image: submit-host:latest
@@ -31,4 +31,4 @@ services:
       - redis
     env_file: ./.docker-env
     volumes:
-      - nfs-ftplus:/projectnb/ftplus
+      - ./nfs-ftplus:/projectnb/ftplus
