@@ -6,6 +6,8 @@ from .models import Job
 class JobSerializer(serializers.ModelSerializer):
     """Serializer for Job model."""
 
+    user_email = serializers.SerializerMethodField()
+
     class Meta:
         model = Job
         fields = [
@@ -17,4 +19,8 @@ class JobSerializer(serializers.ModelSerializer):
             "sge_task_id",
             "job_state",
             "job_data",
+            "user_email",
         ]
+
+    def get_user_email(self, obj):
+        return obj.user.email
