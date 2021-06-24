@@ -4,5 +4,5 @@ from jobs.tasks import scheduled_capture_job_output
 
 
 @click.command()
-def main():
+def command():
     scheduled_capture_job_output.delay()

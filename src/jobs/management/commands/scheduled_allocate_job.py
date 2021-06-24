@@ -4,5 +4,5 @@ from jobs.tasks import scheduled_allocate_job
 
 
 @click.command()
-def main():
+def command():
     scheduled_allocate_job.delay()

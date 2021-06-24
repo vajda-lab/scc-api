@@ -3,5 +3,5 @@ from jobs.tasks import scheduled_poll_job
 
 
 @click.command()
-def main():
+def command():
     scheduled_poll_job.delay()

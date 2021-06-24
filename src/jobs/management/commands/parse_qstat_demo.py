@@ -52,7 +52,7 @@ def parse_output(output):
 
 @click.command()
 @click.argument("input_filename")
-def main(input_filename):
+def command(input_filename):
 
     if Path(input_filename).exists():
         input_buffer = Path(input_filename).read_text()
