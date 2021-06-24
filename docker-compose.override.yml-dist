@@ -14,6 +14,6 @@ services:
     volumes:
       - ./src:/app
 
-  flower:
-    volumes:
-      - ./src:/app
+  # flower:
+  #   volumes:
+  #     - ./src:/app

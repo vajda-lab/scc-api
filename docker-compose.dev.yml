@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/django-sge-submit-host/Dockerfile
-    command: /start-scheduler
+    command: /start-scheduler.sh
     depends_on:
       - redis
     env_file: ./.docker-env
@@ -32,7 +32,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/django-sge-submit-host/Dockerfile
-    command: celery -A config worker --queues celery -l INFO
+    command: /start-worker.sh
     depends_on:
       - redis
     env_file: ./.docker-env

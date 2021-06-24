@@ -29,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
-    command: /start-scheduler
+    command: /start-scheduler.sh
     depends_on:
       - redis
       - postgres
@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
-    command: celery -A config worker --queues celery -l INFO
+    command: /start-worker.sh
     depends_on:
       - redis
       - postgres
@@ -49,21 +49,21 @@ services:
     volumes:
       - ./src:/app
 
-  flower:
-    image: mher/flower
-    # TODO: switch back when flower supports Celery 5.0
-    # build:
-    #   context: .
-    #   dockerfile: ./docker/django/Dockerfile
-    command: /start-flower
-    depends_on:
-      - redis
-      - postgres
-    env_file: ./.docker-env
-    ports:
-      - "5555:5555"
-    volumes:
-      - ./src:/app
+  # flower:
+  #   image: mher/flower
+  #   # TODO: switch back when flower supports Celery 5.0
+  #   # build:
+  #   #   context: .
+  #   #   dockerfile: ./docker/django/Dockerfile
+  #   command: /start-flower.sh
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   env_file: ./.docker-env
+  #   ports:
+  #     - "5555:5555"
+  #   volumes:
+  #     - ./src:/app
 
 volumes:
   postgres_data_dev: {}
