@@ -6,7 +6,9 @@ services:
     image: redis:3.2
 
   django:
-    image: submit-host:latest
+    build:
+      context: .
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
     depends_on:
       - redis
     env_file: ./.docker-env
@@ -16,7 +18,9 @@ services:
       - nfs-ftplus:/projectnb/ftplus
 
   scheduler:
-    image: submit-host:latest
+    build:
+      context: .
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
     command: /start-scheduler
     depends_on:
       - redis
@@ -25,10 +29,17 @@ services:
       - nfs-ftplus:/projectnb/ftplus
 
   worker:
-    image: submit-host:latest
+    build:
+      context: .
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
     command: celery -A config worker --queues celery -l INFO
     depends_on:
       - redis
     env_file: ./.docker-env
     volumes:
       - nfs-ftplus:/projectnb/ftplus
+
+volumes:
+  nfs-ftplus:
+    external: true
+    name: nfs-ftplus

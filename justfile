@@ -54,6 +54,8 @@ bootstrap:
         --exclude '*.pyc' \
         --exclude '.DS_Store' \
         --exclude 'docker-compose.yml' \
+        --exclude '.pytest_cache' \
+        --exclude 'celerybeat*' \
         . kojo@ftplus-dev.bu.edu:/home/kojo/scc-api
 
 # Stops containers
