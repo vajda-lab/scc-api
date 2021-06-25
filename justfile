@@ -45,7 +45,7 @@ bootstrap:
 
 @deploy +ARGS="":
     rsync -av \
-        {{ARGS}} \
+        {{ ARGS }} \
         --exclude '*.bz2' \
         --exclude '*.git' \
         --exclude '*.pyc' \
@@ -65,7 +65,7 @@ bootstrap:
 
 # Starts containers; also takes arguments
 @up +ARGS="":
-    docker-compose up {{ARGS}}
+    docker-compose up {{ ARGS }}
 
 # Monitors container status
 @watch:
@@ -90,7 +90,7 @@ bootstrap:
 
 # Runs Django's manage.py in container; takes arguments
 @manage +ARGS="--help":
-    docker-compose run --rm django python manage.py {{ARGS}}
+    docker-compose run --rm django python manage.py {{ ARGS }}
 
 # Runs code and template linters
 @lint:
@@ -98,7 +98,7 @@ bootstrap:
     -djhtml --check src/templates/*.html src/templates/**/*.html
 
 @run +ARGS="":
-    docker-compose run --rm django {{ARGS}}
+    docker-compose run --rm django {{ ARGS }}
 
 # Runs Django runserver in container
 @serve:
@@ -118,7 +118,7 @@ bootstrap:
 
 # Runs pytest in container
 @test +ARGS="":
-    docker-compose run --rm django pytest -s {{ARGS}}
+    docker-compose run --rm django pytest -s {{ ARGS }}
 
 # Builds upgraded requirements.txt from requirements.in
 @pip-compile:
