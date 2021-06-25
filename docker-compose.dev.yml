@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 
 services:
 
@@ -12,8 +12,10 @@ services:
     depends_on:
       - redis
     env_file: ./.docker-env
+    hostname: ftplus-dev.bu.edu
     ports:
       - "8000:8000"
+    # user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
 
@@ -36,6 +38,8 @@ services:
     depends_on:
       - redis
     env_file: ./.docker-env
+    hostname: ftplus-dev.bu.edu
+    user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
 
