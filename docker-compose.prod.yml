@@ -6,17 +6,25 @@ services:
     image: redis:3.2
 
   django:
-    image: submit-host:latest
+    build:
+      context: .
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
+    # image: scc-api:latest
     depends_on:
       - redis
     env_file: ./.docker-env
+    hostname: ftplus.bu.edu
     ports:
       - "8000:8000"
+    # user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
 
   scheduler:
-    image: submit-host:latest
+    build:
+      context: .
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
+    # image: scc-api:latest
     command: /start-scheduler.sh
     depends_on:
       - redis
@@ -25,10 +33,20 @@ services:
       - nfs-ftplus:/projectnb/ftplus
 
   worker:
-    image: submit-host:latest
+    build:
+      context: .
+      dockerfile: ./docker/django-sge-submit-host/Dockerfile
+    # image: scc-api:latest
     command: /start-worker.sh
     depends_on:
       - redis
     env_file: ./.docker-env
+    hostname: ftplus.bu.edu
+    user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
+
+volumes:
+  nfs-ftplus:
+    external: true
+    name: nfs-ftplus
