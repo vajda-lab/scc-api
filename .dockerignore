@@ -171,3 +171,4 @@ env.template
 docker-compose*.yml
 Makefile
 README.md
+*.md
