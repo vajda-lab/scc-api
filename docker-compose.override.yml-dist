@@ -13,7 +13,3 @@ services:
   worker:
     volumes:
       - ./src:/app
-
-  # flower:
-  #   volumes:
-  #     - ./src:/app
