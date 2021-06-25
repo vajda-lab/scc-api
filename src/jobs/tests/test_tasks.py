@@ -136,6 +136,7 @@ def test_update_jobs():
     qstat_output[0] should convert error_job from Status.ACTIVE to Status.ERROR
     qstat_output[1] should create a new job w/ Status.ACTIVE
     qstat_output[2] should create a new job w/ Status.ERROR
+    qstat_output[3] should create a new job w/ Status.ACTIVE and blank ja-task-ID
     complete_job should convert from Status.ACTIVE to Status.COMPLETE
     """
 
@@ -178,6 +179,17 @@ def test_update_jobs():
             "slots": "1",
             "ja-task-ID": "11",
         },
+        {
+            "job-ID": "6260964",
+            "prior": "0.10000",
+            "name": "nf-analysi",
+            "user": "xrzhou",
+            "state": "r",
+            "submit-start-at": "04/28/2021 19:33:25",
+            "queue": "linga@scc-kb8.scc.bu.edu",
+            "slots": "1",
+            "ja-task-ID": "",
+        },
     ]
 
     tasks.update_jobs(qstat_output)
@@ -193,4 +205,4 @@ def test_update_jobs():
     # Was complete_job's status changed?
     complete_job.refresh_from_db()
     assert complete_job.status == Status.COMPLETE
-    assert len(Job.objects.all()) == 4
+    assert len(Job.objects.all()) == 5
