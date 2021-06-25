@@ -57,7 +57,12 @@ bootstrap:
         --exclude 'celerybeat*' \
         --exclude 'docker-compose.yml' \
         --exclude 'justfile' \
-        . ftplus-dev.bu.edu:/srv/scc-api
+        . ftplus-dev.bu.edu:/home/kojo/scc-api
+    # . ftplus-dev.bu.edu:/srv/scc-api
+
+@build_deploy:
+    just deploy
+    ssh ftplus-dev.bu.edu 'cd /home/kojo/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
 
 # Stops containers
 @down:
