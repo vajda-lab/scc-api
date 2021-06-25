@@ -46,17 +46,18 @@ bootstrap:
 @deploy +ARGS="":
     rsync -av \
         {{ARGS}} \
-        --exclude '*.xz' \
         --exclude '*.bz2' \
         --exclude '*.git' \
-        --exclude '.docker-env' \
-        --exclude '__pycache__' \
         --exclude '*.pyc' \
+        --exclude '*.xz' \
+        --exclude '.docker-env' \
         --exclude '.DS_Store' \
-        --exclude 'docker-compose.yml' \
         --exclude '.pytest_cache' \
+        --exclude '__pycache__' \
         --exclude 'celerybeat*' \
-        . kojo@ftplus-dev.bu.edu:/home/kojo/scc-api
+        --exclude 'docker-compose.yml' \
+        --exclude 'justfile' \
+        . ftplus-dev.bu.edu:/srv/scc-api
 
 # Stops containers
 @down:
