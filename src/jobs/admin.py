@@ -17,6 +17,10 @@ class JobAdmin(admin.ModelAdmin):
         "sge_task_id",
         "job_ja_task_id",
     ]
+    list_filter = [
+        "status",
+        "priority",
+    ]
     raw_id_fields = ["user"]
 
 
