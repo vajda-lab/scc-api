@@ -126,6 +126,9 @@ def test_parse_qstat_output():
     qstat_rows = tasks.parse_qstat_output(input_buffer)
     assert len(qstat_rows) > 1
     assert qstat_rows[1]["job-ID"].strip() == "6260963"
+    assert qstat_rows[1]["state"].strip() == "r"
+    assert qstat_rows[-1]["job-ID"].strip() == "6262069"
+    assert qstat_rows[-1]["state"].strip() == "qw"
 
 
 @pytest.mark.django_db()
