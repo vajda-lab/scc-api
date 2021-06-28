@@ -18,6 +18,7 @@ class JobDetail(LoginRequiredMixin, DetailView):
 
 class UserHomeView(LoginRequiredMixin, ListView):
     model = Job
+    paginate_by = 100
     template_name = "jobs/user_home.html"
 
     def get_queryset(self):
