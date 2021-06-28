@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "constance",
     "django_extensions",
     # "django_sql_dashboard",
+    "django_filters",
     "rest_framework",
     "rest_framework.authtoken",
     # our apps
@@ -205,7 +206,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ],
-    "DEFAULT_FILTER_BACKENDS": ["rest_framework.filters.OrderingFilter"],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+    ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.CursorPagination",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "PAGE_SIZE": 100,
