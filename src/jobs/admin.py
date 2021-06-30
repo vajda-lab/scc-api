@@ -22,6 +22,8 @@ class JobAdmin(admin.ModelAdmin):
         "priority",
     ]
     raw_id_fields = ["user"]
+    readonly_fields = ["created", "modified"]
+    search_fields = ["uuid", "sge_task_id"]
 
 
 @admin.register(models.JobLog)
