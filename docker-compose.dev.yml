@@ -15,7 +15,7 @@ services:
     hostname: ftplus-dev.bu.edu
     ports:
       - "8000:8000"
-    # user: "ftsubmit:ftplus"
+    user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
 
@@ -45,5 +45,10 @@ services:
 
 volumes:
   nfs-ftplus:
-    external: true
+    # external: true
     name: nfs-ftplus
+    driver_opts:
+      type: "nfs"
+      o: "addr=scc-fs.bu.edu,hard,nolock,rw"
+      device: ":/gpfs4/projectnb/ftplus"
+

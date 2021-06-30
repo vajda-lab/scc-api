@@ -12,7 +12,7 @@ from users.models import User
 
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 # Group of Celery task actions
@@ -35,7 +35,7 @@ def activate_job(self, *, pk, **kwargs):
             # Setup SCC job directory; this may change based on container situation
             scc_job_dir = str(job.uuid)
             scc_input_file = str(
-                job.input_file
+                job.input_file.path
             )  # Will this work? Or does the file need to be opened/read?
 
             # Roll a temp folder variable instead
@@ -72,6 +72,7 @@ def activate_job(self, *, pk, **kwargs):
                 return job_submit
             except Exception as e:
                 job.status = Status.ERROR
+                JobLog.objects.create(job=job, event=f"Job status changed to error. Exception: {e}")
                 logger.exception()
             finally:
                 job.save()
