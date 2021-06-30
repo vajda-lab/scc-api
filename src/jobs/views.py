@@ -37,6 +37,10 @@ class JobViewSet(viewsets.ModelViewSet):
         created by the currently authenticated user.
         """
 
+        # What's an efficient way to apply this param as a filter
+        # to all three cases? Is there one?
+        sge_task_id = self.request.query_params.get('sge_task_id')
+
         # Superusers have access to all Jobs
         if self.request.user.is_superuser:
             return Job.objects.all()
