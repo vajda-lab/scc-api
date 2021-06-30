@@ -3,6 +3,7 @@ django-click
 django-constance[redis]
 django-environ
 django-extensions
+django-filter
 django-improved-user
 django-sql-dashboard==0.10a1
 Django<4.0

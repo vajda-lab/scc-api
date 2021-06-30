@@ -30,6 +30,11 @@ class JobViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.JobSerializer
     ordering = "created"
+    filterset_fields = [
+        "sge_task_id",
+        "status",
+        "user",
+    ]
 
     def get_queryset(self):
         """
