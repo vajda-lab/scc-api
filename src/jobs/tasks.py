@@ -291,12 +291,12 @@ def update_jobs(qstat_output):
         logger.debug(f"\nROW IS {row}")
         try:
             job_id = row["job-ID"]
-            # job_ja_task_id = (
-            #     row.get("ja-task-ID") if len(row.get("ja-task-ID")) else None
-            # )
             job_ja_task_id = (
-                row.get("ja-task-ID")
+                row.get("ja-task-ID") if len(row.get("ja-task-ID")) else None
             )
+            # job_ja_task_id = (
+            #     row.get("ja-task-ID")
+            # )
             job_state = row["state"]
             job_submitted = f"{row['submit-start-at']}".replace("/", "-")
             job_submitted = parse(job_submitted)
