@@ -66,6 +66,8 @@ def activate_job(self, *, pk, **kwargs):
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
+                print(f"JOB_SUBMIT: {job_submit}")
+                print(f"JOB_SUBMIT.STDOUT: {job_submit.stdout}")
                 sge_task_id = job_submit.stdout.split(" ")[2]
                 job.sge_task_id = int(sge_task_id)
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
@@ -328,7 +330,7 @@ def update_jobs(qstat_output):
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
-        JobLog.objects.create(job=job, event="Job status changed to error")
+        JobLog.objects.create(job=job, event="Job status changed to error based on SCC's `Eqw` state")
     Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status for Complete jobs
