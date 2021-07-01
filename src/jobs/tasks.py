@@ -38,8 +38,8 @@ def activate_job(self, *, pk, **kwargs):
                 job.input_file.path
             )  # Will this work? Or does the file need to be opened/read?
 
-            # Roll a temp folder variable instead
-            ftplus_path = Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}")
+            # ToDo: settings.SCC_PROCESSING_DIR = env(SCC_PROCESSING_DIR, default="jobs-in-process") 
+            ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{scc_job_dir}")
             if not ftplus_path.exists():
                 subprocess.run(["mkdir", f"{ftplus_path}"])
 
