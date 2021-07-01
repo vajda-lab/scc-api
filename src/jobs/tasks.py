@@ -70,14 +70,14 @@ def activate_job(self, *, pk, **kwargs):
                 print(f"JOB_SUBMIT.STDOUT: {job_submit.stdout}")
                 sge_task_id = job_submit.stdout.split(" ")[2]
                 job.sge_task_id = int(sge_task_id)
+                job.save()
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
                 return job_submit
             except Exception as e:
                 job.status = Status.ERROR
-                JobLog.objects.create(job=job, event=f"Job status changed to error. Exception: {e}")
-                logger.exception()
-            finally:
                 job.save()
+                JobLog.objects.create(job=job, event=f"Job status changed to error. Exception: {e}")
+                logger.exception(e)
         else:
             return None
 
