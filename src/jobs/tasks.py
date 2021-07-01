@@ -56,13 +56,14 @@ def activate_job(self, *, pk, **kwargs):
 
             JobLog.objects.create(job=job, event="Job status changed to active")
 
-            # ToDo: do we need to cd into scc_job_dir to run qsub?
+            # We need to cd into scc_job_dir to run qsub
             try:
-                cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
+                cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} {settings.SCC_RUN_FILE}".split(" ")
+                print(f"CMD: {cmd}")
                 if isinstance(cmd, list):
-                    job_submit = subprocess.run(cmd, capture_output=True, text=True)
+                    job_submit = subprocess.run(cmd, capture_output=True, text=True, cwd=ftplus_path)
                 else:
-                    job_submit = subprocess.run([cmd], capture_output=True, text=True)
+                    job_submit = subprocess.run([cmd], capture_output=True, text=True, cwd=ftplus_path)
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted

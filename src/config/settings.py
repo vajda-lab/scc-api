@@ -225,6 +225,7 @@ SCC_DEFAULT_EMAIL = env("SCC_DEFAULT_EMAIL", default="awake@bu.edu")
 SCC_FTPLUS_PATH = env("SCC_FTPLUS_PATH", default="/tmp/")
 SCC_API_TOKEN = env("SCC_API_TOKEN", default="")
 SCC_API_URL = env("SCC_API_URL", default="http://ftplus.bu.edu:8000/apis")
+SCC_RUN_FILE = env("SCC_RUN_FILE", default="runme.py")
 
 # TASK QUEUE SETTINGS
 SCC_MAX_HIGH_JOBS = env.int("SCC_MAX_HIGH_JOBS", default=50)
