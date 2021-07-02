@@ -31,17 +31,15 @@ def activate_job(self, *, pk, **kwargs):
         if job.status == Status.QUEUED:
             job.status = Status.ACTIVE
 
-            # ToDO: Figure out how to make sure directory setup runs on SCC
             # Setup SCC job directory; this may change based on container situation
             scc_job_dir = str(job.uuid)
-            scc_input_file = str(
-                job.input_file.path
-            )  # Will this work? Or does the file need to be opened/read?
+            scc_input_file = str(job.input_file.path)
 
-            # ToDo: settings.SCC_PROCESSING_DIR = env(SCC_PROCESSING_DIR, default="jobs-in-process") 
-            ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{scc_job_dir}")
+            ftplus_path = Path(
+                settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{scc_job_dir}"
+            )
             if not ftplus_path.exists():
-                subprocess.run(["mkdir", f"{ftplus_path}"])
+                ftplus_path.mkdir(parents=True)
 
             if not ftplus_path.joinpath(f"{scc_input_file}").exists():
                 subprocess.run(
@@ -54,21 +52,28 @@ def activate_job(self, *, pk, **kwargs):
                     ]
                 )
 
+            # TODO: look for {ftplus_path}/runme.py to see if it exists...
+            # ...if it does, then run it
+            # ...if it doesn't, then error out
+
             JobLog.objects.create(job=job, event="Job status changed to active")
 
             # We need to cd into scc_job_dir to run qsub
             try:
-                cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} {settings.SCC_RUN_FILE}".split(" ")
-                print(f"CMD: {cmd}")
+                cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} {ftplus_path}/{settings.SCC_RUN_FILE}".split(
+                    " "
+                )
                 if isinstance(cmd, list):
-                    job_submit = subprocess.run(cmd, capture_output=True, text=True, cwd=ftplus_path)
+                    job_submit = subprocess.run(
+                        cmd, capture_output=True, text=True, cwd=ftplus_path
+                    )
                 else:
-                    job_submit = subprocess.run([cmd], capture_output=True, text=True, cwd=ftplus_path)
+                    job_submit = subprocess.run(
+                        [cmd], capture_output=True, text=True, cwd=ftplus_path
+                    )
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
-                print(f"JOB_SUBMIT: {job_submit}")
-                print(f"JOB_SUBMIT.STDOUT: {job_submit.stdout}")
                 sge_task_id = job_submit.stdout.split(" ")[2]
                 job.sge_task_id = int(sge_task_id)
                 job.save()
@@ -77,7 +82,9 @@ def activate_job(self, *, pk, **kwargs):
             except Exception as e:
                 job.status = Status.ERROR
                 job.save()
-                JobLog.objects.create(job=job, event=f"Job status changed to error. Exception: {e}")
+                JobLog.objects.create(
+                    job=job, event=f"Job status changed to error. Exception: {e}"
+                )
                 logger.exception(e)
         else:
             return None
@@ -330,13 +337,15 @@ def update_jobs(qstat_output):
 
             scc_job_list.append(int(job_id))
         except Exception as e:
-            print(f"{job_id} :: {e}")
+            logger.exception(f"Job {job_id} :: {e}")
 
     # Update status for Error jobs; will also catch exogenous Error jobs
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
-        JobLog.objects.create(job=job, event="Job status changed to error based on SCC's `Eqw` state")
+        JobLog.objects.create(
+            job=job, event="Job status changed to error based on SCC's `Eqw` state"
+        )
     Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status for Complete jobs
