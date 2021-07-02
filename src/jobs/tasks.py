@@ -340,7 +340,7 @@ def update_jobs(qstat_output):
                     },
                 )
 
-                # If an exogenous job is created, set to Status.ACTIVE
+            # If an exogenous job is created, set to Status.ACTIVE
             # Error jobs will be updated later
             if created:
                 job.status = Status.ACTIVE
