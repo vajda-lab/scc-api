@@ -1,11 +1,12 @@
 import pytest
 import tempfile
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from model_bakery import baker
 from pathlib import Path
 
 from jobs import tasks
-from jobs.models import Job, Priority, Status
+from jobs.models import Job, JobLog, Priority, Status
 
 
 @pytest.mark.django_db()
@@ -15,6 +16,10 @@ def test_activate_job():
     """
     job = baker.make(
         "jobs.Job",
+        input_file=SimpleUploadedFile(
+            "test-job.tar.gz",
+            Path(__file__).parent.joinpath("test-job.tar.gz").read_bytes(),
+        ),
     )
     assert job.status != Status.ACTIVE
     qsub_response = tasks.activate_job(pk=job.pk)
@@ -68,15 +73,25 @@ def test_update_job_priority():
 
 @pytest.mark.django_db()
 def test_scheduled_allocate_job():
-    baker.make("jobs.Job", status=Status.QUEUED, _quantity=2)
+    baker.make(
+        "jobs.Job",
+        input_file=SimpleUploadedFile(
+            "test-job.tar.gz",
+            Path(__file__).parent.joinpath("test-job.tar.gz").read_bytes(),
+        ),
+        status=Status.QUEUED,
+        _quantity=2,
+    )
 
     assert Job.objects.filter(status=Status.QUEUED).count() == 2
     assert Job.objects.filter(status=Status.ACTIVE).count() == 0
+    assert JobLog.objects.count() == 0
 
     tasks.scheduled_allocate_job()
 
     assert Job.objects.filter(status=Status.QUEUED).count() == 0
     assert Job.objects.filter(status=Status.ACTIVE).count() == 2
+    assert JobLog.objects.count() == 4
 
 
 @pytest.mark.django_db()

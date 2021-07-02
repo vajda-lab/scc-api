@@ -36,6 +36,11 @@ bootstrap:
 @build:
     docker-compose build
 
+# Deploy & Build Django app on ftplus sites
+@build-deploy:
+    just deploy
+    ssh ftplus-dev.bu.edu 'cd /home/kojo/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
+
 # Build Sun Grid Engine Submit Host images
 @build-sge-submit-host:
     docker-compose -f docker-compose-sge-submit-host.yml build
@@ -60,9 +65,6 @@ bootstrap:
         . ftplus-dev.bu.edu:/home/kojo/scc-api
     # . ftplus-dev.bu.edu:/srv/scc-api
 
-@build_deploy:
-    just deploy
-    ssh ftplus-dev.bu.edu 'cd /home/kojo/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
 
 # Stops containers
 @down:
