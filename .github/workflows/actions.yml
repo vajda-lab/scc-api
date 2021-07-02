@@ -57,6 +57,7 @@ jobs:
           GRID_ENGINE_DELETE_CMD: '/home/runner/work/scc-api/scc-api/src/bin/qdel'
           GRID_ENGINE_STATUS_CMD: '/home/runner/work/scc-api/scc-api/src/bin/qstat'
           GRID_ENGINE_SUBMIT_CMD: '/home/runner/work/scc-api/scc-api/src/bin/qsub'
+          MEDIA_ROOT: '/tmp/'
           REDIS_URL: 'redis://redis:6379/0'
           SECRET_KEY: 'this-is-for-testing-only'
 
