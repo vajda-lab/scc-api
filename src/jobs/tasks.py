@@ -16,7 +16,7 @@ logger.setLevel(logging.INFO)
 
 
 # Group of Celery task actions
-@task(bind=True)
+@task(bind=True, ignore_result=True))
 def activate_job(self, *, pk, **kwargs):
     """
     Takes existing Job object instances from Django API
@@ -93,7 +93,7 @@ def activate_job(self, *, pk, **kwargs):
         logger.exception(f"Job {pk} does not exist")
 
 
-@task(bind=True)
+@task(bind=True, ignore_result=True))
 def delete_job(self, *, pk, **kwargs):
     """
     Sets Job.status to Status.DELETED in Django
@@ -170,7 +170,7 @@ def parse_qstat_output(output):
     return rows
 
 
-@task(bind=True)
+@task(bind=True, ignore_result=True, max_retries=0)
 def scheduled_allocate_job(self):
     """
     Allocates existing Job instances to Celery at a set interval
@@ -227,7 +227,7 @@ def scheduled_allocate_job(self):
                 activate_job.delay(pk=queued_job.pk)
 
 
-@task(bind=True)
+@task(bind=True, ignore_result=True, max_retries=0)
 def scheduled_capture_job_output(self):
     """
     Periodically send TARed output directories from Status.COMPLETE & Status.ERROR jobs to web app
@@ -261,7 +261,7 @@ def scheduled_capture_job_output(self):
             subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
 
 
-@task(bind=True)
+@task(bind=True, ignore_result=True, max_retries=0)
 def scheduled_poll_job(self):
     """
     Checks status of current SCC jobs at a set interval
@@ -315,6 +315,10 @@ def update_jobs(qstat_output):
 
             # Since BU doesn't care about exogenous jobs
             # Do we went to change this to ONLY update?
+            Job.objects.filter(sge_task_id=sge_task_id).exclude(
+                pk=Job.objects.filter(sge_task_id=sge_task_id).first().pk
+            ).delete()
+
             job, created = Job.objects.update_or_create(
                 sge_task_id=job_id,
                 defaults={
@@ -358,7 +362,7 @@ def update_jobs(qstat_output):
     Job.objects.bulk_update(active_jobs, ["status"])
 
 
-@task(bind=True)
+@task(bind=True, ignore_result=True))
 def update_job_priority(self, *, pk, new_priority, **kwargs):
     """
     Update Job.priority
