@@ -306,6 +306,8 @@ def update_jobs(qstat_output):
                     job_submitted, is_dst=None
                 )
 
+            # Since BU doesn't care about exogenous jobs
+            # Do we went to change this to ONLY update?
             job, created = Job.objects.update_or_create(
                 sge_task_id=job_id,
                 defaults={
