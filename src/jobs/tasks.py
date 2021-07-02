@@ -73,7 +73,7 @@ def activate_job(self, *, pk, **kwargs):
             except Exception as e:
                 job.status = Status.ERROR
                 JobLog.objects.create(job=job, event=f"Job status changed to error. Exception: {e}")
-                logger.exception()
+                logger.exception(e)
             finally:
                 job.save()
         else:
@@ -299,17 +299,29 @@ def update_jobs(qstat_output):
                 job_submitted = pytz.timezone(settings.TIME_ZONE).localize(
                     job_submitted, is_dst=None
                 )
-
-            job, created = Job.objects.update_or_create(
-                sge_task_id=job_id,
-                defaults={
-                    "job_data": row,
-                    "job_ja_task_id": job_ja_task_id,
-                    "job_state": job_state,
-                    "job_submitted": job_submitted,
-                    "user": user,
-                },
-            )
+            try:
+                job, created = Job.objects.update_or_create(
+                    sge_task_id=job_id,
+                    defaults={
+                        "job_data": row,
+                        "job_ja_task_id": job_ja_task_id,
+                        "job_state": job_state,
+                        "job_submitted": job_submitted,
+                        "user": user,
+                    },
+                )
+            except Job.MultipleObjectsReturned:
+                Job.objects.filter(sge_task_id=job_id).delete()
+                job, created = Job.objects.update_or_create(
+                    sge_task_id=job_id,
+                    defaults={
+                        "job_data": row,
+                        "job_ja_task_id": job_ja_task_id,
+                        "job_state": job_state,
+                        "job_submitted": job_submitted,
+                        "user": user,
+                    },
+                )
 
             # If an exogenous job is created, set to Status.ACTIVE
             # Error jobs will be updated later
