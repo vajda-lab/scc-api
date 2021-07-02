@@ -16,7 +16,7 @@ logger.setLevel(logging.INFO)
 
 
 # Group of Celery task actions
-@task(bind=True, ignore_result=True))
+@task(bind=True, ignore_result=True)
 def activate_job(self, *, pk, **kwargs):
     """
     Takes existing Job object instances from Django API
@@ -94,7 +94,7 @@ def activate_job(self, *, pk, **kwargs):
         logger.exception(f"Job {pk} does not exist")
 
 
-@task(bind=True, ignore_result=True))
+@task(bind=True, ignore_result=True)
 def delete_job(self, *, pk, **kwargs):
     """
     Sets Job.status to Status.DELETED in Django
@@ -372,7 +372,7 @@ def update_jobs(qstat_output):
     Job.objects.bulk_update(active_jobs, ["status"])
 
 
-@task(bind=True, ignore_result=True))
+@task(bind=True, ignore_result=True)
 def update_job_priority(self, *, pk, new_priority, **kwargs):
     """
     Update Job.priority
