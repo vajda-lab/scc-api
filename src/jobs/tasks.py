@@ -81,11 +81,12 @@ def activate_job(self, *, pk, **kwargs):
                 return job_submit
             except Exception as e:
                 job.status = Status.ERROR
-                job.save()
                 JobLog.objects.create(
                     job=job, event=f"Job status changed to error. Exception: {e}"
                 )
                 logger.exception(e)
+            finally:
+                job.save()
         else:
             return None
 
@@ -313,24 +314,33 @@ def update_jobs(qstat_output):
                     job_submitted, is_dst=None
                 )
 
-            # Since BU doesn't care about exogenous jobs
-            # Do we went to change this to ONLY update?
-            Job.objects.filter(sge_task_id=sge_task_id).exclude(
-                pk=Job.objects.filter(sge_task_id=sge_task_id).first().pk
-            ).delete()
+            try:
+                # Since BU doesn't care about exogenous jobs
+                # Do we went to change this to ONLY update?
+                job, created = Job.objects.update_or_create(
+                    sge_task_id=job_id,
+                    defaults={
+                        "job_data": row,
+                        "job_ja_task_id": job_ja_task_id,
+                        "job_state": job_state,
+                        "job_submitted": job_submitted,
+                        "user": user,
+                    },
+                )
+            except Job.MultipleObjectsReturned:
+                Job.objects.filter(sge_task_id=job_id).delete()
+                job, created = Job.objects.update_or_create(
+                    sge_task_id=job_id,
+                    defaults={
+                        "job_data": row,
+                        "job_ja_task_id": job_ja_task_id,
+                        "job_state": job_state,
+                        "job_submitted": job_submitted,
+                        "user": user,
+                    },
+                )
 
-            job, created = Job.objects.update_or_create(
-                sge_task_id=job_id,
-                defaults={
-                    "job_data": row,
-                    "job_ja_task_id": job_ja_task_id,
-                    "job_state": job_state,
-                    "job_submitted": job_submitted,
-                    "user": user,
-                },
-            )
-
-            # If an exogenous job is created, set to Status.ACTIVE
+                # If an exogenous job is created, set to Status.ACTIVE
             # Error jobs will be updated later
             if created:
                 job.status = Status.ACTIVE
