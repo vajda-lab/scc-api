@@ -334,7 +334,7 @@ def update_jobs(qstat_output):
 
             scc_job_list.append(int(job_id))
         except Exception as e:
-            print(f"{job_id} :: {e}")
+            print(f"Exception w/ {job_id} :: {e}")
 
     # Update status for Error jobs; will also catch exogenous Error jobs
     error_jobs = Job.objects.filter(job_state="Eqw")
