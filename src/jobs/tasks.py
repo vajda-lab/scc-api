@@ -38,8 +38,8 @@ def activate_job(self, *, pk, **kwargs):
                 job.input_file.path
             )  # Will this work? Or does the file need to be opened/read?
 
-            # Roll a temp folder variable instead
-            ftplus_path = Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}")
+            # ToDo: settings.SCC_PROCESSING_DIR = env(SCC_PROCESSING_DIR, default="jobs-in-process") 
+            ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{scc_job_dir}")
             if not ftplus_path.exists():
                 subprocess.run(["mkdir", f"{ftplus_path}"])
 
@@ -56,26 +56,29 @@ def activate_job(self, *, pk, **kwargs):
 
             JobLog.objects.create(job=job, event="Job status changed to active")
 
-            # ToDo: do we need to cd into scc_job_dir to run qsub?
+            # We need to cd into scc_job_dir to run qsub
             try:
-                cmd = settings.GRID_ENGINE_SUBMIT_CMD.split(" ")
+                cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} {settings.SCC_RUN_FILE}".split(" ")
+                print(f"CMD: {cmd}")
                 if isinstance(cmd, list):
-                    job_submit = subprocess.run(cmd, capture_output=True, text=True)
+                    job_submit = subprocess.run(cmd, capture_output=True, text=True, cwd=ftplus_path)
                 else:
-                    job_submit = subprocess.run([cmd], capture_output=True, text=True)
+                    job_submit = subprocess.run([cmd], capture_output=True, text=True, cwd=ftplus_path)
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
+                print(f"JOB_SUBMIT: {job_submit}")
+                print(f"JOB_SUBMIT.STDOUT: {job_submit.stdout}")
                 sge_task_id = job_submit.stdout.split(" ")[2]
                 job.sge_task_id = int(sge_task_id)
+                job.save()
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
                 return job_submit
             except Exception as e:
                 job.status = Status.ERROR
-                JobLog.objects.create(job=job, event=f"Job status changed to error. Exception: {e}")
-                logger.exception()
-            finally:
                 job.save()
+                JobLog.objects.create(job=job, event=f"Job status changed to error. Exception: {e}")
+                logger.exception(e)
         else:
             return None
 
@@ -291,6 +294,9 @@ def update_jobs(qstat_output):
             job_ja_task_id = (
                 row.get("ja-task-ID") if len(row.get("ja-task-ID")) else None
             )
+            # job_ja_task_id = (
+            #     row.get("ja-task-ID")
+            # )
             job_state = row["state"]
             job_submitted = f"{row['submit-start-at']}".replace("/", "-")
             job_submitted = parse(job_submitted)
@@ -300,6 +306,8 @@ def update_jobs(qstat_output):
                     job_submitted, is_dst=None
                 )
 
+            # Since BU doesn't care about exogenous jobs
+            # Do we went to change this to ONLY update?
             job, created = Job.objects.update_or_create(
                 sge_task_id=job_id,
                 defaults={
@@ -328,7 +336,7 @@ def update_jobs(qstat_output):
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
-        JobLog.objects.create(job=job, event="Job status changed to error")
+        JobLog.objects.create(job=job, event="Job status changed to error based on SCC's `Eqw` state")
     Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status for Complete jobs
