@@ -44,16 +44,16 @@ class JobViewSet(viewsets.ModelViewSet):
 
         # Superusers have access to all Jobs
         if self.request.user.is_superuser:
-            return Job.objects.all()
+            return Job.objects.all().exclude(imported=True)
 
         # Staff have access to all Jobs except for Superuser Jobs
         if self.request.user.is_staff:
             if self.action in ["list", "retrieve"]:
-                return Job.objects.all()
-            return Job.objects.filter(user__is_superuser=False)
+                return Job.objects.all().exclude(imported=True)
+            return Job.objects.filter(user__is_superuser=False).exclude(imported=True)
 
         # Everyone else can only access their own Jobs
-        return Job.objects.filter(user=self.request.user)
+        return Job.objects.filter(user=self.request.user).exclude(imported=True)
 
     def create(self, request):
         """
