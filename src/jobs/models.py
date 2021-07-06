@@ -138,6 +138,7 @@ class Job(models.Model):
         null=True,
     )
     imported = models.BooleanField(
+        default=False,
         null=True,
         help_text="Was this job imported from the SCC or created via  OUR API?",
     )
