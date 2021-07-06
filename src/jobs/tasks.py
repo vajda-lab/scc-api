@@ -289,7 +289,7 @@ def update_jobs(qstat_output):
     Takes input from scheduled_poll_job (a list of dictionaries)
     Parses that and saves the results to job objects in the web app
     Also updates Job.Status on jobs that have Errored or are complete
-    Creation and processing of exogenous job objects is also handled here
+    Creation and processing of imported job objects is also handled here
     """
 
     user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
@@ -315,7 +315,7 @@ def update_jobs(qstat_output):
                 )
 
             try:
-                # Since BU doesn't care about exogenous jobs
+                # Since BU doesn't care about imported jobs
                 # Do we went to change this to ONLY update?
                 job, created = Job.objects.update_or_create(
                     sge_task_id=job_id,
@@ -340,12 +340,13 @@ def update_jobs(qstat_output):
                     },
                 )
 
-            # If an exogenous job is created, set to Status.ACTIVE
+            # If an imported job is created, set to Status.ACTIVE & note it's imported
             # Error jobs will be updated later
             if created:
                 job.status = Status.ACTIVE
+                job.imported = True
                 job.save()
-                JobLog.objects.create(job=job, event="Exogenous job added to web app")
+                JobLog.objects.create(job=job, event="Imported job added to web app")
             else:
                 JobLog.objects.create(job=job, event="Job updated with qstat info")
 
@@ -353,7 +354,7 @@ def update_jobs(qstat_output):
         except Exception as e:
             logger.exception(f"Job {job_id} :: {e}")
 
-    # Update status for Error jobs; will also catch exogenous Error jobs
+    # Update status for Error jobs; will also catch imported Error jobs
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR

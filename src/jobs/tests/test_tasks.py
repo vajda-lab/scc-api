@@ -215,7 +215,7 @@ def test_update_jobs():
     # error_job tests
     assert error_job.status == Status.ERROR
     assert error_job.job_state == "Eqw"
-    # Were correcte new objectd created for the exogenous jobs?
+    # Were correct new objects created for the imported jobs?
     assert Job.objects.get(sge_task_id=6260963)
     assert Job.objects.get(sge_task_id=6260963).status == Status.ACTIVE
     assert Job.objects.get(sge_task_id=4260964)
