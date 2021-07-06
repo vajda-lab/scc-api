@@ -16,6 +16,7 @@ class JobAdmin(admin.ModelAdmin):
         "uuid",
         "sge_task_id",
         "job_ja_task_id",
+        "imported",
     ]
     list_filter = [
         "status",

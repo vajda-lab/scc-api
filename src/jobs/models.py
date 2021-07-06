@@ -137,7 +137,9 @@ class Job(models.Model):
         blank=True,
         null=True,
     )
-    imported = models.BooleanField(null=True)
+    imported = models.BooleanField(
+        null=True,
+        help_text="Was this job imported from the SCC or created via  OUR API?",)
 
     objects = JobQuerySet.as_manager()
 
