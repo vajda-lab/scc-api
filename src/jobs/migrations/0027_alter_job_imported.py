@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobs', '0026_auto_20210706_1756'),
+        ("jobs", "0026_auto_20210706_1756"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='job',
-            name='imported',
-            field=models.BooleanField(help_text='Was this job imported from the SCC or created via  OUR API?', null=True),
+            model_name="job",
+            name="imported",
+            field=models.BooleanField(
+                help_text="Was this job imported from the SCC or created via  OUR API?",
+                null=True,
+            ),
         ),
     ]

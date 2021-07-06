@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobs', '0025_auto_20210423_2045'),
+        ("jobs", "0025_auto_20210423_2045"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='imported',
+            model_name="job",
+            name="imported",
             field=models.BooleanField(null=True),
         ),
         migrations.AlterField(
-            model_name='job',
-            name='job_ja_task_id',
+            model_name="job",
+            name="job_ja_task_id",
             field=models.CharField(blank=True, max_length=12, null=True),
         ),
     ]
