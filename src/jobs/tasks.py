@@ -340,12 +340,13 @@ def update_jobs(qstat_output):
                     },
                 )
 
-            # If an imported job is created, set to Status.ACTIVE
+            # If an imported job is created, set to Status.ACTIVE & note it's imported
             # Error jobs will be updated later
             if created:
                 job.status = Status.ACTIVE
+                job.imported = True
                 job.save()
-                JobLog.objects.create(job=job, event="Exogenous job added to web app")
+                JobLog.objects.create(job=job, event="Imported job added to web app")
             else:
                 JobLog.objects.create(job=job, event="Job updated with qstat info")
 
