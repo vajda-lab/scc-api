@@ -60,7 +60,7 @@ def activate_job(self, *, pk, **kwargs):
 
             # We need to cd into scc_job_dir to run qsub
             try:
-                cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} {ftplus_path}/{settings.SCC_RUN_FILE}".split(
+                cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} -cwd {ftplus_path}/{settings.SCC_RUN_FILE}".split(
                     " "
                 )
                 if isinstance(cmd, list):
