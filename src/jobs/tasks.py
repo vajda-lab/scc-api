@@ -55,38 +55,46 @@ def activate_job(self, *, pk, **kwargs):
             # TODO: look for {ftplus_path}/runme.py to see if it exists...
             # ...if it does, then run it
             # ...if it doesn't, then error out
-
-            JobLog.objects.create(job=job, event="Job status changed to active")
-
-            # We need to cd into scc_job_dir to run qsub
+            runfile = ftplus_path.joinpath("runme.py")
             try:
-                cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} -cwd {ftplus_path}/{settings.SCC_RUN_FILE}".split(
-                    " "
-                )
-                if isinstance(cmd, list):
-                    job_submit = subprocess.run(
-                        cmd, capture_output=True, text=True, cwd=ftplus_path
-                    )
-                else:
-                    job_submit = subprocess.run(
-                        [cmd], capture_output=True, text=True, cwd=ftplus_path
-                    )
+                assert runfile.exists()
+                JobLog.objects.create(job=job, event="Job status changed to active")
 
-                # Assign SGE ID to job
-                # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
-                sge_task_id = job_submit.stdout.split(" ")[2]
-                job.sge_task_id = int(sge_task_id)
-                job.save()
-                JobLog.objects.create(job=job, event="Job sge_task_id added")
-                return job_submit
-            except Exception as e:
+                # We need to cd into scc_job_dir to run qsub
+                try:
+                    cmd = f"{settings.GRID_ENGINE_SUBMIT_CMD} -cwd {ftplus_path}/{settings.SCC_RUN_FILE}".split(
+                        " "
+                    )
+                    if isinstance(cmd, list):
+                        job_submit = subprocess.run(
+                            cmd, capture_output=True, text=True, cwd=ftplus_path
+                        )
+                    else:
+                        job_submit = subprocess.run(
+                            [cmd], capture_output=True, text=True, cwd=ftplus_path
+                        )
+
+                    # Assign SGE ID to job
+                    # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
+                    sge_task_id = job_submit.stdout.split(" ")[2]
+                    job.sge_task_id = int(sge_task_id)
+                    job.save()
+                    JobLog.objects.create(job=job, event="Job sge_task_id added")
+                    return job_submit
+                except Exception as e:
+                    job.status = Status.ERROR
+                    JobLog.objects.create(
+                        job=job, event=f"Job status changed to error. Exception: {e}"
+                    )
+                    logger.exception(e)
+                finally:
+                    job.save()
+            except AssertionError as e:
                 job.status = Status.ERROR
                 JobLog.objects.create(
-                    job=job, event=f"Job status changed to error. Exception: {e}"
+                    job=job, event=f"Job status changed to error b/c runme.py doesn't exist.  Exception: {e}"
                 )
-                logger.exception(e)
-            finally:
-                job.save()
+                logger.exception(f"runme.py doesn't exist: {e}")
         else:
             return None
 
