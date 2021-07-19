@@ -90,7 +90,8 @@ def activate_job(self, *, pk, **kwargs):
             except Exception as e:
                 job.status = Status.ERROR
                 JobLog.objects.create(
-                    job=job, event=f"Job status changed to error b/c runme.py doesn't exist.  Exception: {e}"
+                    job=job,
+                    event=f"Job status changed to error b/c runme.py doesn't exist.  Exception: {e}",
                 )
                 logger.exception(e)
             finally:
