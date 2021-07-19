@@ -31,22 +31,18 @@ def activate_job(self, *, pk, **kwargs):
         if job.status == Status.QUEUED:
             job.status = Status.ACTIVE
 
-            # Setup SCC job directory; this may change based on container situation
-            scc_job_dir = str(job.uuid)
-            scc_input_file = str(job.input_file.path)
-
             ftplus_path = Path(
-                settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{scc_job_dir}"
+                settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}"
             )
+
+            # have we already untarred our job files?
             if not ftplus_path.exists():
                 ftplus_path.mkdir(parents=True)
-
-            if not ftplus_path.joinpath(f"{scc_input_file}").exists():
                 subprocess.run(
                     [
                         "tar",
                         "-xf",
-                        f"{scc_input_file}",
+                        f"{job.input_file.path}",
                         "-C",
                         f"{ftplus_path}",
                     ]
@@ -57,7 +53,6 @@ def activate_job(self, *, pk, **kwargs):
             # ...if it doesn't, then error out
             try:
                 runfile = ftplus_path.joinpath("runme.py")
-                print([filename for filename in runfile.glob("*")])
                 if not runfile.exists():
                     raise Exception("runme.py doesn't exist")
 
