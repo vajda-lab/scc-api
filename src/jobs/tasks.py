@@ -55,9 +55,12 @@ def activate_job(self, *, pk, **kwargs):
             # TODO: look for {ftplus_path}/runme.py to see if it exists...
             # ...if it does, then run it
             # ...if it doesn't, then error out
-            runfile = ftplus_path.joinpath("runme.py")
             try:
-                assert runfile.exists()
+                runfile = ftplus_path.joinpath("runme.py")
+                print([filename for filename in runfile.glob("*")])
+                if not runfile.exists():
+                    raise Exception("runme.py doesn't exist")
+
                 JobLog.objects.create(job=job, event="Job status changed to active")
 
                 # We need to cd into scc_job_dir to run qsub
@@ -89,12 +92,14 @@ def activate_job(self, *, pk, **kwargs):
                     logger.exception(e)
                 finally:
                     job.save()
-            except AssertionError as e:
+            except Exception as e:
                 job.status = Status.ERROR
                 JobLog.objects.create(
                     job=job, event=f"Job status changed to error b/c runme.py doesn't exist.  Exception: {e}"
                 )
-                logger.exception(f"runme.py doesn't exist: {e}")
+                logger.exception(e)
+            finally:
+                job.save()
         else:
             return None
 
