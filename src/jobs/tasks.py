@@ -48,22 +48,20 @@ def activate_job(self, *, pk, **kwargs):
                     ]
                 )
 
-            # TODO: look for {ftplus_path}/runme.py to see if it exists...
-            # ...if it does, then run it
-            # ...if it doesn't, then error out
+            # Ensure {ftplus_path}/settings.SCC_RUN_FILE exists
             try:
-                runfile = ftplus_path.joinpath("runme.py")
+                runfile = ftplus_path.joinpath(settings.SCC_RUN_FILE)
                 if not runfile.exists():
-                    raise Exception("runme.py doesn't exist")
+                    raise Exception(f"{settings.SCC_RUN_FILE} doesn't exist")
 
                 JobLog.objects.create(job=job, event="Job status changed to active")
 
-                # We need to cd into scc_job_dir to run qsub
                 cmd = [
                     f"{settings.GRID_ENGINE_SUBMIT_CMD}",
                     "-cwd",
                     "{ftplus_path}/{settings.SCC_RUN_FILE}",
                 ]
+                # qsub must be run from inside job.uuid directory
                 job_submit = subprocess.run(
                     cmd, capture_output=True, text=True, cwd=ftplus_path
                 )
