@@ -288,10 +288,10 @@ def scheduled_poll_job(self):
     update_start = time.perf_counter()
     update_jobs(qstat_output)
     update_stop = time.perf_counter()
-    logger.info(f"UPDATE_JOBS (final step in SCHEDULED_POLL_JOB ) took {update_stop-update_start:0.1f} seconds")
+    logger.info(f"UPDATE_JOBS took {update_stop-update_start:0.1f} seconds")
 
     stop = time.perf_counter()
-    logger.info(f"SCHEDULED_POLL_JOB (includes UPDATE_JOBS) took {stop-start:0.1f} seconds")
+    logger.info(f"SCHEDULED_POLL_JOB took {stop-start:0.1f} seconds")
 
 
 def update_jobs(qstat_output):
