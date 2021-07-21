@@ -1,6 +1,7 @@
 import logging
 import pytz
 import subprocess
+import time
 
 from celery import task
 from dateutil.parser import parse
@@ -174,6 +175,8 @@ def scheduled_allocate_job(self):
     Should do so based on availability of different priority queues
     Availability based on settings.SCC_MAX_{priority}_JOBS
     """
+
+    start = time.perf_counter()
     # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
     queued_jobs = Job.objects.queued()
 
@@ -221,6 +224,9 @@ def scheduled_allocate_job(self):
             logger.debug(f"{jobs_to_allocate} new low priority jobs were allocated")
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
+
+    stop = time.perf_counter()
+    logger.INFO(f"SCHEDULED_ALLOCATE_JOB took {stop-start:0.1f} seconds")
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
@@ -287,6 +293,7 @@ def update_jobs(qstat_output):
     Creation and processing of imported job objects is also handled here
     """
 
+    start = time.perf_counter()
     user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
     scc_job_list = []
     # Update all jobs w/ their qstat results
@@ -366,6 +373,9 @@ def update_jobs(qstat_output):
             job.status = Status.COMPLETE
             JobLog.objects.create(job=job, event="Job status changed to complete")
     Job.objects.bulk_update(active_jobs, ["status"])
+
+    stop = time.perf_counter()
+    logger.INFO(f"SCHEDULED_ALLOCATE_JOB took {stop-start:0.1f} seconds")
 
 
 @task(bind=True, ignore_result=True)
