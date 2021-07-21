@@ -271,6 +271,8 @@ def scheduled_poll_job(self):
 
     Processing of those jobs will be handled by update_jobs()
     """
+
+    start = time.perf_counter()
     cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
     if isinstance(cmd, list):
         job_poll = subprocess.run(cmd, capture_output=True, text=True)
@@ -283,6 +285,9 @@ def scheduled_poll_job(self):
     # Update jobs w/ qstat info
     logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
     update_jobs(qstat_output)
+
+    stop = time.perf_counter()
+    logger.INFO(f"SCHEDULED_POLL_JOB (includes UPDATE_JOBS) took {stop-start:0.1f} seconds")
 
 
 def update_jobs(qstat_output):
@@ -375,7 +380,7 @@ def update_jobs(qstat_output):
     Job.objects.bulk_update(active_jobs, ["status"])
 
     stop = time.perf_counter()
-    logger.INFO(f"SCHEDULED_ALLOCATE_JOB took {stop-start:0.1f} seconds")
+    logger.INFO(f"UPDATE_JOBS (final step in SCHEDULED_POLL_JOB ) took {stop-start:0.1f} seconds")
 
 
 @task(bind=True, ignore_result=True)
