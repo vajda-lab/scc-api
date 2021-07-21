@@ -226,7 +226,7 @@ def scheduled_allocate_job(self):
                 activate_job.delay(pk=queued_job.pk)
 
     stop = time.perf_counter()
-    logger.INFO(f"SCHEDULED_ALLOCATE_JOB took {stop-start:0.1f} seconds")
+    logger.info(f"SCHEDULED_ALLOCATE_JOB took {stop-start:0.1f} seconds")
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
@@ -287,7 +287,7 @@ def scheduled_poll_job(self):
     update_jobs(qstat_output)
 
     stop = time.perf_counter()
-    logger.INFO(f"SCHEDULED_POLL_JOB (includes UPDATE_JOBS) took {stop-start:0.1f} seconds")
+    logger.info(f"SCHEDULED_POLL_JOB (includes UPDATE_JOBS) took {stop-start:0.1f} seconds")
 
 
 def update_jobs(qstat_output):
@@ -380,7 +380,7 @@ def update_jobs(qstat_output):
     Job.objects.bulk_update(active_jobs, ["status"])
 
     stop = time.perf_counter()
-    logger.INFO(f"UPDATE_JOBS (final step in SCHEDULED_POLL_JOB ) took {stop-start:0.1f} seconds")
+    logger.info(f"UPDATE_JOBS (final step in SCHEDULED_POLL_JOB ) took {stop-start:0.1f} seconds")
 
 
 @task(bind=True, ignore_result=True)
