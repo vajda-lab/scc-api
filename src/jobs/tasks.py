@@ -284,7 +284,11 @@ def scheduled_poll_job(self):
     qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
     logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
+
+    update_start = time.perf_counter()
     update_jobs(qstat_output)
+    update_stop = time.perf_counter()
+    logger.info(f"UPDATE_JOBS (final step in SCHEDULED_POLL_JOB ) took {update_stop-update_start:0.1f} seconds")
 
     stop = time.perf_counter()
     logger.info(f"SCHEDULED_POLL_JOB (includes UPDATE_JOBS) took {stop-start:0.1f} seconds")
@@ -298,7 +302,6 @@ def update_jobs(qstat_output):
     Creation and processing of imported job objects is also handled here
     """
 
-    start = time.perf_counter()
     user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
     scc_job_list = []
     # Update all jobs w/ their qstat results
@@ -378,9 +381,6 @@ def update_jobs(qstat_output):
             job.status = Status.COMPLETE
             JobLog.objects.create(job=job, event="Job status changed to complete")
     Job.objects.bulk_update(active_jobs, ["status"])
-
-    stop = time.perf_counter()
-    logger.info(f"UPDATE_JOBS (final step in SCHEDULED_POLL_JOB ) took {stop-start:0.1f} seconds")
 
 
 @task(bind=True, ignore_result=True)
