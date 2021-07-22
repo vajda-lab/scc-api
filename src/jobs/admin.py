@@ -21,6 +21,7 @@ class JobAdmin(admin.ModelAdmin):
     list_filter = [
         "status",
         "priority",
+        "imported",
     ]
     raw_id_fields = ["user"]
     readonly_fields = ["created", "modified"]
