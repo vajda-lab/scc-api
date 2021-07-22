@@ -1,5 +1,7 @@
+from datetime import timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
+from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from rest_framework import status
 from rest_framework import viewsets
@@ -21,7 +23,15 @@ class UserHomeView(LoginRequiredMixin, ListView):
     template_name = "jobs/user_home.html"
 
     def get_queryset(self):
-        return self.model.objects.exclude_imported().all()
+        return self.model.objects.exclude_imported().filter(
+            created=timezone.now() - timedelta(days=7),
+            status__in=[
+                Status.ACTIVE,
+                Status.COMPLETE,
+                Status.ERROR,
+                Status.QUEUED,
+            ],
+        )
 
 
 class JobViewSet(viewsets.ModelViewSet):
