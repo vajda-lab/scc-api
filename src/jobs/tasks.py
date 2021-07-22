@@ -323,6 +323,7 @@ def update_jobs(qstat_output: str) -> None:
                     },
                 )
             except Job.MultipleObjectsReturned:
+                logger.warning(f"Multiple jobs found for {job_id}")
                 Job.objects.filter(sge_task_id=job_id).delete()
                 job, created = Job.objects.update_or_create(
                     sge_task_id=job_id,
