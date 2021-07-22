@@ -36,11 +36,6 @@ bootstrap:
 @build:
     docker-compose build
 
-# Deploy & Build Django app on ftplus sites
-@build-deploy:
-    just deploy
-    ssh ftplus-dev.bu.edu 'cd /home/kojo/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
-
 # Build Sun Grid Engine Submit Host images
 @build-sge-submit-host:
     docker-compose -f docker-compose-sge-submit-host.yml build
@@ -51,20 +46,26 @@ bootstrap:
 @deploy +ARGS="":
     rsync -av \
         {{ ARGS }} \
+        --exclude '__pycache__' \
+        --exclude '.docker-env*' \
+        --exclude '.DS_Store' \
+        --exclude '.github' \
+        --exclude '.gitignore' \
+        --exclude '.pytest_cache' \
         --exclude '*.bz2' \
         --exclude '*.git' \
         --exclude '*.pyc' \
         --exclude '*.xz' \
-        --exclude '.docker-env' \
-        --exclude '.DS_Store' \
-        --exclude '.pytest_cache' \
-        --exclude '__pycache__' \
         --exclude 'celerybeat*' \
         --exclude 'docker-compose.yml' \
         --exclude 'justfile' \
-        . ftplus-dev.bu.edu:/home/kojo/scc-api
-    # . ftplus-dev.bu.edu:/srv/scc-api
+        . \
+        ftplus-dev.bu.edu:/srv/scc-api
 
+# Deploy & Build Django app on ftplus sites
+@deploy-build:
+    just deploy
+    ssh ftplus-dev.bu.edu 'cd /srv/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
 
 # Stops containers
 @down:
