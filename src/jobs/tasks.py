@@ -1,3 +1,4 @@
+import celery
 import logging
 import pytz
 import subprocess
@@ -17,7 +18,7 @@ logger.setLevel(logging.INFO)
 
 # Group of Celery task actions
 @task(bind=True, ignore_result=True)
-def activate_job(self, *, pk, **kwargs):
+def activate_job(self: celery.Task, *, pk: int):
     """
     Takes existing Job object instances from Django API
     Submits their data to the SCC for processing
@@ -90,7 +91,7 @@ def activate_job(self, *, pk, **kwargs):
 
 
 @task(bind=True, ignore_result=True)
-def delete_job(self, *, pk, **kwargs):
+def delete_job(self: celery.Task, *, pk: int):
     """
     Sets Job.status to Status.DELETED in Django
     Also delete job directory and associated files on SCC
@@ -122,7 +123,7 @@ def delete_job(self, *, pk, **kwargs):
         logger.exception(f"Job {pk} does not exist")
 
 
-def parse_qstat_output(output):
+def parse_qstat_output(output: str):
     """
     Takes output from qstat, captured by job_poll in scheduled_poll_job()
     Returns list of dictionaries. Each dict represents 1 row of qstat output
@@ -167,7 +168,7 @@ def parse_qstat_output(output):
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
-def scheduled_allocate_job(self):
+def scheduled_allocate_job(self: celery.Task):
     """
     Allocates existing Job instances to Celery at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
@@ -175,10 +176,10 @@ def scheduled_allocate_job(self):
     Availability based on settings.SCC_MAX_{priority}_JOBS
     """
     # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
-    queued_jobs = Job.objects.queued()
+    has_queued_jobs = bool(Job.objects.queued().exists())
 
     # Do we have any queued jobs ready to schedule?
-    if queued_jobs.exists():
+    if has_queued_jobs:
 
         # Allocate *high* priority jobs
         active_jobs = Job.objects.high_priority().active()
@@ -224,7 +225,7 @@ def scheduled_allocate_job(self):
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
-def scheduled_capture_job_output(self):
+def scheduled_capture_job_output(self: celery.Task):
     """
     Periodically send TARed output directories from Status.COMPLETE & Status.ERROR jobs to web app
     Will also delete those directories from SCC
@@ -258,7 +259,7 @@ def scheduled_capture_job_output(self):
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
-def scheduled_poll_job(self):
+def scheduled_poll_job(self: celery.Task):
     """
     Checks status of current SCC jobs at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
@@ -279,7 +280,7 @@ def scheduled_poll_job(self):
     update_jobs(qstat_output)
 
 
-def update_jobs(qstat_output):
+def update_jobs(qstat_output: str):
     """
     Takes input from scheduled_poll_job (a list of dictionaries)
     Parses that and saves the results to job objects in the web app
@@ -369,7 +370,7 @@ def update_jobs(qstat_output):
 
 
 @task(bind=True, ignore_result=True)
-def update_job_priority(self, *, pk, new_priority, **kwargs):
+def update_job_priority(self: celery.Task, *, pk: int, new_priority: str):
     """
     Update Job.priority
     Current assumption: 3 priority levels: Low/Normal/High
