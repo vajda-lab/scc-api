@@ -1,7 +1,9 @@
 import celery
+from datetime import datetime as dt
 import logging
 import pytz
 import subprocess
+import time
 
 from celery import task
 from dateutil.parser import parse
@@ -174,6 +176,8 @@ def scheduled_allocate_job(self: celery.Task) -> None:
     Should do so based on availability of different priority queues
     Availability based on settings.SCC_MAX_{priority}_JOBS
     """
+
+    start = dt.now()
     # Look at how many jobs are Status.QUEUED, and Status.ACTIVE
     has_queued_jobs = bool(Job.objects.queued().exists())
 
@@ -222,6 +226,9 @@ def scheduled_allocate_job(self: celery.Task) -> None:
             for queued_job in queued_jobs[:jobs_to_allocate]:
                 activate_job.delay(pk=queued_job.pk)
 
+    stop = dt.now()
+    logger.info(f"SCHEDULED_ALLOCATE_JOB took {(stop-start).seconds} seconds")
+
 
 @task(bind=True, ignore_result=True, max_retries=0)
 def scheduled_capture_job_output(self: celery.Task) -> None:
@@ -265,6 +272,8 @@ def scheduled_poll_job(self: celery.Task) -> None:
 
     Processing of those jobs will be handled by update_jobs()
     """
+
+    start = dt.now()
     cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
     if isinstance(cmd, list):
         job_poll = subprocess.run(cmd, capture_output=True, text=True)
@@ -276,7 +285,14 @@ def scheduled_poll_job(self: celery.Task) -> None:
     qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
     logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
+
+    update_start = dt.now()
     update_jobs(qstat_output)
+    update_stop = dt.now()
+    logger.info(f"UPDATE_JOBS took {(update_stop-update_start).seconds} seconds")
+
+    stop = dt.now()
+    logger.info(f"SCHEDULED_POLL_JOB took {(stop-start).seconds} seconds")
 
 
 def update_jobs(qstat_output: str) -> None:
