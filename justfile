@@ -65,7 +65,8 @@ bootstrap:
 # Deploy & Build Django app on ftplus sites
 @deploy-build:
     just deploy
-    ssh ftplus-dev.bu.edu 'cd /srv/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
+    # ssh ftplus-dev.bu.edu 'cd /srv/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
+    ssh ftplus-dev.bu.edu 'cd /srv/scc-api && docker-compose build && docker-compose stop django scheduler worker && docker-compose start django scheduler worker'
 
 # Stops containers
 @down:
