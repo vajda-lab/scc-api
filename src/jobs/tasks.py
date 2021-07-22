@@ -77,17 +77,16 @@ def activate_job(self: celery.Task, *, pk: int):
 
             except Exception as e:
                 job.status = Status.ERROR
-                JobLog.objects.create(
-                    job=job, event=f"Job status changed to error. Exception: {e}"
-                )
-                logger.exception(e)
+                msg = f"Job status changed to error. Exception: {e}"
+                JobLog.objects.create(job=job, event=msg)
+                logger.exception(msg)
             finally:
                 job.save()
         else:
-            return None
+            return
 
     except Job.DoesNotExist:
-        logger.exception(f"Job {pk} does not exist")
+        logger.warning(f"Job {pk} does not exist")
 
 
 @task(bind=True, ignore_result=True)
@@ -120,7 +119,7 @@ def delete_job(self: celery.Task, *, pk: int):
         return job_delete
 
     except Job.DoesNotExist:
-        logger.exception(f"Job {pk} does not exist")
+        logger.warning(f"Job {pk} does not exist")
 
 
 def parse_qstat_output(output: str):
@@ -168,7 +167,7 @@ def parse_qstat_output(output: str):
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
-def scheduled_allocate_job(self: celery.Task):
+def scheduled_allocate_job(self: celery.Task) -> None:
     """
     Allocates existing Job instances to Celery at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
@@ -225,7 +224,7 @@ def scheduled_allocate_job(self: celery.Task):
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
-def scheduled_capture_job_output(self: celery.Task):
+def scheduled_capture_job_output(self: celery.Task) -> None:
     """
     Periodically send TARed output directories from Status.COMPLETE & Status.ERROR jobs to web app
     Will also delete those directories from SCC
@@ -259,7 +258,7 @@ def scheduled_capture_job_output(self: celery.Task):
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
-def scheduled_poll_job(self: celery.Task):
+def scheduled_poll_job(self: celery.Task) -> None:
     """
     Checks status of current SCC jobs at a set interval
     Interval determined by settings.CELERY_BEAT_SCHEDULE
@@ -280,7 +279,7 @@ def scheduled_poll_job(self: celery.Task):
     update_jobs(qstat_output)
 
 
-def update_jobs(qstat_output: str):
+def update_jobs(qstat_output: str) -> None:
     """
     Takes input from scheduled_poll_job (a list of dictionaries)
     Parses that and saves the results to job objects in the web app
@@ -370,7 +369,7 @@ def update_jobs(qstat_output: str):
 
 
 @task(bind=True, ignore_result=True)
-def update_job_priority(self: celery.Task, *, pk: int, new_priority: str):
+def update_job_priority(self: celery.Task, *, pk: int, new_priority: str) -> None:
     """
     Update Job.priority
     Current assumption: 3 priority levels: Low/Normal/High
@@ -385,4 +384,4 @@ def update_job_priority(self: celery.Task, *, pk: int, new_priority: str):
         JobLog.objects.create(job=job, event=f"Job priority changed to {new_priority}")
 
     except Job.DoesNotExist:
-        logger.exception(f"Job {pk} does not exist")
+        logger.warning(f"Job {pk} does not exist")
