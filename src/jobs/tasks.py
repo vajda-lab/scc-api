@@ -185,8 +185,8 @@ def scheduled_allocate_job(self: celery.Task) -> None:
     if has_queued_jobs:
 
         # Allocate *high* priority jobs
-        active_jobs = Job.objects.high_priority().active()
-        queued_jobs = Job.objects.high_priority().queued()
+        active_jobs = Job.objects.exclude_imported().high_priority().active()
+        queued_jobs = Job.objects.exclude_imported().high_priority().queued()
         jobs_in_process = active_jobs.count()
         logger.info(
             f"{jobs_in_process} of {settings.SCC_MAX_HIGH_JOBS} high priority jobs are active"
@@ -199,8 +199,8 @@ def scheduled_allocate_job(self: celery.Task) -> None:
                 activate_job.delay(pk=queued_job.pk)
 
         # Allocate *normal* priority jobs
-        active_jobs = Job.objects.normal_priority().active()
-        queued_jobs = Job.objects.normal_priority().queued()
+        active_jobs = Job.objects.exclude_imported().normal_priority().active()
+        queued_jobs = Job.objects.exclude_imported().normal_priority().queued()
         jobs_in_process = active_jobs.count()
         logger.info(
             f"{jobs_in_process} of {settings.SCC_MAX_NORMAL_JOBS} normal priority jobs are active"
@@ -213,8 +213,8 @@ def scheduled_allocate_job(self: celery.Task) -> None:
                 activate_job.delay(pk=queued_job.pk)
 
         # Allocate *low* priority jobs
-        active_jobs = Job.objects.low_priority().active()
-        queued_jobs = Job.objects.low_priority().queued()
+        active_jobs = Job.objects.exclude_imported().low_priority().active()
+        queued_jobs = Job.objects.exclude_imported().low_priority().queued()
         jobs_in_process = active_jobs.count()
         logger.info(
             f"{jobs_in_process} of {settings.SCC_MAX_LOW_JOBS} low priority jobs are active"

@@ -50,6 +50,9 @@ class JobQuerySet(models.QuerySet):
     def normal_priority(self):
         return self.filter(priority=Priority.NORMAL)
 
+    def exclude_imported(self):
+        return self.filter(imported=False)
+
 
 class Job(models.Model):
     priority = models.IntegerField(
