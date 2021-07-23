@@ -82,11 +82,10 @@ def activate_job(self: celery.Task, *, pk: int):
 
             except Exception as e:
                 job.status = Status.ERROR
+                job.save()
                 msg = f"Job status changed to error. Exception: {e}"
                 JobLog.objects.create(job=job, event=msg)
                 logger.exception(msg)
-            finally:
-                job.save()
         else:
             return
 
@@ -344,7 +343,8 @@ def update_jobs(qstat_output: str) -> None:
             except Job.MultipleObjectsReturned:
                 logger.warning(f"Multiple jobs found for {job_id}")
                 Job.objects.filter(sge_task_id=job_id).delete()
-                job, created = Job.objects.update_or_create(
+
+                job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
                         "job_data": row,
@@ -373,10 +373,11 @@ def update_jobs(qstat_output: str) -> None:
     error_jobs = Job.objects.filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
+        job.save()
         JobLog.objects.create(
             job=job, event="Job status changed to error based on SCC's `Eqw` state"
         )
-    Job.objects.bulk_update(error_jobs, ["status"])
+    # Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status for Complete jobs
     active_jobs = Job.objects.active()
@@ -384,8 +385,9 @@ def update_jobs(qstat_output: str) -> None:
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
             job.status = Status.COMPLETE
+            job.save()
             JobLog.objects.create(job=job, event="Job status changed to complete")
-    Job.objects.bulk_update(active_jobs, ["status"])
+    # Job.objects.bulk_update(active_jobs, ["status"])
 
 
 @task(bind=True, ignore_result=True)
