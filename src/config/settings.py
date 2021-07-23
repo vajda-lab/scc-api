@@ -190,11 +190,11 @@ CELERYD_TASK_TIME_LIMIT = 15 * 60
 CELERYD_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULE = {
     "poll-job": {
-        "schedule": crontab(minute="0-59/2"),  # every two minutes
+        "schedule": crontab(minute="*/15"),  # every five minutes
         "task": "jobs.tasks.scheduled_poll_job",
     },
     "allocate-job": {
-        "schedule": crontab(minute="1-59/2"),  # every two minutes
+        "schedule": crontab(minute="*/5"),  # every two minutes
         "task": "jobs.tasks.scheduled_allocate_job",
     },
 }
