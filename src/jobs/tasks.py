@@ -250,9 +250,6 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     Will also delete those directories from SCC
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Directory will be based on a setting
-    UNFINISHED!
-
-    ALSO: NOT YET ADDED TO settings.CELERY_BEAT_SCHEDULE
     """
     capture_jobs = Job.objects.exclude_imported().filter(
         status__in=[Status.COMPLETE, Status.ERROR],
@@ -269,10 +266,11 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
             "tar",
             "-czf",
             scc_job_output_file,
-            f"ftplus_path",
+            ftplus_path,
         ]
 
         logger.debug(f"File Retrival Command: {cmd}")
+
         # directory existence check so only endogenous jobs have output captured & deleted from SCC
         if ftplus_path.exists():
             subprocess.run(cmd)
