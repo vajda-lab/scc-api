@@ -259,7 +259,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     for job in capture_jobs:
         ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}")
         # scc_job_dir = str(job.uuid)
-        scc_job_output_file = f"results"
+        scc_job_output_file = f"{job.input_file}_results"
         logger.debug(scc_job_output_file)
 
         cmd = [
