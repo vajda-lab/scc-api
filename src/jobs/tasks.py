@@ -62,12 +62,15 @@ def activate_job(self: celery.Task, *, pk: int):
                 cmd = [
                     f"{settings.GRID_ENGINE_SUBMIT_CMD}",
                     "-cwd",
-                    "{ftplus_path}/{settings.SCC_RUN_FILE}",
+                    f"{ftplus_path}/{settings.SCC_RUN_FILE}",
                 ]
+                logging.debug(cmd)
+
                 # qsub must be run from inside job.uuid directory
                 job_submit = subprocess.run(
                     cmd, capture_output=True, text=True, cwd=ftplus_path
                 )
+                logging.debug(job_submit.stdout)
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
