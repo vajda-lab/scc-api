@@ -185,48 +185,59 @@ def scheduled_allocate_job(self: celery.Task) -> None:
 
     # Do we have any queued jobs ready to schedule?
     if has_queued_jobs:
-
-        # Allocate *high* priority jobs
-        active_jobs = Job.objects.exclude_imported().high_priority().active()
-        queued_jobs = Job.objects.exclude_imported().high_priority().queued()
-        jobs_in_process = active_jobs.count()
-        logger.info(
-            f"{jobs_in_process} of {settings.SCC_MAX_HIGH_JOBS} high priority jobs are active"
-        )
-
-        if jobs_in_process < settings.SCC_MAX_HIGH_JOBS:
-            jobs_to_allocate = settings.SCC_MAX_HIGH_JOBS - jobs_in_process
-            logger.info(f"{jobs_to_allocate} new high priority jobs were allocated")
-            for queued_job in queued_jobs[:jobs_to_allocate]:
-                activate_job.delay(pk=queued_job.pk)
-
-        # Allocate *normal* priority jobs
-        active_jobs = Job.objects.exclude_imported().normal_priority().active()
-        queued_jobs = Job.objects.exclude_imported().normal_priority().queued()
-        jobs_in_process = active_jobs.count()
-        logger.info(
-            f"{jobs_in_process} of {settings.SCC_MAX_NORMAL_JOBS} normal priority jobs are active"
-        )
-
-        if jobs_in_process < settings.SCC_MAX_NORMAL_JOBS:
-            jobs_to_allocate = settings.SCC_MAX_NORMAL_JOBS - jobs_in_process
-            logger.info(f"{jobs_to_allocate} new medium priority jobs were allocated")
-            for queued_job in queued_jobs[:jobs_to_allocate]:
-                activate_job.delay(pk=queued_job.pk)
-
         # Allocate *low* priority jobs
-        active_jobs = Job.objects.exclude_imported().low_priority().active()
-        queued_jobs = Job.objects.exclude_imported().low_priority().queued()
-        jobs_in_process = active_jobs.count()
-        logger.info(
-            f"{jobs_in_process} of {settings.SCC_MAX_LOW_JOBS} low priority jobs are active"
-        )
+        active_jobs = Job.objects.exclude_imported().active()
+        queued_jobs = Job.objects.exclude_imported().queued()
+        # jobs_in_process = active_jobs.count()
+        logger.info(f"{active_jobs.count()} jobs are active")
 
-        if jobs_in_process < settings.SCC_MAX_LOW_JOBS:
-            jobs_to_allocate = settings.SCC_MAX_LOW_JOBS - jobs_in_process
-            logger.info(f"{jobs_to_allocate} new low priority jobs were allocated")
-            for queued_job in queued_jobs[:jobs_to_allocate]:
-                activate_job.delay(pk=queued_job.pk)
+        # if jobs_in_process < settings.SCC_MAX_LOW_JOBS:
+        jobs_to_allocate = 100
+        logger.info(f"{jobs_to_allocate} new jobs were allocated")
+        for queued_job in queued_jobs.all():  # [:jobs_to_allocate]:
+            activate_job.delay(pk=queued_job.pk)
+
+        # # Allocate *high* priority jobs
+        # active_jobs = Job.objects.exclude_imported().high_priority().active()
+        # queued_jobs = Job.objects.exclude_imported().high_priority().queued()
+        # jobs_in_process = active_jobs.count()
+        # logger.info(
+        #     f"{jobs_in_process} of {settings.SCC_MAX_HIGH_JOBS} high priority jobs are active"
+        # )
+
+        # if jobs_in_process < settings.SCC_MAX_HIGH_JOBS:
+        #     jobs_to_allocate = settings.SCC_MAX_HIGH_JOBS - jobs_in_process
+        #     logger.info(f"{jobs_to_allocate} new high priority jobs were allocated")
+        #     for queued_job in queued_jobs[:jobs_to_allocate]:
+        #         activate_job.delay(pk=queued_job.pk)
+
+        # # Allocate *normal* priority jobs
+        # active_jobs = Job.objects.exclude_imported().normal_priority().active()
+        # queued_jobs = Job.objects.exclude_imported().normal_priority().queued()
+        # jobs_in_process = active_jobs.count()
+        # logger.info(
+        #     f"{jobs_in_process} of {settings.SCC_MAX_NORMAL_JOBS} normal priority jobs are active"
+        # )
+
+        # if jobs_in_process < settings.SCC_MAX_NORMAL_JOBS:
+        #     jobs_to_allocate = settings.SCC_MAX_NORMAL_JOBS - jobs_in_process
+        #     logger.info(f"{jobs_to_allocate} new medium priority jobs were allocated")
+        #     for queued_job in queued_jobs[:jobs_to_allocate]:
+        #         activate_job.delay(pk=queued_job.pk)
+
+        # # Allocate *low* priority jobs
+        # active_jobs = Job.objects.exclude_imported().low_priority().active()
+        # queued_jobs = Job.objects.exclude_imported().low_priority().queued()
+        # jobs_in_process = active_jobs.count()
+        # logger.info(
+        #     f"{jobs_in_process} of {settings.SCC_MAX_LOW_JOBS} low priority jobs are active"
+        # )
+
+        # if jobs_in_process < settings.SCC_MAX_LOW_JOBS:
+        #     jobs_to_allocate = settings.SCC_MAX_LOW_JOBS - jobs_in_process
+        #     logger.info(f"{jobs_to_allocate} new low priority jobs were allocated")
+        #     for queued_job in queued_jobs[:jobs_to_allocate]:
+        #         activate_job.delay(pk=queued_job.pk)
 
     stop = dt.now()
     logger.info(f"SCHEDULED_ALLOCATE_JOB took {(stop-start).seconds} seconds")
@@ -342,6 +353,7 @@ def update_jobs(qstat_output: str) -> None:
                 )
             except Job.MultipleObjectsReturned:
                 logger.warning(f"Multiple jobs found for {job_id}")
+                logger.debug(f"Deleting jobs for {job_id}")
                 Job.objects.filter(sge_task_id=job_id).delete()
 
                 job, created = Job.objects.get_or_create(
@@ -354,18 +366,20 @@ def update_jobs(qstat_output: str) -> None:
                         "user": user,
                     },
                 )
+                logger.debug(f"Creating new job {job_id} as {job.uuid}")
 
             # If an imported job is created, set to Status.ACTIVE & note it's imported
             # Error jobs will be updated later
             if created:
-                job.status = Status.ACTIVE
-                job.imported = True
-                job.save()
+                Job.objects.filter(sge_task_id=job_id).update(
+                    imported=True, status=Status.ACTIVE
+                )
                 JobLog.objects.create(job=job, event="Imported job added to web app")
             else:
                 JobLog.objects.create(job=job, event="Job updated with qstat info")
 
             scc_job_list.append(int(job_id))
+
         except Exception as e:
             logger.exception(f"Job {job_id} :: {e}")
 
