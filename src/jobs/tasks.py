@@ -243,27 +243,32 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
 
     ALSO: NOT YET ADDED TO settings.CELERY_BEAT_SCHEDULE
     """
-    capture_jobs = Job.objects.filter(
+    capture_jobs = Job.objects.exclude_imported().filter(
         status__in=[Status.COMPLETE, Status.ERROR],
         output_file__in=["", None],
     )
+
+
     for job in capture_jobs:
-        scc_job_dir = str(job.uuid)
+        ftplus_path = Path(
+            settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}"
+        )
+        # scc_job_dir = str(job.uuid)
         scc_job_output_file = f"{job.input_file}_results"
         # directory existence check so only endogenous jobs have output captured & deleted from SCC
-        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
+        if ftplus_path.exists():
             subprocess.run(
                 [
                     "tar",
                     "-czf",
                     scc_job_output_file,
-                    f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}",
+                    f"ftplus_path",
                 ]
             )
             job.output_file = scc_job_output_file
             job.save()
             # Delete SCC directory
-            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
+            subprocess.run(["rm", "-rf", f"ftplus_path"])
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
