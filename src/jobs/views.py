@@ -18,10 +18,23 @@ class JobDetail(LoginRequiredMixin, DetailView):
     template_name = "jobs/job_detail.html"
 
 
-class UserHomeView(LoginRequiredMixin, ListView):
+class JobList(LoginRequiredMixin, ListView):
     model = Job
     paginate_by = 100
-    template_name = "jobs/user_home.html"
+    template_name = "jobs/job_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "job_active_count": Job.objects.exclude_imported().active().count(),
+                "job_complete_count": Job.objects.exclude_imported().complete().count(),
+                "job_deleted_count": Job.objects.exclude_imported().deleted().count(),
+                "job_error_count": Job.objects.exclude_imported().error().count(),
+                "job_queued_count": Job.objects.exclude_imported().queued().count(),
+            }
+        )
+        return context
 
     def get_queryset(self):
         return self.model.objects.exclude_imported().filter(
