@@ -389,7 +389,7 @@ def update_jobs(qstat_output: str) -> None:
             logger.exception(f"Job {job_id} :: {e}")
 
     # Update status for Error jobs; will also catch imported Error jobs
-    error_jobs = Job.objects.filter(job_state="Eqw")
+    error_jobs = Job.objects.exclude(status=Status.ERROR).filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
         job.save()
@@ -397,6 +397,15 @@ def update_jobs(qstat_output: str) -> None:
             job=job, event="Job status changed to error based on SCC's `Eqw` state"
         )
     # Job.objects.bulk_update(error_jobs, ["status"])
+
+    # Update status of jobs that have been imported so they get out of our way
+    Job.objects.imported().exclude(
+        status__in=[
+            Status.COMPLETE,
+            Status.DELETED,
+            Status.ERROR,
+        ]
+    ).update(status=Status.COMPLETE)
 
     # Update status for Complete jobs
     active_jobs = Job.objects.active()
