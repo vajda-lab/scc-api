@@ -269,6 +269,8 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
             ftplus_path,
         ]
 
+        logger.debug(f"ftplus_path=={ftplus_path}")
+        logger.debug(f"scc_job_output_file=={scc_job_output_file}")
         logger.debug(f"File Retrival Command: {cmd}")
 
         # directory existence check so only endogenous jobs have output captured & deleted from SCC
