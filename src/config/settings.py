@@ -198,7 +198,7 @@ CELERY_BEAT_SCHEDULE = {
         "task": "jobs.tasks.scheduled_poll_job",
     },
     "scheduled-capture-job-output": {
-        "schedule": crontab(minute="*/1"),  # every two minutes
+        "schedule": crontab(minute="*/1"),  # every minute
         "task": "jobs.tasks.scheduled_capture_job_output",
     },
 }
