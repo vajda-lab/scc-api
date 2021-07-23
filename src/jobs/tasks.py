@@ -259,28 +259,23 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
         output_file__in=["", None],
     )
 
-
     for job in capture_jobs:
-        ftplus_path = Path(
-            settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}"
-        )
+        ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}")
         # scc_job_dir = str(job.uuid)
         scc_job_output_file = f"{job.input_file.path}_results"
         logger.debug(scc_job_output_file)
 
-        cmd =        [
-                    "tar",
-                    "-czf",
-                    scc_job_output_file,
-                    f"ftplus_path",
-                ]
+        cmd = [
+            "tar",
+            "-czf",
+            scc_job_output_file,
+            f"ftplus_path",
+        ]
 
         logger.debug(f"File Retrival Command: {cmd}")
         # directory existence check so only endogenous jobs have output captured & deleted from SCC
         if ftplus_path.exists():
-            subprocess.run(
-                cmd
-            )
+            subprocess.run(cmd)
             job.output_file = scc_job_output_file
             job.save()
             # Delete SCC directory
