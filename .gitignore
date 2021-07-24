@@ -126,11 +126,12 @@ dmypy.json
 dev/scc_vars.py
 
 # scc sample code
+.docker-env*
 *atlas*
-sample_job*
 8b784b9c-77c8-49d5-946a-7eb41f408b5a/3ODU.pdb
+caddy-info
 Priority issues.md
+sample_job*
 sample_run_job.py
 scc_help_output.txt
 sccapi.drawio
-.docker-env-*

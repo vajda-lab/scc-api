@@ -168,7 +168,8 @@ env.template
 .gitignore
 .gitlab-ci.yml
 .version
+*.md
+caddy-info
 docker-compose*.yml
 Makefile
 README.md
-*.md
