@@ -8,7 +8,7 @@ django-improved-user
 django-sql-dashboard
 Django<4.0
 djangorestframework<3.13
-flower
+# flower
 psycopg2-binary
 python-dateutil
 pytz==2018.5
