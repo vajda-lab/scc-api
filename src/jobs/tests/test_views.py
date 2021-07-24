@@ -240,6 +240,55 @@ def test_job_partial_update(
     assert job_obj.status == exp_job_status
 
 
+@pytest.mark.django_db()
+def test_job_stats_url(tp, job):
+    expected_url = "/apis/jobs/stats/"
+    reversed_url = tp.reverse("job-stats")
+    assert expected_url == reversed_url
+
+
+def test_job_stats_noauth(tp, job):
+    """
+    GET '/apis/jobs/stats/'
+    """
+    url = tp.reverse("job-stats")
+
+    # Without auth, API should return 401
+    tp.get(url)
+    tp.response_401()
+
+
+@pytest.mark.django_db()
+@pytest.mark.parametrize(
+    "test_user,expected",
+    [
+        (pytest.lazy_fixture("user"), 200),
+        (pytest.lazy_fixture("staff"), 200),
+        (pytest.lazy_fixture("superuser"), 200),
+    ],
+)
+def test_job_stats(tp, job, password, test_user, expected):
+    """
+    GET '/apis/jobs/stats/'
+    """
+    url = tp.reverse("job-stats")
+
+    tp.client.login(email=test_user.email, password=password)
+
+    response = tp.get(url)
+    assert response.status_code == expected
+
+    results = response.data["queued"]
+    assert len(results) == 5
+    assert results["active"] == models.Job.objects.exclude_imported().active().count()
+    assert (
+        results["complete"] == models.Job.objects.exclude_imported().complete().count()
+    )
+    assert results["deleted"] == models.Job.objects.exclude_imported().deleted().count()
+    assert results["error"] == models.Job.objects.exclude_imported().error().count()
+    assert results["queued"] == models.Job.objects.exclude_imported().queued().count()
+
+
 def test_job_update_noauth(tp, job):
     """
     PUT '/apis/jobs/{pk}/'

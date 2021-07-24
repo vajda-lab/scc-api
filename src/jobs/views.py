@@ -1,10 +1,12 @@
 from datetime import timedelta
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.utils import timezone
 from django.views.generic import ListView, DetailView
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from . import serializers
@@ -130,6 +132,34 @@ class JobViewSet(viewsets.ModelViewSet):
             tasks.update_job_priority.delay(pk=pk, new_priority=instance.priority)
 
         return response
+
+    @action(detail=False)
+    def stats(self, request):
+        """
+        GET '/apis/jobs/stats/'
+        """
+        data = {
+            "queued": {
+                "active": Job.objects.exclude_imported().active().count(),
+                "complete": Job.objects.exclude_imported().complete().count(),
+                "deleted": Job.objects.exclude_imported().deleted().count(),
+                "error": Job.objects.exclude_imported().error().count(),
+                "queued": Job.objects.exclude_imported().queued().count(),
+            },
+            "queued-with-imported": {
+                "active": Job.objects.active().count(),
+                "complete": Job.objects.complete().count(),
+                "deleted": Job.objects.deleted().count(),
+                "error": Job.objects.error().count(),
+                "queued": Job.objects.queued().count(),
+            },
+            "settings": {
+                "SCC_MAX_HIGH_JOBS": settings.SCC_MAX_HIGH_JOBS,
+                "SCC_MAX_LOW_JOBS": settings.SCC_MAX_LOW_JOBS,
+                "SCC_MAX_NORMAL_JOBS": settings.SCC_MAX_NORMAL_JOBS,
+            },
+        }
+        return Response(data)
 
     def update(self, request, pk=None, **kwargs):
         """
