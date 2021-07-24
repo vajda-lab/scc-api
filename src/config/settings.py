@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     # third party
     "constance",
     "django_extensions",
-    # "django_sql_dashboard",
+    "django_sql_dashboard",
     "django_filters",
     "rest_framework",
     "rest_framework.authtoken",

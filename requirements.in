@@ -5,7 +5,7 @@ django-environ
 django-extensions
 django-filter
 django-improved-user
-django-sql-dashboard==0.10a1
+django-sql-dashboard
 Django<4.0
 djangorestframework<3.13
 flower
