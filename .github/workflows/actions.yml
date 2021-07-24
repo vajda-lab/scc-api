@@ -73,7 +73,7 @@ jobs:
           djhtml --check src/templates/*.html src/templates/**/*.html
 
   build-and-push-image:
-    # if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     name: Build and Publish Docker image
     needs: [test]
     permissions:
@@ -110,7 +110,7 @@ jobs:
       #   uses: docker/build-push-action@v2
       #   with:
       #     context: .
-      #     file: ./docker/sge-submit-host/Dockerfile
+      #     file: ./docker/sge-submit-host/Dockerfile.prod
       #     push: true
       #     tags: |
       #       ghcr.io/${{ github.repository }}:latest
