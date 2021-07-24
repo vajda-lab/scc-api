@@ -17,6 +17,7 @@
         "github.copilot",
         "skellock.just"
     ],
+    "runServices": ["django"],
     "service": "django",
     "settings": {
         "terminal.integrated.shell.linux": null
