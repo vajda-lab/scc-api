@@ -5,6 +5,21 @@ services:
   redis:
     image: redis:3.2
 
+  caddy:
+    depends_on:
+      - django
+    env_file: ./.docker-env
+    image: "caddy:2.2.1"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile  # configuration
+      - caddy-config:/config  # configuration autosaves
+      - caddy-data:/data  # saving certificates
+    #   - django-static:/var/www/django/static  # serving django's statics
+    #   - django-media:/var/www/django/media  # serving django's media
+
   django:
     build:
       context: .
@@ -44,11 +59,13 @@ services:
       - nfs-ftplus:/projectnb/ftplus
 
 volumes:
+  caddy-config:
+  caddy-data:
+  # django-media:
+  # django-locale:
   nfs-ftplus:
-    # external: true
     name: nfs-ftplus
     driver_opts:
       type: "nfs"
       o: "addr=scc-fs.bu.edu,hard,nolock,rw"
       device: ":/gpfs4/projectnb/ftplus"
-

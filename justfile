@@ -56,6 +56,7 @@ bootstrap:
         --exclude '*.git' \
         --exclude '*.pyc' \
         --exclude '*.xz' \
+        --exclude 'caddy-info' \
         --exclude 'celerybeat*' \
         --exclude 'docker-compose.yml' \
         --exclude 'justfile' \
