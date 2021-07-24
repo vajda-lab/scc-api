@@ -23,7 +23,7 @@ services:
   django:
     build:
       context: .
-      dockerfile: ./docker/django-sge-submit-host/Dockerfile
+      dockerfile: ./docker/sge-submit-host/Dockerfile
     depends_on:
       - redis
     env_file: ./.docker-env
@@ -38,7 +38,7 @@ services:
   scheduler:
     build:
       context: .
-      dockerfile: ./docker/django-sge-submit-host/Dockerfile
+      dockerfile: ./docker/sge-submit-host/Dockerfile
     command: /start-scheduler.sh
     depends_on:
       - redis
@@ -50,7 +50,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: ./docker/django-sge-submit-host/Dockerfile
+      dockerfile: ./docker/sge-submit-host/Dockerfile
     command: /start-worker.sh
     depends_on:
       - redis
