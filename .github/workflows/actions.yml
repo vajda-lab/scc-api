@@ -73,7 +73,7 @@ jobs:
           djhtml --check src/templates/*.html src/templates/**/*.html
 
   build-and-push-image:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     name: Build and Publish Docker image
     needs: [test]
     permissions:
