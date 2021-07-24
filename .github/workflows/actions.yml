@@ -106,11 +106,11 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:develop
 
-      - name: Build and Push our Production Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./docker/sge-submit-host/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:latest
+      # - name: Build and Push our Production Docker Image
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     file: ./docker/sge-submit-host/Dockerfile
+      #     push: true
+      #     tags: |
+      #       ghcr.io/${{ github.repository }}:latest
