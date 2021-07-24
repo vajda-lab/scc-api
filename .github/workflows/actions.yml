@@ -110,7 +110,7 @@ jobs:
       #   uses: docker/build-push-action@v2
       #   with:
       #     context: .
-      #     file: ./docker/sge-submit-host/Dockerfile
+      #     file: ./docker/sge-submit-host/Dockerfile.prod
       #     push: true
       #     tags: |
       #       ghcr.io/${{ github.repository }}:latest
