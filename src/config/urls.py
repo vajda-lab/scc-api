@@ -22,13 +22,14 @@ admin.site.site_header = admin_header
 admin.site.site_title = admin_header
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("", views.HomeView.as_view(), name="home"),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("admin/", admin.site.urls),
+    path("apis/", include(router.urls)),
     path("dashboard/", include(django_sql_dashboard.urls)),
     path("jobs/", include(("jobs.urls", "jobs"), namespace="jobs")),
+    path("tokens/", views.TokenView.as_view(), name="token"),
     path("users/", include(("users.urls", "users"), namespace="users")),
-    path("accounts/", include("django.contrib.auth.urls")),
-    path("apis/", include(router.urls)),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(

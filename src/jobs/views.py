@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.utils import timezone
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView, ListView
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
