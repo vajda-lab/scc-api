@@ -63,6 +63,11 @@
                                 <a class="nav-link" href="{% url 'admin:index' %}">Django Admin</a>
                             </li>
                         {% endif %}
+                        {% if request.user.is_staff %}
+                            <li class="nav-item active">
+                                <a class="nav-link" href="/apis/">SCC API</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
                 <style type="text/css">

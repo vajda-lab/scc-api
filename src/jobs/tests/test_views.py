@@ -10,7 +10,7 @@ from jobs import models, serializers
 @pytest.mark.django_db()
 def test_job_list_url(tp, job):
     expected_url = "/apis/jobs/"
-    reversed_url = tp.reverse("job-list")
+    reversed_url = tp.reverse("apis:job-list")
     assert expected_url == reversed_url
 
 
@@ -18,7 +18,7 @@ def test_job_list_noauth(tp, job):
     """
     GET '/apis/jobs/'
     """
-    url = tp.reverse("job-list")
+    url = tp.reverse("apis:job-list")
 
     # Without auth, API should return 401
     tp.get(url)
@@ -38,7 +38,7 @@ def test_job_list(tp, job, password, test_user, expected):
     """
     GET '/apis/jobs/'
     """
-    url = tp.reverse("job-list")
+    url = tp.reverse("apis:job-list")
 
     tp.client.login(email=test_user.email, password=password)
 
@@ -56,7 +56,7 @@ def test_job_create_noauth(tp):
     """
     POST '/apis/jobs/'
     """
-    url = tp.reverse("job-list")
+    url = tp.reverse("apis:job-list")
 
     # Without auth, API should return 401
     tp.post(url)
@@ -76,7 +76,7 @@ def test_job_create(tp, password, test_user, http_status):
     """
     POST '/apis/jobs/'
     """
-    url = tp.reverse("job-list")
+    url = tp.reverse("apis:job-list")
 
     # Can users create jobs?
     tp.client.login(email=test_user.email, password=password)
@@ -97,7 +97,7 @@ def test_job_create(tp, password, test_user, http_status):
 @pytest.mark.django_db()
 def test_job_detail_url(tp, job):
     expected_url = f"/apis/jobs/{job.pk}/"
-    reversed_url = tp.reverse("job-detail", pk=job.pk)
+    reversed_url = tp.reverse("apis:job-detail", pk=job.pk)
     assert expected_url == reversed_url
 
 
@@ -105,7 +105,7 @@ def test_job_detail_noauth(tp, job):
     """
     GET '/apis/jobs/{pk}/'
     """
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Without auth, API should return 401
     tp.get(url)
@@ -125,7 +125,7 @@ def test_job_detail(tp, job, password, test_user):
     """
     GET '/apis/jobs/{pk}/'
     """
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Can users see job detail?
     tp.client.login(email=test_user.email, password=password)
@@ -140,7 +140,7 @@ def test_job_delete_noauth(tp, user):
     DELETE '/apis/jobs/{pk}/'
     """
     job = baker.make("jobs.Job", user=user)
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Without auth, API should return 401
     tp.delete(url)
@@ -170,7 +170,7 @@ def test_job_delete(
     Can a creating_user job be deleted by deleting_user?
     """
     job = baker.make("jobs.Job", user=creating_user)
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Can another user delete this job?
     tp.client.login(email=deleting_user.email, password=password)
@@ -190,7 +190,7 @@ def test_job_partial_update_noauth(tp, job):
     """
     PATCH '/apis/jobs/{pk}/'
     """
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Without auth, API should return 401
     tp.patch(url)
@@ -227,7 +227,7 @@ def test_job_partial_update(
     job = baker.make("jobs.Job", user=creating_user)
     new_status = models.Status.ERROR
     assert job.status is not new_status
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Can another user patch this job?
     tp.client.login(email=patching_user.email, password=password)
@@ -243,7 +243,7 @@ def test_job_partial_update(
 @pytest.mark.django_db()
 def test_job_stats_url(tp, job):
     expected_url = "/apis/jobs/stats/"
-    reversed_url = tp.reverse("job-stats")
+    reversed_url = tp.reverse("apis:job-stats")
     assert expected_url == reversed_url
 
 
@@ -251,7 +251,7 @@ def test_job_stats_noauth(tp, job):
     """
     GET '/apis/jobs/stats/'
     """
-    url = tp.reverse("job-stats")
+    url = tp.reverse("apis:job-stats")
 
     # Without auth, API should return 401
     tp.get(url)
@@ -271,7 +271,7 @@ def test_job_stats(tp, job, password, test_user, expected):
     """
     GET '/apis/jobs/stats/'
     """
-    url = tp.reverse("job-stats")
+    url = tp.reverse("apis:job-stats")
 
     tp.client.login(email=test_user.email, password=password)
 
@@ -293,7 +293,7 @@ def test_job_update_noauth(tp, job):
     """
     PUT '/apis/jobs/{pk}/'
     """
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Without auth, API should return 401
     tp.put(url)
@@ -331,7 +331,7 @@ def test_job_update(
     new_status = models.Status.ERROR
     assert job.status is not new_status
 
-    url = tp.reverse("job-detail", pk=job.pk)
+    url = tp.reverse("apis:job-detail", pk=job.pk)
 
     # Can another user update this job?
     tp.client.login(email=updating_user.email, password=password)

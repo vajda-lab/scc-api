@@ -9,7 +9,7 @@ from users import models, serializers
 @pytest.mark.django_db()
 def test_user_list_url(tp, user):
     expected_url = "/apis/users/"
-    reversed_url = tp.reverse("user-list")
+    reversed_url = tp.reverse("apis:user-list")
     assert expected_url == reversed_url
 
 
@@ -19,7 +19,7 @@ def test_user_list(tp, user, password):
     GET '/apis/users/'
     2nd assert is an extra check
     """
-    url = tp.reverse("user-list")
+    url = tp.reverse("apis:user-list")
 
     # Without auth, API should return 401
     tp.get(url)
@@ -40,7 +40,7 @@ def test_user_create(tp, user, password):
     """
     POST '/apis/users/'
     """
-    url = tp.reverse("user-list")
+    url = tp.reverse("apis:user-list")
     # Without auth, API should return 401
     tp.get(url)
     tp.response_401()
@@ -64,7 +64,7 @@ def test_user_create(tp, user, password):
 @pytest.mark.django_db()
 def test_user_detail_url(tp, user):
     expected_url = f"/apis/users/{user.pk}/"
-    reversed_url = tp.reverse("user-detail", pk=user.pk)
+    reversed_url = tp.reverse("apis:user-detail", pk=user.pk)
     assert expected_url == reversed_url
 
 
@@ -73,7 +73,7 @@ def test_user_detail(tp, user, password):
     """
     GET '/apis/users/{pk}/'
     """
-    url = tp.reverse("user-detail", pk=user.pk)
+    url = tp.reverse("apis:user-detail", pk=user.pk)
 
     # Without auth, API should return 401
     tp.get(url)
@@ -92,7 +92,7 @@ def test_user_delete(tp, user, password):
     DELETE '/apis/users/{pk}/'
     """
     new_user = baker.make("users.User")
-    url = tp.reverse("user-detail", pk=new_user.pk)
+    url = tp.reverse("apis:user-detail", pk=new_user.pk)
 
     # Without auth, API should return 401
     tp.get(url)
@@ -112,7 +112,7 @@ def test_user_partial_update(tp, user, password):
     """
     new_name = "Jacob Lyons"
     assert user.full_name is not new_name
-    url = tp.reverse("user-detail", pk=user.pk)
+    url = tp.reverse("apis:user-detail", pk=user.pk)
     payload = {"full_name": new_name}
 
     # Without auth, API should return 401
@@ -136,7 +136,7 @@ def test_user_update(tp, user, password):
     new_name = "Jacob Lyons"
     assert user.full_name is not new_name
 
-    url = tp.reverse("user-detail", pk=user.pk)
+    url = tp.reverse("apis:user-detail", pk=user.pk)
     payload = serializers.UserSerializer(instance=user).data
     payload["full_name"] = new_name
 

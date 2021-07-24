@@ -24,8 +24,12 @@ admin.site.site_title = admin_header
 urlpatterns = [
     path("", views.HomeView.as_view(), name="home"),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("apis/", include(router.urls)),
-    path("apis/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path(
+        "apis/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path("apis/", include((router.urls, "apis"), namespace="apis")),
     path("apis/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("dashboard/", include(django_sql_dashboard.urls)),
     path("jobs/", include(("jobs.urls", "jobs"), namespace="jobs")),
