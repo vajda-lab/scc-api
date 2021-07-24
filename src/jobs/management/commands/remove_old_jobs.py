@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ftmap.models import Job
+from jobs.models import Job
 from django.utils import timezone
 from datetime import datetime, timedelta
 from constance import config
