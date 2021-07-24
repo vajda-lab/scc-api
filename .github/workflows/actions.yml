@@ -72,11 +72,14 @@ jobs:
         run: |
           djhtml --check src/templates/*.html src/templates/**/*.html
 
-  build:
-    needs: [test]
-    name: Build and Publish Docker image
-    runs-on: ubuntu-latest
+  build-and-push-image:
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    name: Build and Publish Docker image
+    needs: [test]
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -94,7 +97,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Develop Docker Image
+      - name: Build and Push our Develop Docker Image
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -102,3 +105,12 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:develop
+
+      - name: Build and Push our Production Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./docker/django-sge-submit-host/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
