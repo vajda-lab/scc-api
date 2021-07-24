@@ -1,4 +1,4 @@
-FROM submit-host
+FROM ghcr.io/vajda-lab/sge-submit-host:latest
 
 WORKDIR /app
 
