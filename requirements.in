@@ -1,3 +1,4 @@
+# flower
 celery<5.0
 django-click
 django-constance[redis]
@@ -8,7 +9,7 @@ django-improved-user
 django-sql-dashboard
 Django<4.0
 djangorestframework<3.13
-# flower
+drf-spectacular
 psycopg2-binary
 python-dateutil
 pytz==2018.5

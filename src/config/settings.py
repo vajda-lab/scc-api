@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__) - 3
 SECRET_KEY = env.str("SECRET_KEY")
 
 DEBUG = env.bool("DEBUG", default=False)
+DJANGO_ADMIN = env("DJANGO_ADMIN", default="django-admin/")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 

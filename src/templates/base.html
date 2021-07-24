@@ -51,10 +51,18 @@
                 <ul class="navbar-nav mr-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item active">
-                            <a class="nav-link" href="{% url 'jobs:user_home' %}">
-                                SCC Queue<span class="sr-only">(current)</span>
-                            </a>
+                            <a class="nav-link" href="{% url 'jobs:user_home' %}">SCC Queue<span class="sr-only">(current)</span></a>
                         </li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{% url 'tokens' %}">Tokens</a>
+                            </li>
+                        {% endif %}
+                        {% if request.user.is_staff %}
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{% url 'admin:index' %}">Django Admin</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
                 <style type="text/css">
