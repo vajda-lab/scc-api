@@ -9,6 +9,8 @@ class JobAdmin(admin.ModelAdmin):
     form = forms.JobAdminForm
     list_display = [
         "user",
+        "created",
+        "modified",
         "input_file",
         "output_file",
         "status",
