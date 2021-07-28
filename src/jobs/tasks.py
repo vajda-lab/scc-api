@@ -356,7 +356,7 @@ def update_jobs(qstat_output: str) -> None:
             try:
                 # Since BU doesn't care about imported jobs
                 # Do we went to change this to ONLY update?
-                job, created = Job.objects.update_or_create(
+                job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
                         "job_data": row,
@@ -366,6 +366,12 @@ def update_jobs(qstat_output: str) -> None:
                         "user": user,
                     },
                 )
+                if not created:
+                    job.job_data = row
+                    job.job_ja_task_id = job_ja_task_id
+                    job.job_state = job_state
+                    job.job_submitted = job_submitted
+                    job.save()
             except Job.MultipleObjectsReturned:
                 logger.warning(f"Multiple jobs found for {job_id}")
                 logger.debug(f"Deleting jobs for {job_id}")
