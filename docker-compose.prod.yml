@@ -21,14 +21,14 @@ services:
     #   - django-media:/var/www/django/media  # serving django's media
 
   django:
-    build:
-      context: .
-      dockerfile: ./docker/sge-submit-host/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: ./docker/sge-submit-host/Dockerfile
     depends_on:
       - redis
     env_file: ./.docker-env
     hostname: ftplus.bu.edu
-    # image: scc-api:latest
+    image: ghcr.io/vajda-lab/scc-api@latest
     ports:
       - "8000:8000"
     # user: "ftsubmit:ftplus"
@@ -36,27 +36,27 @@ services:
       - nfs-ftplus:/projectnb/ftplus
 
   scheduler:
-    build:
-      context: .
-      dockerfile: ./docker/sge-submit-host/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: ./docker/sge-submit-host/Dockerfile
     command: /start-scheduler.sh
     depends_on:
       - redis
     env_file: ./.docker-env
-    # image: scc-api:latest
+    image: ghcr.io/vajda-lab/scc-api@latest
     volumes:
       - nfs-ftplus:/projectnb/ftplus
 
   worker:
-    build:
-      context: .
-      dockerfile: ./docker/sge-submit-host/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: ./docker/sge-submit-host/Dockerfile
     command: /start-worker.sh
     depends_on:
       - redis
     env_file: ./.docker-env
     hostname: ftplus.bu.edu
-    # image: scc-api:latest
+    image: ghcr.io/vajda-lab/scc-api@latest
     user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
