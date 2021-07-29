@@ -4,9 +4,16 @@ from . import forms
 from . import models
 
 
+class JobLogInline(admin.TabularInline):
+    model = models.JobLog
+
+
 @admin.register(models.Job)
 class JobAdmin(admin.ModelAdmin):
     form = forms.JobAdminForm
+    inlines = [
+        JobLogInline,
+    ]
     list_display = [
         "user",
         "created",
