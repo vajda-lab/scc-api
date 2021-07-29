@@ -8,6 +8,8 @@ import time
 from celery import task
 from dateutil.parser import parse
 from django.conf import settings
+from django.db.models import F
+from django.utils import timezone
 from pathlib import Path
 
 from .models import Job, JobLog, Status
@@ -259,6 +261,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
         .filter(
             status__in=[Status.COMPLETE, Status.ERROR],
             output_file__in=["", None],
+            last_exception_count__lt=10,
         )
     )
 
@@ -305,9 +308,12 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 raise Exception(f"ftplus_path path: {ftplus_path} was not found")
 
         except Exception as e:
-            job.status = Status.ERROR
-            job.save()
             msg = f"Job status changed to error. Exception: {e}"
+            job.status = Status.ERROR
+            job.last_exception = msg
+            job.last_exception_at = timezone.now()
+            job.last_exception_count = F("last_exception_count") + 1
+            job.save()
             JobLog.objects.create(job=job, event=msg)
             logger.exception(msg)
 
