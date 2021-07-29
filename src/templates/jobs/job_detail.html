@@ -34,7 +34,11 @@
                                     <td>{{job.uuid}}</td>
                                     <td>{{ job.get_status_display }}</td>
                                     <td>{{ job.user }}</td>
-                                    <td><a href="{{ job.output_file.url }}">download</a></td>
+                                    <td>
+                                        {% if job.output_file %}
+                                            <a href="{{ job.output_file.url }}">download</a>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
