@@ -15,17 +15,16 @@ class JobAdmin(admin.ModelAdmin):
         JobLogInline,
     ]
     list_display = [
-        "user",
-        "created",
-        "modified",
-        "input_file",
-        "output_file",
-        "status",
-        "priority",
         "uuid",
         "sge_task_id",
+        "status",
+        "priority",
         "job_ja_task_id",
         "imported",
+        "input_file",
+        "output_file",
+        "created",
+        "modified",
     ]
     list_filter = [
         "status",
