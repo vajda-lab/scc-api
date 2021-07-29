@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jobs', '0028_alter_job_imported'),
+        ("jobs", "0028_alter_job_imported"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='job',
-            name='last_exception',
+            model_name="job",
+            name="last_exception",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='job',
-            name='last_exception_at',
+            model_name="job",
+            name="last_exception_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='job',
-            name='last_exception_count',
+            model_name="job",
+            name="last_exception_count",
             field=models.IntegerField(blank=True, default=0, null=True),
         ),
     ]
