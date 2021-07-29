@@ -148,6 +148,9 @@ class Job(models.Model):
         null=True,
         help_text="Was this job imported from the SCC or created via  OUR API?",
     )
+    last_exception = models.TextField(blank=True, null=True)
+    last_exception_at = models.DateTimeField(blank=True, null=True)
+    last_exception_count = models.IntegerField(default=0, blank=True, null=True)
 
     objects = JobQuerySet.as_manager()
 
