@@ -265,37 +265,49 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     for job in capture_jobs:
         logger.info(f"Processing Job: {job.uuid}")
 
-        ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}")
-        scc_job_input_file = f"{job.input_file.path}"
-        logger.debug(scc_job_input_file)
-
-        cmd = [
-            "tar",
-            "-czf",
-            f"{scc_job_input_file}",
-            "-C",
-            f"{ftplus_path}",
-            ".",
-        ]
-
-        logger.debug(f"File Retrival Command: {cmd}")
-
-        # directory existence check so only endogenous jobs have output captured & deleted from SCC
-        if ftplus_path.exists():
-            subprocess.run(cmd)
-            scc_job_output_file = scc_job_input_file.replace(
-                "jobs_input", "jobs_output"
+        try:
+            ftplus_path = Path(
+                settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}"
             )
+            scc_job_input_file = f"{job.input_file.path}"
+            logger.debug(scc_job_input_file)
 
-            # Rename our input_file to match where we want our output_file to be
-            Path(scc_job_input_file).rename(scc_job_output_file)
+            cmd = [
+                "tar",
+                "-czf",
+                f"{scc_job_input_file}",
+                "-C",
+                f"{ftplus_path}",
+                ".",
+            ]
 
-            job.output_file = scc_job_output_file.replace(f"{settings.MEDIA_ROOT}", "")
+            logger.debug(f"File Retrival Command: {cmd}")
+
+            # directory existence check so only endogenous jobs have output captured & deleted from SCC
+            if ftplus_path.exists():
+                subprocess.run(cmd)
+                scc_job_output_file = scc_job_input_file.replace(
+                    "jobs_input", "jobs_output"
+                )
+
+                # Rename our input_file to match where we want our output_file to be
+                Path(scc_job_input_file).rename(scc_job_output_file)
+
+                job.output_file = scc_job_output_file.replace(
+                    f"{settings.MEDIA_ROOT}", ""
+                )
+                job.save()
+
+                # Delete SCC directory
+                # TODO: Re-add this once we are good!
+                # subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+
+        except Exception as e:
+            job.status = Status.ERROR
             job.save()
-
-            # Delete SCC directory
-            # TODO: Re-add this once we are good!
-            # subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+            msg = f"Job status changed to error. Exception: {e}"
+            JobLog.objects.create(job=job, event=msg)
+            logger.exception(msg)
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
