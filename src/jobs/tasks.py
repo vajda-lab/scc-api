@@ -251,9 +251,15 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Directory will be based on a setting
     """
-    capture_jobs = Job.objects.exclude_imported().filter(
-        status__in=[Status.COMPLETE, Status.ERROR],
-        output_file__in=["", None],
+    capture_jobs = (
+        Job.objects.exclude_imported()
+        .filter(
+            status__in=[Status.COMPLETE, Status.ERROR],
+            output_file__in=["", None],
+        )
+        .exclude(
+            input_file__in=["", None],
+        )
     )
 
     for job in capture_jobs:
