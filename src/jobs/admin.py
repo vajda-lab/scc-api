@@ -16,11 +16,11 @@ class JobAdmin(admin.ModelAdmin):
     ]
     list_display = [
         "uuid",
+        "imported",
         "sge_task_id",
         "status",
         "priority",
         "job_ja_task_id",
-        "imported",
         "input_file",
         "output_file",
         "created",
