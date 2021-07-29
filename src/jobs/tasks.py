@@ -253,12 +253,12 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     """
     capture_jobs = (
         Job.objects.exclude_imported()
+        .exclude(
+            input_file__in=["", None],
+        )
         .filter(
             status__in=[Status.COMPLETE, Status.ERROR],
             output_file__in=["", None],
-        )
-        .exclude(
-            input_file__in=["", None],
         )
     )
 
@@ -301,6 +301,8 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 # Delete SCC directory
                 # TODO: Re-add this once we are good!
                 # subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+            else:
+                raise Exception(f"ftplus_path path: {ftplus_path} was not found")
 
         except Exception as e:
             job.status = Status.ERROR
