@@ -359,10 +359,12 @@ def update_jobs(qstat_output: str) -> None:
                 job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
+                        "imported": True,
                         "job_data": row,
                         "job_ja_task_id": job_ja_task_id,
                         "job_state": job_state,
                         "job_submitted": job_submitted,
+                        "status": Status.ACTIVE,
                         "user": user,
                     },
                 )
@@ -372,6 +374,7 @@ def update_jobs(qstat_output: str) -> None:
                     job.job_state = job_state
                     job.job_submitted = job_submitted
                     job.save()
+
             except Job.MultipleObjectsReturned:
                 logger.warning(f"Multiple jobs found for {job_id}")
                 logger.debug(f"Deleting jobs for {job_id}")
@@ -380,10 +383,12 @@ def update_jobs(qstat_output: str) -> None:
                 job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
+                        "imported": True,
                         "job_data": row,
                         "job_ja_task_id": job_ja_task_id,
                         "job_state": job_state,
                         "job_submitted": job_submitted,
+                        "status": Status.ACTIVE,
                         "user": user,
                     },
                 )
@@ -392,9 +397,9 @@ def update_jobs(qstat_output: str) -> None:
             # If an imported job is created, set to Status.ACTIVE & note it's imported
             # Error jobs will be updated later
             if created:
-                Job.objects.filter(sge_task_id=job_id).update(
-                    imported=True, status=Status.ACTIVE
-                )
+                # Job.objects.filter(sge_task_id=job_id).update(
+                #     imported=True, status=Status.ACTIVE
+                # )
                 JobLog.objects.create(job=job, event="Imported job added to web app")
             else:
                 JobLog.objects.create(job=job, event="Job updated with qstat info")
@@ -405,7 +410,13 @@ def update_jobs(qstat_output: str) -> None:
             logger.exception(f"Job {job_id} :: {e}")
 
     # Update status for Error jobs; will also catch imported Error jobs
-    error_jobs = Job.objects.exclude(status=Status.ERROR).filter(job_state="Eqw")
+    error_jobs = Job.objects.exclude(
+        status__in=[
+            Status.COMPLETE,
+            Status.DELETED,
+            Status.ERROR,
+        ]
+    ).filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
         job.save()
