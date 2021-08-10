@@ -254,7 +254,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     Directory will be based on a setting
     """
 
-    # We don't want imported jobs, jobs without input files, or jobs with output files
+    # We don't want imported jobs, jobs with no input file, or jobs with an output file
     capture_jobs = (
         Job.objects.exclude_imported()
         .exclude(
