@@ -450,7 +450,6 @@ def update_jobs(qstat_output: str) -> None:
         JobLog.objects.create(
             job=job, event="Job status changed to error based on SCC's `Eqw` state"
         )
-    # Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status of jobs that have been imported so they get out of our way
     Job.objects.imported().exclude(
@@ -469,7 +468,6 @@ def update_jobs(qstat_output: str) -> None:
             job.status = Status.COMPLETE
             job.save()
             JobLog.objects.create(job=job, event="Job status changed to complete")
-    # Job.objects.bulk_update(active_jobs, ["status"])
 
 
 @task(bind=True, ignore_result=True)
