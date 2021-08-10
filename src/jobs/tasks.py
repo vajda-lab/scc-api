@@ -253,6 +253,8 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Directory will be based on a setting
     """
+
+    # We don't want imported jobs, jobs without input files, or jobs with output files
     capture_jobs = (
         Job.objects.exclude_imported()
         .exclude(
@@ -286,7 +288,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
 
             logger.debug(f"File Retrival Command: {cmd}")
 
-            # directory existence check so only endogenous jobs have output captured & deleted from SCC
+            # directory existence check
             if ftplus_path.exists():
                 subprocess.run(cmd)
                 scc_job_output_file = scc_job_input_file.replace(
@@ -302,8 +304,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 job.save()
 
                 # Delete SCC directory
-                # TODO: Re-add this once we are good!
-                # subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+                subprocess.run(["rm", "-rf", f"{ftplus_path}"])
             else:
                 raise Exception(f"ftplus_path path: {ftplus_path} was not found")
 
