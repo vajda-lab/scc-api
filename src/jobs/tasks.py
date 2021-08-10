@@ -116,13 +116,12 @@ def delete_job(self: celery.Task, *, pk: int):
         else:
             job_delete = subprocess.run([cmd], capture_output=True)
 
-        # Remove temp dir created in activate_job
-        scc_job_dir = str(job.uuid)
-        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
-            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
-
-        # This return was for testing early mocked command
-        return job_delete
+        # Remove jobs-in-process dir created in activate_job
+        ftplus_path = Path(
+            settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}"
+        )
+        if ftplus_path.exists():
+            subprocess.run(["rm", "-rf", f"{ftplus_path}"])
 
     except Job.DoesNotExist:
         logger.warning(f"Job {pk} does not exist")
