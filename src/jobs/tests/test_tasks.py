@@ -22,12 +22,9 @@ def test_activate_job():
         ),
     )
     assert job.status != Status.ACTIVE
-    qsub_response = tasks.activate_job(pk=job.pk)
+    tasks.activate_job(pk=job.pk)
     job.refresh_from_db()
     assert job.status == Status.ACTIVE
-    assert qsub_response.returncode == 0
-    assert "5290723" in qsub_response.stdout
-    assert "has been submitted" in qsub_response.stdout
 
 
 @pytest.mark.django_db()

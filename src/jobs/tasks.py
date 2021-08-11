@@ -80,7 +80,6 @@ def activate_job(self: celery.Task, *, pk: int):
                 job.sge_task_id = int(sge_task_id)
                 job.save()
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
-                return job_submit
 
             except Exception as e:
                 job.status = Status.ERROR
