@@ -123,6 +123,9 @@ def delete_job(self: celery.Task, *, pk: int):
         if ftplus_path.exists():
             subprocess.run(["rm", "-rf", f"{ftplus_path}"])
 
+        # This return was for testing early mocked command
+        return job_delete
+
     except Job.DoesNotExist:
         logger.warning(f"Job {pk} does not exist")
 
