@@ -117,9 +117,7 @@ def delete_job(self: celery.Task, *, pk: int):
             job_delete = subprocess.run([cmd], capture_output=True)
 
         # Remove jobs-in-process dir created in activate_job
-        ftplus_path = Path(
-            settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}"
-        )
+        ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}")
         if ftplus_path.exists():
             subprocess.run(["rm", "-rf", f"{ftplus_path}"])
 
