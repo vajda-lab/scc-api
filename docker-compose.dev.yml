@@ -9,7 +9,7 @@ services:
     depends_on:
       - django
     env_file: ./.docker-env
-    image: "caddy:2.2.1"
+    image: caddy:2.2.1
     ports:
       - "80:80"
       - "443:443"
@@ -29,8 +29,8 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       # - "com.centurylinklabs.watchtower.lifecycle.post-update='./post-update.sh'"
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
@@ -43,8 +43,9 @@ services:
     image: ghcr.io/vajda-lab/scc-api:latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    volumes:
-      - nfs-ftplus:/projectnb/ftplus
+    # user: "ftsubmit:ftplus"
+    # volumes:
+    #   - nfs-ftplus:/projectnb/ftplus
 
   worker:
     command: /start-worker.sh
@@ -70,8 +71,6 @@ services:
       - "WATCHTOWER_POLL_INTERVAL=300"
       - "WATCHTOWER_REVIVE_STOPPED=true"
     image: containrrr/watchtower:latest
-    networks:
-      - traefik
     restart: "always"
     volumes:
       - /root/.docker/config.json:/config.json
@@ -87,4 +86,5 @@ volumes:
     driver_opts:
       type: "nfs"
       o: "addr=scc-fs.bu.edu,hard,nolock,rw"
+      # o: "addr=scc-fs.bu.edu,nolock,rw"
       device: ":/gpfs4/projectnb/ftplus"

@@ -45,23 +45,31 @@ bootstrap:
 
 @deploy +ARGS="":
     rsync -av \
-        {{ ARGS }} \
-        --exclude '__pycache__' \
-        --exclude '.docker-env*' \
-        --exclude '.DS_Store' \
-        --exclude '.github' \
-        --exclude '.gitignore' \
-        --exclude '.pytest_cache' \
-        --exclude '*.bz2' \
-        --exclude '*.git' \
-        --exclude '*.pyc' \
-        --exclude '*.xz' \
-        --exclude 'caddy-info' \
-        --exclude 'celerybeat*' \
-        --exclude 'docker-compose.yml' \
-        --exclude 'justfile' \
-        . \
-        ftplus-dev.bu.edu:/srv/scc-api
+        docker-compose.dev.yml \
+        ftplus-dev.bu.edu:/srv/ftplus-dev.bu.edu
+
+    rsync -av \
+        ./docker/caddy/Caddyfile \
+        ftplus-dev.bu.edu:/srv/ftplus-dev.bu.edu/docker/caddy/
+
+    # rsync -av \
+    #     {{ ARGS }} \
+    #     --exclude '__pycache__' \
+    #     --exclude '.docker-env*' \
+    #     --exclude '.DS_Store' \
+    #     --exclude '.github' \
+    #     --exclude '.gitignore' \
+    #     --exclude '.pytest_cache' \
+    #     --exclude '*.bz2' \
+    #     --exclude '*.git' \
+    #     --exclude '*.pyc' \
+    #     --exclude '*.xz' \
+    #     --exclude 'caddy-info' \
+    #     --exclude 'celerybeat*' \
+    #     --exclude 'docker-compose.yml' \
+    #     --exclude 'justfile' \
+    #     . \
+    #     ftplus-dev.bu.edu:/srv/scc-api
 
 # Deploy & Build Django app on ftplus sites
 @deploy-build:
