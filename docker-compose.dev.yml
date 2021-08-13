@@ -21,13 +21,14 @@ services:
     #   - django-media:/var/www/django/media  # serving django's media
 
   django:
-    build:
-      context: .
-      dockerfile: ./docker/sge-submit-host/Dockerfile
     depends_on:
       - redis
     env_file: ./.docker-env
     hostname: ftplus-dev.bu.edu
+    image: ghcr.io/vajda-lab/scc-api:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      # - "com.centurylinklabs.watchtower.lifecycle.post-update='./post-update.sh'"
     ports:
       - "8000:8000"
     user: "ftsubmit:ftplus"
@@ -35,28 +36,46 @@ services:
       - nfs-ftplus:/projectnb/ftplus
 
   scheduler:
-    build:
-      context: .
-      dockerfile: ./docker/sge-submit-host/Dockerfile
     command: /start-scheduler.sh
     depends_on:
       - redis
     env_file: ./.docker-env
+    image: ghcr.io/vajda-lab/scc-api:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
 
   worker:
-    build:
-      context: .
-      dockerfile: ./docker/sge-submit-host/Dockerfile
     command: /start-worker.sh
     depends_on:
       - redis
     env_file: ./.docker-env
     hostname: ftplus-dev.bu.edu
+    image: ghcr.io/vajda-lab/scc-api:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
+
+  watchtower:
+    env_file: ./.docker-env
+    environment:
+      - "WATCHTOWER_CLEANUP=true"
+      - "WATCHTOWER_DEBUG=true"
+      - "WATCHTOWER_INCLUDE_STOPPED=false"
+      - "WATCHTOWER_LABEL_ENABLE=true"
+      - "WATCHTOWER_LIFECYCLE_HOOKS=true"
+      - "WATCHTOWER_POLL_INTERVAL=300"
+      - "WATCHTOWER_REVIVE_STOPPED=true"
+    image: containrrr/watchtower:latest
+    networks:
+      - traefik
+    restart: "always"
+    volumes:
+      - /root/.docker/config.json:/config.json
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   caddy-config:
