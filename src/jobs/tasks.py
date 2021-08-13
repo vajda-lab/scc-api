@@ -8,6 +8,8 @@ import time
 from celery import task
 from dateutil.parser import parse
 from django.conf import settings
+from django.db.models import F
+from django.utils import timezone
 from pathlib import Path
 
 from .models import Job, JobLog, Status
@@ -78,7 +80,6 @@ def activate_job(self: celery.Task, *, pk: int):
                 job.sge_task_id = int(sge_task_id)
                 job.save()
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
-                return job_submit
 
             except Exception as e:
                 job.status = Status.ERROR
@@ -114,13 +115,10 @@ def delete_job(self: celery.Task, *, pk: int):
         else:
             job_delete = subprocess.run([cmd], capture_output=True)
 
-        # Remove temp dir created in activate_job
-        scc_job_dir = str(job.uuid)
-        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
-            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
-
-        # This return was for testing early mocked command
-        return job_delete
+        # Remove jobs-in-process dir created in activate_job
+        ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}")
+        if ftplus_path.exists():
+            subprocess.run(["rm", "-rf", f"{ftplus_path}"])
 
     except Job.DoesNotExist:
         logger.warning(f"Job {pk} does not exist")
@@ -251,45 +249,70 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Directory will be based on a setting
     """
-    capture_jobs = Job.objects.exclude_imported().filter(
-        status__in=[Status.COMPLETE, Status.ERROR],
-        output_file__in=["", None],
+
+    # We don't want imported jobs, jobs with no input file, or jobs with an output file
+    capture_jobs = (
+        Job.objects.exclude_imported()
+        .exclude(
+            input_file__in=["", None],
+        )
+        .filter(
+            status__in=[Status.COMPLETE, Status.ERROR],
+            output_file__in=["", None],
+            last_exception_count__lt=10,
+        )
     )
 
     for job in capture_jobs:
         logger.info(f"Processing Job: {job.uuid}")
 
-        ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}")
-        scc_job_input_file = f"{job.input_file.path}"
-        logger.debug(scc_job_input_file)
-
-        cmd = [
-            "tar",
-            "-czf",
-            f"{scc_job_input_file}",
-            "-C",
-            f"{ftplus_path}",
-            ".",
-        ]
-
-        logger.debug(f"File Retrival Command: {cmd}")
-
-        # directory existence check so only endogenous jobs have output captured & deleted from SCC
-        if ftplus_path.exists():
-            subprocess.run(cmd)
-            scc_job_output_file = scc_job_input_file.replace(
-                "jobs_input", "jobs_output"
+        try:
+            ftplus_path = Path(
+                settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}"
             )
+            scc_job_input_file = f"{job.input_file.path}"
+            logger.debug(scc_job_input_file)
 
-            # Rename our input_file to match where we want our output_file to be
-            Path(scc_job_input_file).rename(scc_job_output_file)
+            cmd = [
+                "tar",
+                "-czf",
+                f"{scc_job_input_file}",
+                "-C",
+                f"{ftplus_path}",
+                ".",
+            ]
 
-            job.output_file = scc_job_output_file.replace(f"{settings.MEDIA_ROOT}", "")
+            logger.debug(f"File Retrival Command: {cmd}")
+
+            # directory existence check
+            if ftplus_path.exists():
+                subprocess.run(cmd)
+                scc_job_output_file = scc_job_input_file.replace(
+                    "jobs_input", "jobs_output"
+                )
+
+                # Rename our input_file to match where we want our output_file to be
+                Path(scc_job_input_file).rename(scc_job_output_file)
+
+                job.output_file = scc_job_output_file.replace(
+                    f"{settings.MEDIA_ROOT}", ""
+                )
+                job.save()
+
+                # Delete SCC directory
+                subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+            else:
+                raise Exception(f"ftplus_path path: {ftplus_path} was not found")
+
+        except Exception as e:
+            msg = f"Job status changed to error. Exception: {e}"
+            job.status = Status.ERROR
+            job.last_exception = msg
+            job.last_exception_at = timezone.now()
+            job.last_exception_count = F("last_exception_count") + 1
             job.save()
-
-            # Delete SCC directory
-            # TODO: Re-add this once we are good!
-            # subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+            JobLog.objects.create(job=job, event=msg)
+            logger.exception(msg)
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
@@ -356,16 +379,25 @@ def update_jobs(qstat_output: str) -> None:
             try:
                 # Since BU doesn't care about imported jobs
                 # Do we went to change this to ONLY update?
-                job, created = Job.objects.update_or_create(
+                job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
+                        "imported": True,
                         "job_data": row,
                         "job_ja_task_id": job_ja_task_id,
                         "job_state": job_state,
                         "job_submitted": job_submitted,
+                        "status": Status.ACTIVE,
                         "user": user,
                     },
                 )
+                if not created:
+                    job.job_data = row
+                    job.job_ja_task_id = job_ja_task_id
+                    job.job_state = job_state
+                    job.job_submitted = job_submitted
+                    job.save()
+
             except Job.MultipleObjectsReturned:
                 logger.warning(f"Multiple jobs found for {job_id}")
                 logger.debug(f"Deleting jobs for {job_id}")
@@ -374,10 +406,12 @@ def update_jobs(qstat_output: str) -> None:
                 job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
+                        "imported": True,
                         "job_data": row,
                         "job_ja_task_id": job_ja_task_id,
                         "job_state": job_state,
                         "job_submitted": job_submitted,
+                        "status": Status.ACTIVE,
                         "user": user,
                     },
                 )
@@ -386,9 +420,9 @@ def update_jobs(qstat_output: str) -> None:
             # If an imported job is created, set to Status.ACTIVE & note it's imported
             # Error jobs will be updated later
             if created:
-                Job.objects.filter(sge_task_id=job_id).update(
-                    imported=True, status=Status.ACTIVE
-                )
+                # Job.objects.filter(sge_task_id=job_id).update(
+                #     imported=True, status=Status.ACTIVE
+                # )
                 JobLog.objects.create(job=job, event="Imported job added to web app")
             else:
                 JobLog.objects.create(job=job, event="Job updated with qstat info")
@@ -399,14 +433,19 @@ def update_jobs(qstat_output: str) -> None:
             logger.exception(f"Job {job_id} :: {e}")
 
     # Update status for Error jobs; will also catch imported Error jobs
-    error_jobs = Job.objects.exclude(status=Status.ERROR).filter(job_state="Eqw")
+    error_jobs = Job.objects.exclude(
+        status__in=[
+            Status.COMPLETE,
+            Status.DELETED,
+            Status.ERROR,
+        ]
+    ).filter(job_state="Eqw")
     for job in error_jobs:
         job.status = Status.ERROR
         job.save()
         JobLog.objects.create(
             job=job, event="Job status changed to error based on SCC's `Eqw` state"
         )
-    # Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status of jobs that have been imported so they get out of our way
     Job.objects.imported().exclude(
@@ -425,7 +464,6 @@ def update_jobs(qstat_output: str) -> None:
             job.status = Status.COMPLETE
             job.save()
             JobLog.objects.create(job=job, event="Job status changed to complete")
-    # Job.objects.bulk_update(active_jobs, ["status"])
 
 
 @task(bind=True, ignore_result=True)
