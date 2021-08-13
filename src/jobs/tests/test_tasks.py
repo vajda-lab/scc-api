@@ -1,7 +1,10 @@
 import pytest
 import tempfile
+import time_machine
 
+from datetime import timedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
 from model_bakery import baker
 from pathlib import Path
 
@@ -120,6 +123,20 @@ def test_scheduled_capture_job_output():
     assert complete_job.output_file != ""
     assert ignore_me_job.output_file
     assert ignore_me_too_job.output_file
+
+
+@pytest.mark.django_db()
+def test_scheduled_cleanup_job():
+    baker.make("jobs.Job", _quantity=2)
+
+    with time_machine.travel(timezone.now() - timedelta(days=30)):
+        baker.make("jobs.Job", imported=True)
+
+    assert Job.objects.all().count() == 3
+
+    tasks.scheduled_cleanup_job()
+
+    assert Job.objects.all().count() == 2
 
 
 @pytest.mark.django_db()

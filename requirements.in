@@ -34,3 +34,4 @@ pep8-naming
 pytest
 pytest-django
 pytest-lazy-fixture
+time-machine

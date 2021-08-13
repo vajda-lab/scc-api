@@ -195,6 +195,10 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute="*/2"),  # every two minutes
         "task": "jobs.tasks.scheduled_allocate_job",
     },
+    "cleanup-job": {
+        "schedule": crontab(hour="*/1"),  # every hour
+        "task": "jobs.tasks.scheduled_cleanup_job",
+    },
     "poll-job": {
         "schedule": crontab(minute="*/5"),  # every five minutes
         "task": "jobs.tasks.scheduled_poll_job",

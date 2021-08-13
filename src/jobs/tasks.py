@@ -1,11 +1,12 @@
 import celery
-from datetime import datetime as dt
 import logging
 import pytz
 import subprocess
 import time
 
 from celery import task
+from datetime import datetime as dt
+from datetime import timedelta
 from dateutil.parser import parse
 from django.conf import settings
 from django.db.models import F
@@ -313,6 +314,13 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
             job.save()
             JobLog.objects.create(job=job, event=msg)
             logger.exception(msg)
+
+
+@task(bind=True, ignore_result=True, max_retries=0)
+def scheduled_cleanup_job(self: celery.Task) -> None:
+    deleted_date = timezone.now() - timedelta(days=7)
+    deleted_jobs = Job.objects.imported().filter(created__lt=deleted_date).delete()
+    logger.info(f"Deleted Jobs: {deleted_jobs}")
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
