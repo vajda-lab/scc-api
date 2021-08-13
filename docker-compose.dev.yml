@@ -25,7 +25,7 @@ services:
       - redis
     env_file: ./.docker-env
     hostname: ftplus-dev.bu.edu
-    image: ghcr.io/vajda-lab/scc-api:develop
+    image: ghcr.io/vajda-lab/scc-api:latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       # - "com.centurylinklabs.watchtower.lifecycle.post-update='./post-update.sh'"
@@ -40,7 +40,7 @@ services:
     depends_on:
       - redis
     env_file: ./.docker-env
-    image: ghcr.io/vajda-lab/scc-api:develop
+    image: ghcr.io/vajda-lab/scc-api:latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     volumes:
@@ -52,7 +52,7 @@ services:
       - redis
     env_file: ./.docker-env
     hostname: ftplus-dev.bu.edu
-    image: ghcr.io/vajda-lab/scc-api:develop
+    image: ghcr.io/vajda-lab/scc-api:latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     user: "ftsubmit:ftplus"
