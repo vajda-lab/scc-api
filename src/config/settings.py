@@ -237,6 +237,7 @@ SCC_FTPLUS_PATH = env("SCC_FTPLUS_PATH", default="/tmp/")
 SCC_API_TOKEN = env("SCC_API_TOKEN", default="")
 SCC_API_URL = env("SCC_API_URL", default="http://ftplus.bu.edu:8000/apis")
 SCC_RUN_FILE = env("SCC_RUN_FILE", default="runme.py")
+SCC_DELETE_OLD_JOBS_IN_DAYS = env("SCC_DELETE_OLD_JOBS_IN_DAYS", default=7)
 
 # TASK QUEUE SETTINGS
 SCC_MAX_HIGH_JOBS = env.int("SCC_MAX_HIGH_JOBS", default=50)
