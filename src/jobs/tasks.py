@@ -80,7 +80,6 @@ def activate_job(self: celery.Task, *, pk: int):
                 job.sge_task_id = int(sge_task_id)
                 job.save()
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
-                return job_submit
 
             except Exception as e:
                 job.status = Status.ERROR
@@ -116,13 +115,10 @@ def delete_job(self: celery.Task, *, pk: int):
         else:
             job_delete = subprocess.run([cmd], capture_output=True)
 
-        # Remove temp dir created in activate_job
-        scc_job_dir = str(job.uuid)
-        if Path(settings.SCC_FTPLUS_PATH, f"{scc_job_dir}").exists():
-            subprocess.run(["rm", "-rf", f"{settings.SCC_FTPLUS_PATH}{scc_job_dir}"])
-
-        # This return was for testing early mocked command
-        return job_delete
+        # Remove jobs-in-process dir created in activate_job
+        ftplus_path = Path(settings.SCC_FTPLUS_PATH, "jobs-in-process", f"{job.uuid}")
+        if ftplus_path.exists():
+            subprocess.run(["rm", "-rf", f"{ftplus_path}"])
 
     except Job.DoesNotExist:
         logger.warning(f"Job {pk} does not exist")
@@ -253,6 +249,8 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
     Interval determined by settings.CELERY_BEAT_SCHEDULE
     Directory will be based on a setting
     """
+
+    # We don't want imported jobs, jobs with no input file, or jobs with an output file
     capture_jobs = (
         Job.objects.exclude_imported()
         .exclude(
@@ -286,7 +284,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
 
             logger.debug(f"File Retrival Command: {cmd}")
 
-            # directory existence check so only endogenous jobs have output captured & deleted from SCC
+            # directory existence check
             if ftplus_path.exists():
                 subprocess.run(cmd)
                 scc_job_output_file = scc_job_input_file.replace(
@@ -302,8 +300,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 job.save()
 
                 # Delete SCC directory
-                # TODO: Re-add this once we are good!
-                # subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+                subprocess.run(["rm", "-rf", f"{ftplus_path}"])
             else:
                 raise Exception(f"ftplus_path path: {ftplus_path} was not found")
 
@@ -449,7 +446,6 @@ def update_jobs(qstat_output: str) -> None:
         JobLog.objects.create(
             job=job, event="Job status changed to error based on SCC's `Eqw` state"
         )
-    # Job.objects.bulk_update(error_jobs, ["status"])
 
     # Update status of jobs that have been imported so they get out of our way
     Job.objects.imported().exclude(
@@ -468,7 +464,6 @@ def update_jobs(qstat_output: str) -> None:
             job.status = Status.COMPLETE
             job.save()
             JobLog.objects.create(job=job, event="Job status changed to complete")
-    # Job.objects.bulk_update(active_jobs, ["status"])
 
 
 @task(bind=True, ignore_result=True)
