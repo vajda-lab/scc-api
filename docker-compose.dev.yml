@@ -26,9 +26,9 @@ services:
     env_file: ./.docker-env
     hostname: ftplus-dev.bu.edu
     image: ghcr.io/vajda-lab/scc-api:latest
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-      # - "com.centurylinklabs.watchtower.lifecycle.post-update='./post-update.sh'"
+    # labels:
+    #   - "com.centurylinklabs.watchtower.enable=true"
+    #   - "com.centurylinklabs.watchtower.lifecycle.post-update='./post-update.sh'"
     # ports:
     #   - "8000:8000"
     user: "ftsubmit:ftplus"
@@ -42,8 +42,8 @@ services:
     env_file: ./.docker-env
     hostname: ftplus-dev.bu.edu
     image: ghcr.io/vajda-lab/scc-api:latest
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+    # labels:
+    #   - "com.centurylinklabs.watchtower.enable=true"
     # user: "ftsubmit:ftplus"
     # volumes:
     #   - nfs-ftplus:/projectnb/ftplus
@@ -55,8 +55,8 @@ services:
     env_file: ./.docker-env
     hostname: ftplus-dev.bu.edu
     image: ghcr.io/vajda-lab/scc-api:latest
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+    # labels:
+    #   - "com.centurylinklabs.watchtower.enable=true"
     user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
