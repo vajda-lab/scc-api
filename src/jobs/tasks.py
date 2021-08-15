@@ -317,10 +317,17 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
-def scheduled_cleanup_job(self: celery.Task) -> None:
+def scheduled_cleanup_job(self: celery.Task, limit: int = 10_000) -> None:
     deleted_date = timezone.now() - timedelta(days=7)
     deleted_jobs = Job.objects.imported().filter(created__lt=deleted_date).delete()
-    logger.info(f"Deleted Jobs: {deleted_jobs}")
+    deleted_count, deleted_jobs = Job.objects.filter(
+        pk__in=list(
+            Job.objects.imported()
+            .order_by("created")
+            .values_list("pk", flat=True)[:limit]
+        )
+    ).delete()
+    logger.info(f"Deleted Jobs: {deleted_count}, {deleted_jobs}")
 
 
 @task(bind=True, ignore_result=True, max_retries=0)
