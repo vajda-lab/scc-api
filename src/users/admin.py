@@ -11,8 +11,7 @@ class JobRelationshipInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    inlines = (JobRelationshipInline,)
-
-
-admin.site.register(User, UserAdmin)
+    # inlines = (JobRelationshipInline,)
+    pass
