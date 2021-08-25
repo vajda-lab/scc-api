@@ -319,6 +319,10 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
 
 @task(bind=True, ignore_result=True, max_retries=0)
 def scheduled_cleanup_job(self: celery.Task, limit: int = 10_000) -> None:
+    """
+    To avoid overloading our database with old jobs, we cleanup all old jobs
+    over, 7 days...
+    """
     deleted_date = timezone.now() - timedelta(days=7)
     deleted_jobs = Job.objects.imported().filter(created__lt=deleted_date).delete()
     deleted_count, deleted_jobs = Job.objects.filter(
