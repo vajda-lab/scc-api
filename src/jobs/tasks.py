@@ -157,14 +157,15 @@ def parse_qstat_output(output: str):
 
     rows = []
     for row in lines[2:]:
-        data = {}
-        for column in headers:
-            start = headers[column]["start"]
-            end = headers[column]["end"]
-            if end:
-                data[column] = row[start:end].strip()
-            else:
-                data[column] = row[start:].strip()
+        if "@scc-" in row:
+            data = {}
+            for column in headers:
+                start = headers[column]["start"]
+                end = headers[column]["end"]
+                if end:
+                    data[column] = row[start:end].strip()
+                else:
+                    data[column] = row[start:].strip()
         rows.append(data)
     return rows
 
