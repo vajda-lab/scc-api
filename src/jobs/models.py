@@ -128,6 +128,12 @@ class Job(models.Model):
         null=False,
         db_index=True,
     )
+    callback_job_id = models.CharField(
+        max_length=64,
+        blank=True,
+        null=False,
+        db_index=True,
+    )
     # these are to track what comes out of qstat
     # state The state of the job:
     #   (r) – running;
