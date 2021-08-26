@@ -17,6 +17,7 @@ class JobSerializer(serializers.ModelSerializer):
             "input_file",
             "output_file",
             "sge_task_id",
+            "scc_user",
             "job_state",
             "job_data",
             "user_email",
