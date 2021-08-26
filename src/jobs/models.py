@@ -120,6 +120,7 @@ class Job(models.Model):
     sge_task_id = models.IntegerField(
         blank=True,
         null=True,
+        db_index=True,
     )
     scc_user = models.CharField(
         max_length=20,
