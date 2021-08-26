@@ -29,6 +29,9 @@ bootstrap:
     SCC_MAX_HIGH_JOBS=50
     SCC_MAX_LOW_JOBS=25
     SCC_MAX_NORMAL_JOBS=25
+    SCC_WEBHOOK_COMPLETED_JOB_API_TOKEN=
+    SCC_WEBHOOK_COMPLETED_JOB_URL=http://ftplus.bu.edu:8080/ftplus/scc-api/%s/
+    SCC_WEBHOOK_ENABLED=false
     SECRET_KEY=`head -c 75 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 50`" > $FILE
     fi
 
