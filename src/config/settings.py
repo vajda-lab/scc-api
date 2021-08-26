@@ -243,3 +243,14 @@ SCC_DELETE_OLD_JOBS_IN_DAYS = env("SCC_DELETE_OLD_JOBS_IN_DAYS", default=7)
 SCC_MAX_HIGH_JOBS = env.int("SCC_MAX_HIGH_JOBS", default=50)
 SCC_MAX_LOW_JOBS = env.int("SCC_MAX_LOW_JOBS", default=25)
 SCC_MAX_NORMAL_JOBS = env.int("SCC_MAX_NORMAL_JOBS", default=25)
+
+# WEBHOOK SETTINGS
+SCC_WEBHOOK_ENABLED = env.bool("SCC_WEBHOOK_ENABLED", default=False)
+SCC_WEBHOOK_COMPLETED_JOB_API_TOKEN = env(
+    "SCC_WEBHOOK_COMPLETED_JOB_API_TOKEN",
+    default="",
+)
+SCC_WEBHOOK_COMPLETED_JOB_URL = env(
+    "SCC_WEBHOOK_COMPLETED_JOB_URL",
+    default="http://ftplus.bu.edu:8080/ftplus/scc-api/%s/",
+)
