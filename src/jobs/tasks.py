@@ -1,8 +1,8 @@
 import celery
 import logging
 import pytz
+import requests
 import subprocess
-import time
 
 from celery import task
 from datetime import datetime as dt
@@ -13,7 +13,9 @@ from django.db.models import F
 from django.utils import timezone
 from pathlib import Path
 
-from .models import Job, JobLog, Status
+from jobs.models import Job, JobLog, Status
+from jobs.serializers import JobSerializer
+from jobs.utils import TokenAuth
 from users.models import User
 
 
@@ -484,6 +486,40 @@ def update_jobs(qstat_output: str) -> None:
             job.status = Status.COMPLETE
             job.save()
             JobLog.objects.create(job=job, event="Job status changed to complete")
+
+            # If our SCC_WEBHOOK_ENABLED settings is set to True, we
+            # will fire off a webhook to a url when Jobs have been
+            # successfully completed.
+            if getattr(settings, "SCC_WEBHOOK_ENABLED", False):
+                send_webhook.delay(pk=job.pk)
+
+
+@task(bind=True, ignore_result=True)
+def send_webhook(self: celery.Task, *, pk: int):
+    try:
+        job = Job.objects.get(pk=pk)
+        try:
+            job_serializer = JobSerializer(job)
+            job_serializer.is_valid()
+            data = job_serializer.data
+
+            url = settings.SCC_WEBHOOK_COMPLETED_JOB_URL.format(job.uuid)
+            msg = f"Sending Job {job.pk} to {url}"
+            logging.info(msg)
+            JobLog.objects.create(job=job, event=msg)
+
+            token_auth = TokenAuth(settings.SCC_WEBHOOK_COMPLETED_JOB_API_TOKEN)
+            # TODO: Fill in files?
+            requests.post(
+                url, auth=token_auth, data=data, files={"ftmap_results_tar_file": ""}
+            )
+            requests.raise_for_status()
+
+        except Exception as e:
+            logger.warning(f"Job {pk} errored. {e}")
+
+    except Job.DoesNotExist:
+        logger.warning(f"Job {pk} does not exist. We can not send ")
 
 
 @task(bind=True, ignore_result=True)
