@@ -64,6 +64,7 @@ def activate_job(self: celery.Task, *, pk: int):
 
                 JobLog.objects.create(job=job, event="Job status changed to active")
 
+                # TODO: Add a priority to the job...
                 cmd = [
                     f"{settings.GRID_ENGINE_SUBMIT_CMD}",
                     "-cwd",
