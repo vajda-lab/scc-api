@@ -500,20 +500,23 @@ def send_webhook(self: celery.Task, *, pk: int):
     try:
         job = Job.objects.get(pk=pk)
         try:
-            job_serializer = JobSerializer(job)
-            job_serializer.is_valid()
-            data = job_serializer.data
-
+            # build our webhook url
             url = settings.SCC_WEBHOOK_COMPLETED_JOB_URL.format(job.uuid)
             msg = f"Sending Job {job.pk} to {url}"
             logging.info(msg)
             JobLog.objects.create(job=job, event=msg)
 
+            # get our webhook auth token
             token_auth = TokenAuth(settings.SCC_WEBHOOK_COMPLETED_JOB_API_TOKEN)
+
+            # prepare our data to JSON and send...
+            job_serializer = JobSerializer(job)
+            job_serializer.is_valid()
+            data = job_serializer.data
             # TODO: Fill in files?
-            requests.post(
-                url, auth=token_auth, data=data, files={"ftmap_results_tar_file": ""}
-            )
+            files = {"ftmap_results_tar_file": ""}
+
+            requests.post(url, auth=token_auth, data=data, files=files)
             requests.raise_for_status()
 
         except Exception as e:
