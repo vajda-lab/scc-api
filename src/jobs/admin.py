@@ -19,6 +19,7 @@ class JobAdmin(admin.ModelAdmin):
         "user",
         "imported",
         "sge_task_id",
+        "scc_user",
         "status",
         "priority",
         "job_ja_task_id",

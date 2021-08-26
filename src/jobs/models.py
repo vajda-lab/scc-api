@@ -120,8 +120,14 @@ class Job(models.Model):
     sge_task_id = models.IntegerField(
         blank=True,
         null=True,
+        db_index=True,
     )
-
+    scc_user = models.CharField(
+        max_length=20,
+        blank=True,
+        null=False,
+        db_index=True,
+    )
     # these are to track what comes out of qstat
     # state The state of the job:
     #   (r) – running;
