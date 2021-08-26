@@ -13,7 +13,7 @@ from django.db.models import F
 from django.utils import timezone
 from pathlib import Path
 
-from jobs.models import Job, JobLog, Status
+from jobs.models import Job, JobLog, Priority, Status
 from jobs.serializers import JobSerializer
 from jobs.utils import TokenAuth
 from users.models import User
@@ -64,9 +64,20 @@ def activate_job(self: celery.Task, *, pk: int):
 
                 JobLog.objects.create(job=job, event="Job status changed to active")
 
+                if job.priority == Priority.HIGH:
+                    priority = -100
+                elif job.priority == Priority.NORMAL:
+                    priority = -500
+                elif job.priority == Priority.LOW:
+                    priority = -1000
+                else:
+                    priority = -1000
+
                 # TODO: Add a priority to the job...
                 cmd = [
                     f"{settings.GRID_ENGINE_SUBMIT_CMD}",
+                    "-p",
+                    f"{priority}",
                     "-cwd",
                     f"{ftplus_path}/{settings.SCC_RUN_FILE}",
                 ]
