@@ -235,7 +235,7 @@ GRID_ENGINE_SUBMIT_CMD = env("GRID_ENGINE_SUBMIT_CMD", default="/app/bin/qsub")
 SCC_DEFAULT_EMAIL = env("SCC_DEFAULT_EMAIL", default="awake@bu.edu")
 SCC_FTPLUS_PATH = env("SCC_FTPLUS_PATH", default="/tmp/")
 SCC_API_TOKEN = env("SCC_API_TOKEN", default="")
-SCC_API_URL = env("SCC_API_URL", default="http://ftplus.bu.edu:8000/apis")
+SCC_API_URL = env("SCC_API_URL", default="https://vajda-dashboard.bu.edu/apis")
 SCC_RUN_FILE = env("SCC_RUN_FILE", default="runme.py")
 SCC_DELETE_OLD_JOBS_IN_DAYS = env("SCC_DELETE_OLD_JOBS_IN_DAYS", default=7)
 
