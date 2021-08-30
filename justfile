@@ -49,11 +49,11 @@ bootstrap:
 @deploy +ARGS="":
     rsync -av \
         docker-compose.dev.yml \
-        ftplus-dev.bu.edu:/srv/ftplus-dev.bu.edu
+        vajda-dashboard.bu.edu:/srv/vajda-dashboard.bu.edu
 
     rsync -av \
         ./docker/caddy/Caddyfile \
-        ftplus-dev.bu.edu:/srv/ftplus-dev.bu.edu/docker/caddy/
+        vajda-dashboard.bu.edu:/srv/vajda-dashboard.bu.edu/docker/caddy/
 
     # rsync -av \
     #     {{ ARGS }} \
@@ -77,8 +77,7 @@ bootstrap:
 # Deploy & Build Django app on ftplus sites
 @deploy-build:
     just deploy
-    ssh ftplus-dev.bu.edu 'cd /srv/scc-api && docker-compose build && docker-compose down && docker-compose up -d'
-    # ssh ftplus-dev.bu.edu 'cd /srv/scc-api && docker-compose build && docker-compose stop django scheduler worker && docker-compose start django scheduler worker'
+    ssh vajda-dashboard.bu.edu 'cd /srv/vajda-dashboard.bu.edu && docker-compose build && docker-compose down && docker-compose up -d'
 
 # Stops containers
 @down:
