@@ -24,7 +24,7 @@ services:
     depends_on:
       - redis
     env_file: ./.docker-env
-    hostname: ftplus-dev.bu.edu
+    hostname: vajda-dashboard.bu.edu
     image: ghcr.io/vajda-lab/scc-api:latest
     # labels:
     #   - "com.centurylinklabs.watchtower.enable=true"
@@ -40,7 +40,7 @@ services:
     depends_on:
       - redis
     env_file: ./.docker-env
-    hostname: ftplus-dev.bu.edu
+    hostname: vajda-dashboard.bu.edu
     image: ghcr.io/vajda-lab/scc-api:latest
     # labels:
     #   - "com.centurylinklabs.watchtower.enable=true"
@@ -53,7 +53,7 @@ services:
     depends_on:
       - redis
     env_file: ./.docker-env
-    hostname: ftplus-dev.bu.edu
+    hostname: vajda-dashboard.bu.edu
     image: ghcr.io/vajda-lab/scc-api:latest
     # labels:
     #   - "com.centurylinklabs.watchtower.enable=true"
