@@ -525,9 +525,11 @@ def send_webhook(self: celery.Task, *, pk: int):
             job_serializer = JobSerializer(job)
             job_serializer.is_valid()
             data = job_serializer.data
-            # TODO: Fill in files?
-            # files = {"ftmap_results_tar_file": ""}
-            files = {}
+
+            if Path(job.output_file.path).exists():
+                files = {"ftmap_results_tar_file": Path(job.output_file.path).open("rb")}
+            else:
+                files = {}
 
             requests.post(url, auth=token_auth, data=data, files=files)
             requests.raise_for_status()
