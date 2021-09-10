@@ -527,7 +527,9 @@ def send_webhook(self: celery.Task, *, pk: int):
             data = job_serializer.data
 
             if Path(job.output_file.path).exists():
-                files = {"ftmap_results_tar_file": Path(job.output_file.path).open("rb")}
+                files = {
+                    "ftmap_results_tar_file": Path(job.output_file.path).open("rb")
+                }
             else:
                 files = {}
 
