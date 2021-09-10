@@ -77,7 +77,7 @@ bootstrap:
 # Deploy & Build Django app on ftplus sites
 @deploy-build:
     just deploy
-    ssh vajda-dashboard.bu.edu 'cd /srv/vajda-dashboard.bu.edu && docker-compose build && docker-compose down && docker-compose up -d'
+    ssh vajda-dashboard.bu.edu 'cd /srv/vajda-dashboard.bu.edu && docker-compose pull && docker-compose down && docker-compose up -d'
 
 # Stops containers
 @down:
