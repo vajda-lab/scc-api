@@ -8,14 +8,21 @@
     ],
     // Add the IDs of extensions you want installed when the container is created.
     "extensions": [
+        "eamodio.gitlens",
+        "editorconfig.editorconfig",
+        "ms-azuretools.vscode-docker",
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "eamodio.gitlens",
+        "ms-vscode-remote.remote-containers"
         "redhat.vscode-yaml",
-        "ms-azuretools.vscode-docker",
-        "editorconfig.editorconfig",
+    ],
+    "mounts": [
+        "source=vscode-server-extensions,target=/root/.vscode-server/extensions,type=volume",
+        "source=vscode-server-insiders-extensions,target=/root/.vscode-server-insiders/extensions,type=volume",
+    ],
+    "recommendations": [
         "github.copilot",
-        "skellock.just"
+        "skellock.just",
     ],
     "runServices": ["django"],
     "service": "django",
