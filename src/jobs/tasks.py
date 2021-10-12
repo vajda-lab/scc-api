@@ -523,7 +523,7 @@ def send_webhook(self: celery.Task, *, pk: int):
 
             # prepare our data to JSON and send...
             job_serializer = JobSerializer(job)
-            job_serializer.is_valid()
+            # job_serializer.is_valid()
             data = job_serializer.data
 
             if Path(job.output_file.path).exists():
