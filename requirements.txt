@@ -26,7 +26,9 @@ bumpver==2021.1113
 celery==4.4.7
     # via -r ./requirements.in
 certifi==2021.5.30
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
 chardet==3.0.4
     # via requests
 click==7.1.2
@@ -172,6 +174,8 @@ requests==2.23.0
     # via -r ./requirements.in
 rich==10.6.0
     # via -r ./requirements.in
+sentry-sdk==1.4.3
+    # via -r ./requirements.in
 six==1.16.0
     # via
     #   bleach
@@ -194,7 +198,9 @@ toml==0.10.2
 uritemplate==3.0.1
     # via drf-spectacular
 urllib3==1.25.11
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
 vine==1.3.0
     # via
     #   amqp

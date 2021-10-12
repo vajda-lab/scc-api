@@ -16,6 +16,7 @@ pytz==2018.5
 redis
 requests==2.23.0
 rich
+sentry-sdk
 whitenoise
 
 # development
