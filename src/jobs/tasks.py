@@ -549,7 +549,9 @@ def send_webhook(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
 
 
 @task(bind=True, ignore_result=True)
-def update_job_priority(self: celery.Task, *, pk: typing.Union[str, uuid.UUID], new_priority: str) -> None:
+def update_job_priority(
+    self: celery.Task, *, pk: typing.Union[str, uuid.UUID], new_priority: str
+) -> None:
     """
     Update Job.priority
     Current assumption: 3 priority levels: Low/Normal/High
