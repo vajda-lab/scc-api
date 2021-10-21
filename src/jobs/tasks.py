@@ -3,6 +3,8 @@ import logging
 import pytz
 import requests
 import subprocess
+import typing
+import uuid
 
 from celery import task
 from datetime import datetime as dt
@@ -25,7 +27,7 @@ logger.setLevel(logging.INFO)
 
 # Group of Celery task actions
 @task(bind=True, ignore_result=True)
-def activate_job(self: celery.Task, *, pk: int):
+def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
     """
     Takes existing Job object instances from Django API
     Submits their data to the SCC for processing
@@ -110,7 +112,7 @@ def activate_job(self: celery.Task, *, pk: int):
 
 
 @task(bind=True, ignore_result=True)
-def delete_job(self: celery.Task, *, pk: int):
+def delete_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
     """
     Sets Job.status to Status.DELETED in Django
     Also delete job directory and associated files on SCC
@@ -511,7 +513,7 @@ def update_jobs(qstat_output: str) -> None:
 
 
 @task(bind=True, ignore_result=True)
-def send_webhook(self: celery.Task, *, pk: int):
+def send_webhook(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
     try:
         job = Job.objects.get(pk=pk)
         try:
@@ -547,7 +549,7 @@ def send_webhook(self: celery.Task, *, pk: int):
 
 
 @task(bind=True, ignore_result=True)
-def update_job_priority(self: celery.Task, *, pk: int, new_priority: str) -> None:
+def update_job_priority(self: celery.Task, *, pk: typing.Union[str, uuid.UUID], new_priority: str) -> None:
     """
     Update Job.priority
     Current assumption: 3 priority levels: Low/Normal/High
