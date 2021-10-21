@@ -201,14 +201,17 @@ def scheduled_allocate_job(self: celery.Task) -> None:
     if has_queued_jobs:
         # Allocate *low* priority jobs
         active_jobs = Job.objects.exclude_imported().active()
-        queued_jobs = Job.objects.exclude_imported().queued()
-        # jobs_in_process = active_jobs.count()
         logger.info(f"{active_jobs.count()} jobs are active")
 
+        # queued_jobs = Job.objects.exclude_imported().queued()
+        queued_jobs = Job.objects.queued()
+        logger.info(f"{queued_jobs.count()} jobs are queued")
+
         # if jobs_in_process < settings.SCC_MAX_LOW_JOBS:
-        jobs_to_allocate = 100
-        logger.info(f"{jobs_to_allocate} new jobs were allocated")
+        # jobs_to_allocate = 100
+        # logger.info(f"{jobs_to_allocate} new jobs were allocated")
         for queued_job in queued_jobs.all():  # [:jobs_to_allocate]:
+            logger.info(f"running activate_job(pk={queued_job.pk})")
             activate_job.delay(pk=queued_job.pk)
 
         # # Allocate *high* priority jobs
