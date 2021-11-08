@@ -256,7 +256,7 @@ SCC_WEBHOOK_COMPLETED_JOB_API_TOKEN = env(
 )
 SCC_WEBHOOK_COMPLETED_JOB_URL = env(
     "SCC_WEBHOOK_COMPLETED_JOB_URL",
-    default="http://ftplus.bu.edu:8080/ftplus/scc-api/%s/",
+    default="https://vajda-dashboard.bu.edu/ftplus/scc-api/{0}/",
 )
 
 # Sentry Configuration
