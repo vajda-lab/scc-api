@@ -11,8 +11,9 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-18.04
     name: Tests with Python
+    runs-on: ubuntu-18.04
+    timeout-minutes: 15
 
     services:
       postgres:
@@ -79,7 +80,8 @@ jobs:
     permissions:
       contents: read
       packages: write
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v2
