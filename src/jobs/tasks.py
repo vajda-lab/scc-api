@@ -418,6 +418,7 @@ def update_jobs(qstat_output: str) -> None:
             try:
                 # Since BU doesn't care about imported jobs
                 # Do we went to change this to ONLY update?
+                # i see errors for multiple jobs submitted coming from here, i think we should test this without creating entries for non submitted jobs
                 job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
