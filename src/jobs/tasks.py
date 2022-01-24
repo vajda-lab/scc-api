@@ -34,7 +34,7 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
 
     called via: `scheduled_allocate_job`
 
-    """   
+    """
     try:
         job = Job.objects.get(pk=pk)
 
