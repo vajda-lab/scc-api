@@ -24,7 +24,7 @@ from users.models import User
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
+##test for push
 # Group of Celery task actions
 @task(bind=True, ignore_result=True)
 def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
