@@ -65,13 +65,13 @@ jobs:
         run: |
           python -m pytest src
 
-      - name: Lints Python
-        run: |
-          black --check .
+      # - name: Lints Python
+      #   run: |
+      #     black --check .
 
-      - name: Lints HTML templates
-        run: |
-          djhtml --check src/templates/*.html src/templates/**/*.html
+      # - name: Lints HTML templates
+      #   run: |
+      #     djhtml --check src/templates/*.html src/templates/**/*.html
 
   build-and-push-image:
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
