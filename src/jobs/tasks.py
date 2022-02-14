@@ -419,6 +419,16 @@ def update_jobs(qstat_output: str) -> None:
                 # Since BU doesn't care about imported jobs
                 # Do we went to change this to ONLY update?
                 # i see errors for multiple jobs submitted coming from here, i think we should test this without creating entries for non submitted jobs
+                # scc_jobs = Job.objects.queued() + Job.objects.active()  <- this would be before the loop
+                # ids = [x.pk for x in scc_jobs]  <- before loop
+                # if job_id in ids:
+                #    job.job_data = row
+                #    job.job_ja_task_id = job_ja_task_id
+                #    job.job_state = job_state
+                #    job.job_submitted = job_submitted
+                #    job.scc_user = row.get("user")
+                #    job.save()
+                # can we do something like this to not get imported jobs?
                 job, created = Job.objects.get_or_create(
                     sge_task_id=job_id,
                     defaults={
