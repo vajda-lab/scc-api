@@ -1,10 +1,7 @@
 version: '3.6'
 
-volumes:
-  postgres_data_dev: {}
-  postgres_backup_dev: {}
-
 services:
+
   postgres:
     image: postgres:10.4-alpine
     env_file: ./.docker-env
@@ -12,12 +9,15 @@ services:
       - postgres_data_dev:/var/lib/postgresql/data
       - postgres_backup_dev:/backups
 
+  redis:
+    image: redis:3.2
+
   django:
-    &django
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
     depends_on:
+      - redis
       - postgres
     env_file: ./.docker-env
     ports:
@@ -25,28 +25,46 @@ services:
     volumes:
       - ./src:/app
 
-  redis:
-    image: redis:3.2
-
-  celeryworker:
-    <<: *django
+  scheduler:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: /start-scheduler.sh
     depends_on:
       - redis
       - postgres
-    ports: []
-    command: celery -A config worker -l INFO
+    env_file: ./.docker-env
+    volumes:
+      - ./src:/app
 
-  celerybeat:
-    <<: *django
+  worker:
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+    command: /start-worker.sh
     depends_on:
       - redis
       - postgres
-    ports: []
-    command: /start-celerybeat
+    env_file: ./.docker-env
+    volumes:
+      - ./src:/app
 
-  flower:
-    <<: *django
-    ports:
-      - "5555:5555"
-    command: /start-flower
+  # flower:
+  #   image: mher/flower
+  #   # TODO: switch back when flower supports Celery 5.0
+  #   # build:
+  #   #   context: .
+  #   #   dockerfile: ./docker/django/Dockerfile
+  #   command: /start-flower.sh
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   env_file: ./.docker-env
+  #   ports:
+  #     - "5555:5555"
+  #   volumes:
+  #     - ./src:/app
 
+volumes:
+  postgres_data_dev: {}
+  postgres_backup_dev: {}

@@ -1,0 +1,85 @@
+version: "3.6"
+
+services:
+
+  redis:
+    image: redis:3.2
+
+  caddy:
+    depends_on:
+      - django
+    env_file: ./.docker-env
+    image: caddy:2.2.1
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile  # configuration
+      - caddy-config:/config  # configuration autosaves
+      - caddy-data:/data  # saving certificates
+
+  django:
+    depends_on:
+      - redis
+    env_file: ./.docker-env
+    hostname: vajda-dashboard.bu.edu
+    image: ghcr.io/vajda-lab/scc-api:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      # - "com.centurylinklabs.watchtower.lifecycle.post-update='./post-update.sh'"
+    user: "ftsubmit:ftplus"
+    volumes:
+      - nfs-ftplus:/projectnb/ftplus
+
+  scheduler:
+    command: /start-scheduler.sh
+    depends_on:
+      - redis
+    env_file: ./.docker-env
+    hostname: vajda-dashboard.bu.edu
+    image: ghcr.io/vajda-lab/scc-api:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    # user: "ftsubmit:ftplus"
+    # volumes:
+    #   - nfs-ftplus:/projectnb/ftplus
+
+  worker:
+    command: /start-worker.sh
+    depends_on:
+      - redis
+    env_file: ./.docker-env
+    hostname: vajda-dashboard.bu.edu
+    image: ghcr.io/vajda-lab/scc-api:latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    user: "ftsubmit:ftplus"
+    volumes:
+      - nfs-ftplus:/projectnb/ftplus
+
+  watchtower:
+    env_file: ./.docker-env
+    environment:
+      - "WATCHTOWER_CLEANUP=true"
+      - "WATCHTOWER_DEBUG=true"
+      - "WATCHTOWER_INCLUDE_STOPPED=false"
+      - "WATCHTOWER_LABEL_ENABLE=true"
+      - "WATCHTOWER_LIFECYCLE_HOOKS=true"
+      - "WATCHTOWER_POLL_INTERVAL=300"
+      - "WATCHTOWER_REVIVE_STOPPED=true"
+    image: containrrr/watchtower:latest
+    restart: "always"
+    volumes:
+      - /root/.docker/config.json:/config.json
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  caddy-config:
+  caddy-data:
+  nfs-ftplus:
+    name: nfs-ftplus
+    driver_opts:
+      type: "nfs"
+      o: "addr=scc-fs.bu.edu,hard,nolock,rw"
+      # o: "addr=scc-fs.bu.edu,nolock,rw"
+      device: ":/gpfs4/projectnb/ftplus"

@@ -2,12 +2,15 @@
 
 {% load static %}
 
-
 {% block title %}Home{% endblock %}
 
 {% block content %}
-  <div style="margin:70px">
-    <h1>Welcome to the API for the SCC at Boston University</h1>
-    <p>Login to view the current status</p>
-  </div>
+    <div style="margin: 70px">
+        <h1>Welcome to the API for the SCC at Boston University</h1>
+        {% if not request.user.is_authenticated %}
+            <p>Login to view the current status and to access your Access Token.</p>
+        {% else %}
+            <p><a href="{% url 'tokens' %}">Access your SCC-CLI API Token</a></p>
+        {% endif %}
+    </div>
 {% endblock %}

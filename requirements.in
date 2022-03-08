@@ -1,0 +1,38 @@
+# flower
+celery<5.0
+django-click
+django-constance[redis]
+django-environ
+django-extensions
+django-filter
+django-improved-user
+django-sql-dashboard
+Django<4.0
+djangorestframework<3.13
+drf-spectacular
+psycopg2-binary
+python-dateutil
+pytz==2018.5
+redis
+requests==2.23.0
+rich
+sentry-sdk
+whitenoise
+
+# development
+black==21.6b0
+bumpver
+djhtml
+django-test-plus
+factory_boy
+Faker
+flake8
+flake8-bugbear
+flake8-docstrings
+# ipython
+model-bakery
+pep8-naming
+pytest
+pytest-django
+pytest-lazy-fixture
+time-machine

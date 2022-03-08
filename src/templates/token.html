@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div style="margin: 70px">
+        <h1>Your Access Token</h1>
+        {% if tokens %}
+            <ul>
+                {% for token in tokens %}
+                    <li><strong>Your Access Token:</strong> {{ token.key }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <p>
+            <code>
+                # To add your token to access the scccli<br>
+                python -m scccli init
+            </code>
+        </p>
+    </div>
+{% endblock %}

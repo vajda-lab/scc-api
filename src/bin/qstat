@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+import click
+
+
+@click.command()
+@click.option("jobname", "-j", default=None)
+@click.option("username", "-u", default=None)
+def main(jobname, username):
+    if username:
+        # $ qstat -u awake
+        click.echo("job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID ")
+        click.echo("-----------------------------------------------------------------------------------------------------------------")
+        click.echo("5290728 0.10087 atlas_whol awake        r     03/19/2021 11:09:21 neuro-pub@scc-md8.scc.bu.edu      16 1")
+        click.echo("5290728 0.10087 atlas_whol awake        r     03/19/2021 11:09:21 ecoggroup-pub@scc-gc3.scc.bu.e    16 2")
+    elif jobname:
+        # $ qstat -j 5290723
+        click.echo("==============================================================")
+        click.echo("job_number:                 5290723")
+        click.echo("exec_file:                  job_scripts/5290723")
+        click.echo("submission_time:            Fri Mar 19 11:03:19 2021")
+        click.echo("owner:                      awake")
+        click.echo("uid:                        255619")
+        click.echo("group:                      docking")
+        click.echo("gid:                        88667")
+        click.echo("sge_o_home:                 /usr3/bustaff/awake")
+        click.echo("sge_o_log_name:             awake")
+        click.echo("sge_o_path:                 /share/pkg.7/anaconda3/5.2.0/install/bin:/usr/java/default/jre/bin:/usr/java/default/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/dell/srvadmin/bin:/bin:/usr3/bustaff/awake/bin:.")
+        click.echo("sge_o_shell:                /bin/bash")
+        click.echo("sge_o_workdir:              /projectnb/docking/awake/gpcr_projects/keseru_new_extra_10")
+        click.echo("sge_o_host:                 scc1")
+        click.echo("account:                    sge")
+        click.echo("cwd:                        /projectnb/docking/awake/gpcr_projects/keseru_new_extra_10")
+        click.echo("hard resource_list:         no_gpu=TRUE,h_rt=43200")
+        click.echo("soft resource_list:         buyin=TRUE")
+        click.echo("mail_list:                  awake@scc1.bu.edu")
+        click.echo("notify:                     FALSE")
+        click.echo("job_name:                   atlas_whole.py")
+        click.echo("jobshare:                   0")
+        click.echo("env_list:                   PATH=/share/pkg.7/anaconda3/5.2.0/install/bin:/usr/java/default/jre/bin:/usr/java/default/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/dell/srvadmin/bin:/bin:/usr3/bustaff/awake/bin:.")
+        click.echo("script_file:                scripts/atlas_whole.py")
+        click.echo("parallel environment:  omp16 range: 16")
+        click.echo("verify_suitable_queues:     2")
+        click.echo("project:                    docking")
+        click.echo("job-array tasks:            1-2:1")
+        click.echo("usage    1:                 cpu=00:00:00, mem=0.00000 GBs, io=0.00000, vmem=N/A, maxvmem=N/A")
+        click.echo("usage    2:                 cpu=00:00:00, mem=0.00000 GBs, io=0.00000, vmem=N/A, maxvmem=N/A")
+        click.echo("scheduling info:            (Collecting of scheduler job information is turned off)")
+    else:
+        click.echo("job-ID  prior   name       user         state submit/start at     queue                          slots ja-task-ID ")
+        click.echo("-----------------------------------------------------------------------------------------------------------------")
+        click.echo("5290728 0.10087 atlas_whol awake        r     03/19/2021 11:09:21 neuro-pub@scc-md8.scc.bu.edu      16 1")
+        click.echo("5290728 0.10087 atlas_whol azzze        r     03/19/2021 11:09:21 ecoggroup-pub@scc-gc3.scc.bu.e    16 2")
+
+
+if __name__ == "__main__":
+    main()
