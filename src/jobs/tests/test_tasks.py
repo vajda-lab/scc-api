@@ -144,7 +144,7 @@ def test_scheduled_cleanup_job():
     assert Job.objects.all().count() == 2
 
 
-@pytest.mark.django_db()
+#@pytest.mark.django_db()
 def test_parse_qstat_output():
     """
     Tests parse_qstat_output task.
