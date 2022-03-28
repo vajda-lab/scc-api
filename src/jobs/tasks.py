@@ -419,8 +419,8 @@ def update_jobs(qstat_output: str) -> None:
                 # Since BU doesn't care about imported jobs
                 # Do we went to change this to ONLY update?
                 # i see errors for multiple jobs submitted coming from here, i think we should test this without creating entries for non submitted jobs
-                # scc_jobs = Job.objects.queued() + Job.objects.active()  <- this would be before the loop
-                # ids = [x.pk for x in scc_jobs]  <- before loop
+                scc_jobs = Job.objects.queued() + Job.objects.active()  #<- this would be before the loop
+                ids = [x.sge_task_id for x in scc_jobs]  #<- before loop
                 # if job_id in ids:
                 #    job.job_data = row
                 #    job.job_ja_task_id = job_ja_task_id
@@ -448,13 +448,21 @@ def update_jobs(qstat_output: str) -> None:
                 #    job.job_submitted = job_submitted
                 #    job.scc_user = row.get("user")
                 #    job.save()
-                job = Job.objects.get(sge_task_id=job_id)
-                job.job_data = row
-                job.job_ja_task_id = job_ja_task_id
-                job.job_state = job_state
-                job.job_submitted = job_submitted
-                job.scc_user = row.get("user")
-                job.save()
+                if job_id in ids:
+                    job = Job.objects.get(sge_task_id=job_id)
+                    job.job_data = row
+                    job.job_ja_task_id = job_ja_task_id
+                    job.job_state = job_state
+                    job.job_submitted = job_submitted
+                    job.scc_user = row.get("user")
+                    job.save()
+                #job = Job.objects.get(sge_task_id=job_id)
+                #job.job_data = row
+                #job.job_ja_task_id = job_ja_task_id
+                #job.job_state = job_state
+                #job.job_submitted = job_submitted
+                #job.scc_user = row.get("user")
+                #job.save()
 
             except Job.MultipleObjectsReturned:
                 logger.warning(f"Multiple jobs found for {job_id}")
