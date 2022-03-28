@@ -419,7 +419,9 @@ def update_jobs(qstat_output: str) -> None:
                 # Since BU doesn't care about imported jobs
                 # Do we went to change this to ONLY update?
                 # i see errors for multiple jobs submitted coming from here, i think we should test this without creating entries for non submitted jobs
-                scc_jobs = Job.objects.queued() + Job.objects.active()  #<- this would be before the loop
+                qs1 = Job.objects.queued()
+                qs2 = Job.objects.active()
+                scc_jobs = qs1.union(qs2)  #<- this would be before the loop
                 ids = [x.sge_task_id for x in scc_jobs]  #<- before loop
                 # if job_id in ids:
                 #    job.job_data = row
