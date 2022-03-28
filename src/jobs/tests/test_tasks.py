@@ -161,7 +161,7 @@ def test_parse_qstat_output():
     assert qstat_rows[-1]["state"].strip() == "r"
 
 
-@pytest.mark.django_db()
+#@pytest.mark.django_db()
 def test_update_jobs():
     """
     Tests tasks.update_jobs
