@@ -448,7 +448,7 @@ def update_jobs(qstat_output: str) -> None:
                 #    job.job_submitted = job_submitted
                 #    job.scc_user = row.get("user")
                 #    job.save()
-                Job.objects.get(sge_task_id=job_id)
+                job = Job.objects.get(sge_task_id=job_id)
                 job.job_data = row
                 job.job_ja_task_id = job_ja_task_id
                 job.job_state = job_state
