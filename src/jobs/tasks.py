@@ -409,7 +409,8 @@ def update_jobs(qstat_output: str) -> None:
             job_state = row["state"]
             job_submitted = f"{row['submit-start-at']}".replace("/", "-")
             job_submitted = parse(job_submitted)
-
+            updated = False
+    
             if job_submitted:
                 job_submitted = pytz.timezone(settings.TIME_ZONE).localize(
                     job_submitted, is_dst=None
@@ -458,6 +459,7 @@ def update_jobs(qstat_output: str) -> None:
                     job.job_submitted = job_submitted
                     job.scc_user = row.get("user")
                     job.save()
+                    updated = True
                 #job = Job.objects.get(sge_task_id=job_id)
                 #job.job_data = row
                 #job.job_ja_task_id = job_ja_task_id
@@ -487,13 +489,17 @@ def update_jobs(qstat_output: str) -> None:
 
             # If an imported job is created, set to Status.ACTIVE & note it's imported
             # Error jobs will be updated later
-            if created:
+            #if created:
+            if updated:
                 # Job.objects.filter(sge_task_id=job_id).update(
                 #     imported=True, status=Status.ACTIVE
                 # )
-                JobLog.objects.create(job=job, event="Imported job added to web app")
-            else:
+                #JobLog.objects.create(job=job, event="Imported job added to web app")
                 JobLog.objects.create(job=job, event="Job updated with qstat info")
+                
+            else:
+                #JobLog.objects.create(job=job, event="Job updated with qstat info")
+                pass
 
             scc_job_list.append(int(job_id))
 
