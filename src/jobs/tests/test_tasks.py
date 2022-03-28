@@ -160,7 +160,7 @@ def test_parse_qstat_output():
     assert qstat_rows[-1]["job-ID"].strip() == "6262064"
     assert qstat_rows[-1]["state"].strip() == "r"
 
-
+@pytest.mark.skip(reason="i want to")
 @pytest.mark.django_db()
 def test_update_jobs():
     """
