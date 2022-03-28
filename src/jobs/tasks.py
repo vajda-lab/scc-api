@@ -429,43 +429,50 @@ def update_jobs(qstat_output: str) -> None:
                 #    job.scc_user = row.get("user")
                 #    job.save()
                 # can we do something like this to not get imported jobs?
-                job, created = Job.objects.get_or_create(
-                    sge_task_id=job_id,
-                    defaults={
-                        "imported": True,
-                        "job_data": row,
-                        "job_ja_task_id": job_ja_task_id,
-                        "job_state": job_state,
-                        "job_submitted": job_submitted,
-                        "status": Status.ACTIVE,
-                        "user": user,
-                    },
-                )
-                if not created:
-                    job.job_data = row
-                    job.job_ja_task_id = job_ja_task_id
-                    job.job_state = job_state
-                    job.job_submitted = job_submitted
-                    job.scc_user = row.get("user")
-                    job.save()
+                #job, created = Job.objects.get_or_create(
+                #    sge_task_id=job_id,
+                #    defaults={
+                #        "imported": True,
+                #        "job_data": row,
+                #        "job_ja_task_id": job_ja_task_id,
+                #        "job_state": job_state,
+                #        "job_submitted": job_submitted,
+                #        "status": Status.ACTIVE,
+                #        "user": user,
+                #    },
+                #)
+                #if not created:
+                #    job.job_data = row
+                #    job.job_ja_task_id = job_ja_task_id
+                #    job.job_state = job_state
+                #    job.job_submitted = job_submitted
+                #    job.scc_user = row.get("user")
+                #    job.save()
+                Job.objects.get(sge_task_id=job_id)
+                job.job_data = row
+                job.job_ja_task_id = job_ja_task_id
+                job.job_state = job_state
+                job.job_submitted = job_submitted
+                job.scc_user = row.get("user")
+                job.save()
 
             except Job.MultipleObjectsReturned:
                 logger.warning(f"Multiple jobs found for {job_id}")
                 logger.debug(f"Deleting jobs for {job_id}")
                 Job.objects.filter(sge_task_id=job_id).delete()
 
-                job, created = Job.objects.get_or_create(
-                    sge_task_id=job_id,
-                    defaults={
-                        "imported": True,
-                        "job_data": row,
-                        "job_ja_task_id": job_ja_task_id,
-                        "job_state": job_state,
-                        "job_submitted": job_submitted,
-                        "status": Status.ACTIVE,
-                        "user": user,
-                    },
-                )
+                #job, created = Job.objects.get_or_create(
+                #    sge_task_id=job_id,
+                #    defaults={
+                #        "imported": True,
+                #        "job_data": row,
+                #        "job_ja_task_id": job_ja_task_id,
+                #        "job_state": job_state,
+                #        "job_submitted": job_submitted,
+                #        "status": Status.ACTIVE,
+                #        "user": user,
+                #    },
+                #)
                 logger.debug(f"Creating new job {job_id} as {job.uuid}")
 
             # If an imported job is created, set to Status.ACTIVE & note it's imported
