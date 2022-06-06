@@ -533,6 +533,7 @@ def update_jobs(qstat_output: str) -> None:
     # Update status for Complete jobs
     active_jobs = Job.objects.exclude_imported().active()
     # Completed SCC jobs show NO result in qstat
+    logger.warning(scc_job_list)
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
             job.status = Status.COMPLETE
