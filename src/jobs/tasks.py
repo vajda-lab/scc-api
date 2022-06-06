@@ -365,6 +365,7 @@ def scheduled_poll_job(self: celery.Task) -> None:
 
     start = dt.now()
     cmd = settings.GRID_ENGINE_STATUS_CMD.split(" ")
+    cmd = ['/usr/local/sge/bin/qstat', '-u','ftsubmit']
     if isinstance(cmd, list):
         job_poll = subprocess.run(cmd, capture_output=True, text=True)
     else:
