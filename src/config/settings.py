@@ -232,7 +232,7 @@ REST_FRAMEWORK = {
 
 # Grid Engine Commands
 GRID_ENGINE_DELETE_CMD = env("GRID_ENGINE_DELETE_CMD", default="/app/bin/qdel")
-GRID_ENGINE_STATUS_CMD = env("GRID_ENGINE_STATUS_CMD", default="/app/bin/qstat")
+GRID_ENGINE_STATUS_CMD = env("GRID_ENGINE_STATUS_CMD", default="/app/bin/qstat -u ftsubmit")
 GRID_ENGINE_SUBMIT_CMD = env("GRID_ENGINE_SUBMIT_CMD", default="/app/bin/qsub")
 
 # SCC Settings...
