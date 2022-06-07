@@ -386,8 +386,8 @@ def scheduled_poll_job(self: celery.Task) -> None:
     qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
     logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
-    logger.info(qstat_output)
-    logger.info(cmd)
+    #logger.info(qstat_output)
+    #logger.info(cmd)
 
     update_start = dt.now()
     update_jobs(qstat_output)
