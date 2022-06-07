@@ -550,15 +550,17 @@ def update_jobs(qstat_output: str) -> None:
     logger.warning(scc_job_list)
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
-            job.status = Status.COMPLETE
-            job.save()
-            JobLog.objects.create(job=job, event="Job status changed to complete")
+            if job.output_file != None:
+                #files = {            
+                job.status = Status.COMPLETE
+                job.save()
+                JobLog.objects.create(job=job, event="Job status changed to complete")
 
-            # If our SCC_WEBHOOK_ENABLED settings is set to True, we
-            # will fire off a webhook to a url when Jobs have been
-            # successfully completed.
-            if getattr(settings, "SCC_WEBHOOK_ENABLED", False):
-                send_webhook.delay(pk=job.pk)
+                # If our SCC_WEBHOOK_ENABLED settings is set to True, we
+                # will fire off a webhook to a url when Jobs have been
+                # successfully completed.
+                if getattr(settings, "SCC_WEBHOOK_ENABLED", False):
+                    send_webhook.delay(pk=job.pk)
 
 
 @task(bind=True, ignore_result=True)
