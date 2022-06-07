@@ -550,7 +550,7 @@ def update_jobs(qstat_output: str) -> None:
     logger.warning(scc_job_list)
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
-            if job.output_file != None:
+            if bool(job.output_file):
                 #files = {            
                 job.status = Status.COMPLETE
                 job.save()
