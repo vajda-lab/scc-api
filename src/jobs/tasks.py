@@ -149,6 +149,8 @@ def parse_qstat_output(output: str):
     """
     if "submit/start at" in output:
         output = output.replace("submit/start at", "submit-start-at")
+    if len(output) < 5:
+        return []
 
     lines = [line for line in output.split("\n") if len(line)]
     header_keys = [column for column in lines[0].split(" ") if len(column)]
