@@ -29,6 +29,9 @@ class JobQuerySet(models.QuerySet):
     def active(self):
         return self.filter(status=Status.ACTIVE)
 
+    def finished(self):
+        return self.filter(status=Status.FINISHED)    
+    
     def complete(self):
         return self.filter(status=Status.COMPLETE)
 
