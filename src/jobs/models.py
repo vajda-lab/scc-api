@@ -22,6 +22,7 @@ class Status(models.TextChoices):
     DELETED = "deleted", _("deleted")
     ERROR = "error", _("error")
     QUEUED = "queued", _("queued")
+    FINISHED = "finished", _("finished")
 
 
 class JobQuerySet(models.QuerySet):
