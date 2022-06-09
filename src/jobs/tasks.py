@@ -290,7 +290,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
             input_file__in=["", None],
         )
         .filter(
-            status__in=[Status.COMPLETE, Status.ERROR],
+            status__in=[Status.FINISHED, Status.ERROR],
             output_file__in=["", None],
             last_exception_count__lt=10,
         )
@@ -548,21 +548,27 @@ def update_jobs(qstat_output: str) -> None:
 
     # Update status for Complete jobs
     active_jobs = Job.objects.exclude_imported().active()
+    finished_jobs = Job.objects.exclude_imported().finished()
     # Completed SCC jobs show NO result in qstat
     logger.warning(scc_job_list)
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
-            if bool(job.output_file):
-                #files = {            
-                job.status = Status.COMPLETE
-                job.save()
-                JobLog.objects.create(job=job, event="Job status changed to complete")
+            
+            #files = {            
+            job.status = Status.FINISHED
+            job.save()
+            JobLog.objects.create(job=job, event="Job status changed to finished")
 
-                # If our SCC_WEBHOOK_ENABLED settings is set to True, we
-                # will fire off a webhook to a url when Jobs have been
-                # successfully completed.
-                if getattr(settings, "SCC_WEBHOOK_ENABLED", False):
-                    send_webhook.delay(pk=job.pk)
+    for job in finished_jobs:                
+        if bool(job.output_file):    
+            # If our SCC_WEBHOOK_ENABLED settings is set to True, we
+            # will fire off a webhook to a url when Jobs have been
+            # successfully completed.
+            job.status = Status.COMPLETE
+            job.save()
+            JobLog.objects.create(job=job, event="Job status changed to complete")            
+            if getattr(settings, "SCC_WEBHOOK_ENABLED", False):
+                send_webhook.delay(pk=job.pk)
 
 
 @task(bind=True, ignore_result=True)
