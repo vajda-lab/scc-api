@@ -83,7 +83,7 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
                     "-cwd",
                     f"{ftplus_path}/{settings.SCC_RUN_FILE}",
                 ]
-                cmd = ["python", f"{ftplus_path}/{settings.SCC_RUN_FILE}"]
+                #cmd = ["python", f"{ftplus_path}/{settings.SCC_RUN_FILE}"]
                 logging.debug(cmd)
 
                 # qsub must be run from inside job.uuid directory
