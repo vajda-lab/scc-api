@@ -84,6 +84,7 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
                     f"{ftplus_path}/{settings.SCC_RUN_FILE}",
                 ]
                 #cmd = ["python", f"{ftplus_path}/{settings.SCC_RUN_FILE}"]
+                #checking the push to see it update
                 logging.debug(cmd)
 
                 # qsub must be run from inside job.uuid directory
