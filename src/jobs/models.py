@@ -158,6 +158,12 @@ class Job(models.Model):
         blank=True,
         null=True,
     )
+    
+    pyrun = models.BooleanField(
+        default=False,
+        null=True,
+        help_text="Is this job run using python instead of qsub",
+    )    
     imported = models.BooleanField(
         default=False,
         null=True,
