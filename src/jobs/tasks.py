@@ -83,8 +83,8 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
                     "-cwd",
                     f"{ftplus_path}/{settings.SCC_RUN_FILE}",
                 ]
-                if int(job.user) == 6:
-                    cmd = ["python", f"{ftplus_path}/{settings.SCC_RUN_FILE}"]
+                #if int(job.user) == 6:
+                #    cmd = ["python", f"{ftplus_path}/{settings.SCC_RUN_FILE}"]
                 #checking the push to see it update
                 logging.debug(cmd)
 
