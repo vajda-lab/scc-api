@@ -83,7 +83,8 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
                     "-cwd",
                     f"{ftplus_path}/{settings.SCC_RUN_FILE}",
                 ]
-                #cmd = ["python", f"{ftplus_path}/{settings.SCC_RUN_FILE}"]
+                if int(job.user) == 7:
+                    cmd = ["python", f"{ftplus_path}/{settings.SCC_RUN_FILE}"]
                 #checking the push to see it update
                 logging.debug(cmd)
 
@@ -95,7 +96,7 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
-                sge_task_id = job_submit.stdout.split(" ")[2]
+                sge_task_id = job_submit.stdout.split(" ")[2]       
                 job.sge_task_id = int(sge_task_id)
                 job.save()
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
