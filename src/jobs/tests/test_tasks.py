@@ -24,6 +24,7 @@ def test_activate_job():
         input_file=SimpleUploadedFile(
             "test-job.tar.gz",
             Path(__file__).parent.joinpath("test-job.tar.gz").read_bytes(),
+        user=7,
         ),
     )
     assert job.status != Status.ACTIVE
