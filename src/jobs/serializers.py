@@ -22,6 +22,7 @@ class JobSerializer(serializers.ModelSerializer):
             "job_state",
             "job_data",
             "user_email",
+            "priority",
         ]
 
     def get_user_email(self, obj):
