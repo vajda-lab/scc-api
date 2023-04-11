@@ -30,8 +30,7 @@ services:
     user: "ftsubmit:ftplus"
     volumes:
       - nfs-ftplus:/projectnb/ftplus
-    cap-add:
-      - SYS_PTRACE
+
 
   scheduler:
     command: /start-scheduler.sh
