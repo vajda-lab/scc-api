@@ -317,7 +317,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 "-C",
                 f"{ftplus_path}",
                 ".",
-                "&&",
+                ";",
                 "echo",
                 "'this is done now'",
                 ">>",
