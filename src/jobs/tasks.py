@@ -316,12 +316,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 f"{scc_job_input_file}",
                 "-C",
                 f"{ftplus_path}",
-                ".",
-                ";",
-                "echo",
-                "'this is done now'",
-                ">>",
-                "log"
+                "."
             ]
 
             logger.debug(f"File Retrival Command: {cmd}")
