@@ -337,7 +337,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 job.save()
 
                 # Delete SCC directory
-                #subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+                subprocess.run(["rm", "-rf", f"{ftplus_path}"])
             else:
                 raise Exception(f"ftplus_path path: {ftplus_path} was not found")
 
