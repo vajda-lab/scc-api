@@ -16,7 +16,7 @@ attrs==21.2.0
     #   flake8-bugbear
     #   jsonschema
     #   pytest
-billiard==3.6.4.0
+billiard==4.2.0
     # via celery
 black==21.6b0
     # via -r ./requirements.in
