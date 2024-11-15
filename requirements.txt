@@ -104,7 +104,7 @@ iniconfig==1.1.1
     # via pytest
 jsonschema==3.2.0
     # via drf-spectacular
-kombu==4.6.11
+kombu==5.3.4
     # via celery
 lexid==2021.1006
     # via bumpver
