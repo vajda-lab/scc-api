@@ -5,7 +5,7 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN python3 -m pip install -U pip
+RUN python3 -m pip install -U pip==21.3
 
 COPY requirements.txt /tmp/requirements.txt
 RUN python3 -m pip install -U --no-cache-dir -r /tmp/requirements.txt
