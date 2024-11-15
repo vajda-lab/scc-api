@@ -24,7 +24,7 @@ bleach==3.3.1
     # via django-sql-dashboard
 bumpver==2021.1113
     # via -r ./requirements.in
-celery==4.4.7
+celery==5.4.0
     # via -r ./requirements.in
 certifi==2021.5.30
     # via
