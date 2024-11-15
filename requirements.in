@@ -1,5 +1,5 @@
 # flower
-celery<5.0
+celery
 django-click
 django-constance[redis]
 django-environ
