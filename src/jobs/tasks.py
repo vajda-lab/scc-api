@@ -88,14 +88,14 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
                     
                 #checking the push to see it update
                 logging.debug(cmd)
-                logging.info(cmd)
+                #logging.info(cmd)
 
                 # qsub must be run from inside job.uuid directory
                 job_submit = subprocess.run(
                     cmd, capture_output=True, text=True, cwd=ftplus_path
                 )
                 logging.debug(job_submit.stdout)
-                logging.info(job_submit.stdout)
+                #logging.info(job_submit.stdout)
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
@@ -339,7 +339,7 @@ def scheduled_capture_job_output(self: celery.Task) -> None:
                 job.save()
 
                 # Delete SCC directory
-                subprocess.run(["rm", "-rf", f"{ftplus_path}"])
+                #subprocess.run(["rm", "-rf", f"{ftplus_path}"])
             else:
                 raise Exception(f"ftplus_path path: {ftplus_path} was not found")
 
