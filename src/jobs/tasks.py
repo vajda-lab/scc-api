@@ -5,6 +5,7 @@ import requests
 import subprocess
 import typing
 import uuid
+import json
 
 from celery import task
 from datetime import datetime as dt
@@ -584,8 +585,9 @@ def send_webhook(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
         try:
             # build our webhook url
             url = settings.SCC_WEBHOOK_COMPLETED_JOB_URL.format(job.pk)
-            if 'return_url' in list(job.job_data.keys()):
-                url = job.job_data['return_url']
+            jbdta = json.loads(job.job_data)
+            if 'return_url' in list(jbdta.keys()):
+                url = jbdta['return_url']
             msg = f"Sending Job {job.pk} to {url}"
             logging.info(msg)
             JobLog.objects.create(job=job, event=msg)
