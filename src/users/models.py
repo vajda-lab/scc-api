@@ -17,6 +17,7 @@ class User(AbstractUser):
         choices=Priority.choices,
         default=Priority.LOW,
     )
+    apitoken = models.CharField(max_length=300)
 
     def daily_job_count(self):
         return (
