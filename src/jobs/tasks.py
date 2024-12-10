@@ -585,7 +585,8 @@ def send_webhook(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
         try:
             # build our webhook url
             url = settings.SCC_WEBHOOK_COMPLETED_JOB_URL.format(job.pk)
-            jbdta = json.loads(job.job_data)
+            #jbdta = json.loads(job.job_data)
+            jbdta = job.job_data
             if 'return_url' in list(jbdta.keys()):
                 url = jbdta['return_url']
             msg = f"Sending Job {job.pk} to {url}"
