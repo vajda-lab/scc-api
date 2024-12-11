@@ -603,7 +603,7 @@ def send_webhook(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
 
             if Path(job.output_file.path).exists():
                 files = {
-                    "ftmap_results_tar_file": Path(job.output_file.path).open("rb")
+                    "results_tar_file": Path(job.output_file.path).open("rb")
                 }
             else:
                 files = {}
