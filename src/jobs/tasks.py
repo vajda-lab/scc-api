@@ -100,7 +100,8 @@ def activate_job(self: celery.Task, *, pk: typing.Union[str, uuid.UUID]):
 
                 # Assign SGE ID to job
                 # Successful qsub stdout = Your job 6274206 ("ls -al") has been submitted
-                sge_task_id = job_submit.stdout.split(" ")[2]       
+                sge_task_id = job_submit.stdout.split()[2]       
+                logging.info(sge_task_id)
                 job.sge_task_id = int(sge_task_id)
                 job.save()
                 JobLog.objects.create(job=job, event="Job sge_task_id added")
