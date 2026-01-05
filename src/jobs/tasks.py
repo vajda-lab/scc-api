@@ -477,7 +477,7 @@ def update_jobs(qstat_output: str) -> None:
                 scc_job_list.append(int(job_id))                                    
                 if job_id in ids:
                     job = Job.objects.get(sge_task_id=job_id)
-                    job.job_data = row
+                    job.job_data['current_info'] = row
                     job.job_ja_task_id = job_ja_task_id
                     job.job_state = job_state
                     job.job_submitted = job_submitted
