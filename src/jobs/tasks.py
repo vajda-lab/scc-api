@@ -418,6 +418,9 @@ def update_jobs(qstat_output: str) -> None:
 
     user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
     scc_job_list = []
+    logger.info('is this even running')
+    logger.info(f"type of qstat {type(qstat_output)} ")
+    logger.info(f'qq  {qstat_output}')
     # Update all jobs w/ their qstat results
     for row in qstat_output:
         logger.info(f"\nROW IS {row}")
