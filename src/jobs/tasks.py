@@ -396,8 +396,8 @@ def scheduled_poll_job(self: celery.Task) -> None:
     qstat_output = parse_qstat_output(job_poll.stdout)
     # Update jobs w/ qstat info
     logger.debug(f"\nQSTAT_OUTPUT{qstat_output}")
-    logger.info(qstat_output)
-    logger.info(cmd)
+    #logger.info(qstat_output)
+    #logger.info(cmd)
 
     update_start = dt.now()
     update_jobs(qstat_output)
@@ -420,7 +420,7 @@ def update_jobs(qstat_output: str) -> None:
     scc_job_list = []
     # Update all jobs w/ their qstat results
     for row in qstat_output:
-        logger.debug(f"\nROW IS {row}")
+        logger.info(f"\nROW IS {row}")
         try:
             job_id = row["job-ID"]
             job_ja_task_id = (
@@ -447,6 +447,7 @@ def update_jobs(qstat_output: str) -> None:
                 qs2 = Job.objects.active()
                 scc_jobs = qs1.union(qs2)  #<- this would be before the loop
                 ids = [x.sge_task_id for x in scc_jobs]  #<- before loop
+                logger.info(f" ID {ids}")
                 # if job_id in ids:
                 #    job.job_data = row
                 #    job.job_ja_task_id = job_ja_task_id
