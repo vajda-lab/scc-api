@@ -475,9 +475,7 @@ def update_jobs(qstat_output: str) -> None:
                 #    job.scc_user = row.get("user")
                 #    job.save()
                 scc_job_list.append(int(job_id))
-                logger.info(f'ids = {ids}')
                 if int(job_id) in ids:
-                    logger.info(f'job id = {job_id}')
                     job = Job.objects.get(sge_task_id=job_id)
                     job.job_data['current_info'] = row
                     job.job_ja_task_id = job_ja_task_id
@@ -560,7 +558,7 @@ def update_jobs(qstat_output: str) -> None:
     active_jobs = Job.objects.exclude_imported().active()
     finished_jobs = Job.objects.exclude_imported().finished()
     # Completed SCC jobs show NO result in qstat
-    logger.warning(scc_job_list)
+    #logger.warning(scc_job_list)
     for job in active_jobs:
         if job.sge_task_id not in scc_job_list:
             
