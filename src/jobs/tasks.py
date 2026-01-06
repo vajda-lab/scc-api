@@ -418,12 +418,9 @@ def update_jobs(qstat_output: str) -> None:
 
     user, created = User.objects.get_or_create(email=settings.SCC_DEFAULT_EMAIL)
     scc_job_list = []
-    logger.info('is this even running')
-    logger.info(f"type of qstat {type(qstat_output)} ")
-    logger.info(f'qq  {qstat_output}')
+
     # Update all jobs w/ their qstat results
     for row in qstat_output:
-        logger.info(f"\nROW IS {row}")
         try:
             job_id = row["job-ID"]
             job_ja_task_id = (
@@ -450,7 +447,6 @@ def update_jobs(qstat_output: str) -> None:
                 qs2 = Job.objects.active()
                 scc_jobs = qs1.union(qs2)  #<- this would be before the loop
                 ids = [x.sge_task_id for x in scc_jobs]  #<- before loop
-                logger.info(f" ID {ids}")
                 # if job_id in ids:
                 #    job.job_data = row
                 #    job.job_ja_task_id = job_ja_task_id
@@ -478,8 +474,10 @@ def update_jobs(qstat_output: str) -> None:
                 #    job.job_submitted = job_submitted
                 #    job.scc_user = row.get("user")
                 #    job.save()
-                scc_job_list.append(int(job_id))                                    
-                if job_id in ids:
+                scc_job_list.append(int(job_id))
+                logger.info(f'ids = {ids}')
+                if int(job_id) in ids:
+                    logger.info(f'job id = {job_id}')
                     job = Job.objects.get(sge_task_id=job_id)
                     job.job_data['current_info'] = row
                     job.job_ja_task_id = job_ja_task_id
